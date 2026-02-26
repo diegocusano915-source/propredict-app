@@ -1,14 +1,11 @@
 const express = require("express");
 require("dotenv").config();
-const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Homepage
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
+// ✅ Serve static frontend files (including index.html)
+app.use(express.static(__dirname));
 
 // ✅ LIVE matches
 app.get("/api/matches", async (req, res) => {
@@ -31,7 +28,7 @@ app.get("/api/matches", async (req, res) => {
   }
 });
 
-// ✅ Upcoming fixtures by league
+// ✅ Upcoming fixtures by league (next 10)
 app.get("/api/league/:id", async (req, res) => {
   try {
     const leagueId = req.params.id;
@@ -54,7 +51,6 @@ app.get("/api/league/:id", async (req, res) => {
   }
 });
 
-// ✅ Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
