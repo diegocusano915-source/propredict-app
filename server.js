@@ -34,7 +34,7 @@ app.get("/api/matches", async (req, res) => {
 app.get("/api/league/:id", async (req, res) => {
   try {
     const leagueId = req.params.id;
-    const currentYear = new Date().getFullYear();
+    const currentYear = 2024;
 
     const response = await fetch(
       `https://v3.football.api-sports.io/fixtures?league=${leagueId}&season=${currentYear}`,
