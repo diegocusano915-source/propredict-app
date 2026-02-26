@@ -59,6 +59,7 @@
       padding: 15px;
       border-radius: 10px;
       border: 1px solid #1f2937;
+      cursor: pointer;
     }
 
     .league {
@@ -91,6 +92,37 @@
       font-size: 11px;
       margin-left: 6px;
     }
+
+    /* Modal */
+    #matchModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      padding: 20px;
+      overflow: auto;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #111827;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .close-btn {
+      padding: 8px 12px;
+      background: #22c55e;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
   </style>
 </head>
 
@@ -103,10 +135,9 @@
 <div class="container">
 
   <h3>🔥 Live Matches</h3>
-  <div id="matches">Loading matches...</div>
+  <div id="liveMatches">Loading live matches...</div>
 
   <h3 style="margin-top:25px;">🏆 Leagues</h3>
-
   <div class="league-tabs">
     <div class="league-tab" onclick="loadLeague(39)">Premier League</div>
     <div class="league-tab" onclick="loadLeague(140)">La Liga</div>
@@ -118,6 +149,18 @@
     <div class="league-tab" onclick="loadLeague(307)">Saudi League</div>
   </div>
 
+  <h3 style="margin-top:25px;">🏆 League Fixtures</h3>
+  <div id="leagueMatches"></div>
+
+</div>
+
+<!-- ✅ Modal -->
+<div id="matchModal">
+  <div class="modal-content">
+    <h3>Head-to-Head</h3>
+    <div id="h2hContent">Loading...</div>
+    <button class="close-btn" onclick="closeModal()">Close</button>
+  </div>
 </div>
 
 <script>
@@ -125,9 +168,9 @@
     try {
       const response = await fetch("https://propredict-app.onrender.com/api/matches");
       const data = await response.json();
-      displayMatches(data.response || []);
+      displayMatches(data.response || [], "liveMatches");
     } catch (error) {
-      document.getElementById("matches").innerHTML = "Error loading live matches.";
+      document.getElementById("liveMatches").innerHTML = "Error loading live matches.";
     }
   }
 
@@ -135,14 +178,14 @@
     try {
       const response = await fetch(`https://propredict-app.onrender.com/api/league/${id}`);
       const data = await response.json();
-      displayMatches(data.response || []);
+      displayMatches(data.response || [], "leagueMatches");
     } catch (error) {
-      document.getElementById("matches").innerHTML = "Error loading league matches.";
+      document.getElementById("leagueMatches").innerHTML = "Error loading league matches.";
     }
   }
 
-  function displayMatches(matches) {
-    const container = document.getElementById("matches");
+  function displayMatches(matches, targetId) {
+    const container = document.getElementById(targetId);
     container.innerHTML = "";
 
     if (!matches || matches.length === 0) {
@@ -152,7 +195,7 @@
 
     matches.forEach(match => {
       container.innerHTML += `
-        <div class="match-card" onclick="openMatch(${match.teams.home.id}, ${match.teams.away.id})" style="cursor:pointer;">
+        <div class="match-card" onclick="openMatch(${match.teams.home.id}, ${match.teams.away.id})">
           <div class="league">
             ${match.league?.name || ""}
           </div>
@@ -172,55 +215,48 @@
       `;
     });
   }
-async function openMatch(homeId, awayId) {
-  document.getElementById("matchModal").style.display = "block";
-  document.getElementById("h2hContent").innerHTML = "Loading...";
 
-  try {
-    const response = await fetch(
-      `https://propredict-app.onrender.com/api/h2h/${homeId}/${awayId}`
-    );
+  async function openMatch(homeId, awayId) {
+    document.getElementById("matchModal").style.display = "block";
+    document.getElementById("h2hContent").innerHTML = "Loading...";
 
-    const data = await response.json();
-    const container = document.getElementById("h2hContent");
-    container.innerHTML = "";
+    try {
+      const response = await fetch(
+        `https://propredict-app.onrender.com/api/h2h/${homeId}/${awayId}`
+      );
 
-    if (!data.response || data.response.length === 0) {
-      container.innerHTML = "No H2H data found.";
-      return;
+      const data = await response.json();
+      const container = document.getElementById("h2hContent");
+      container.innerHTML = "";
+
+      if (!data.response || data.response.length === 0) {
+        container.innerHTML = "No H2H data found.";
+        return;
+      }
+
+      const lastFive = data.response.slice(0, 5);
+
+      lastFive.forEach(match => {
+        container.innerHTML += `
+          <div style="margin-bottom:10px;">
+            ${match.teams.home.name} ${match.goals.home} -
+            ${match.goals.away} ${match.teams.away.name}
+          </div>
+        `;
+      });
+
+    } catch (error) {
+      document.getElementById("h2hContent").innerHTML = "Error loading H2H.";
     }
-
-    const lastFive = data.response.slice(0, 5);
-
-    lastFive.forEach(match => {
-      container.innerHTML += `
-        <div style="margin-bottom:10px;">
-          ${match.teams.home.name} ${match.goals.home} -
-          ${match.goals.away} ${match.teams.away.name}
-        </div>
-      `;
-    });
-
-  } catch (error) {
-    document.getElementById("h2hContent").innerHTML = "Error loading H2H.";
   }
-}
 
-function closeModal() {
-  document.getElementById("matchModal").style.display = "none";
+  function closeModal() {
+    document.getElementById("matchModal").style.display = "none";
   }
+
   loadTodayMatches();
+  loadLeague(39);
 </script>
-<!-- ✅ Match Detail Modal -->
-<div id="matchModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000000cc; padding:20px; overflow:auto; z-index:1000;">
-  <div style="background:#111827; padding:20px; border-radius:10px; max-width:600px; margin:auto;">
-    <h3>Head‑to‑Head</h3>
-    <div id="h2hContent">Loading...</div>
-    <br>
-    <button onclick="closeModal()" style="padding:8px 12px; background:#22c55e; border:none; border-radius:6px; cursor:pointer;">
-      Close
-    </button>
-  </div>
-</div>
+
 </body>
 </html>
