@@ -69,48 +69,94 @@
 </header>
 
 <div class="container">
+
+  <select id="leagueFilter" style="margin-bottom:15px;padding:8px;border-radius:6px;">
+    <option value="all">All Leagues</option>
+  </select>
+
   <div id="matches" class="loading">
-    Loading matches...
+  Loading matches...
   </div>
-</div>
+  
 
 <script>
+  let allMatches = [];
+
   async function loadMatches() {
     try {
       const response = await fetch("https://propredict-app.onrender.com/api/matches");
       const data = await response.json();
 
-      const container = document.getElementById("matches");
-      container.innerHTML = "";
-
-      if (!data.response || data.response.length === 0) {
-        container.innerHTML = "No matches today.";
+      if (!data.response) {
+        document.getElementById("matches").innerHTML = "No data available.";
         return;
       }
 
-      data.response.forEach(match => {
-        container.innerHTML += `
-          <div class="match-card">
-            <div class="league">
-              ${match.league.name} (${match.league.country})
-            </div>
-            <div class="teams">
-              ${match.teams.home.name} vs ${match.teams.away.name}
-            </div>
-            <div class="status">
-              ${match.fixture.status.long}
-            </div>
-            <div class="score">
-              ${match.goals.home ?? "-"} - ${match.goals.away ?? "-"}
-            </div>
-          </div>
-        `;
-      });
+      allMatches = data.response;
+
+      populateLeagueFilter(allMatches);
+      displayMatches(allMatches);
 
     } catch (error) {
       document.getElementById("matches").innerHTML =
         "Error loading matches.";
     }
+  }
+
+  function populateLeagueFilter(matches) {
+    const select = document.getElementById("leagueFilter");
+
+    // Reset dropdown except first option
+    select.length = 1;
+
+    const leagues = [...new Set(matches.map(m => m.league.name))];
+
+    leagues.forEach(league => {
+      const option = document.createElement("option");
+      option.value = league;
+      option.textContent = league;
+      select.appendChild(option);
+    });
+
+    select.addEventListener("change", function() {
+      if (this.value === "all") {
+        displayMatches(allMatches);
+      } else {
+        const filtered = allMatches.filter(
+          m => m.league.name === this.value
+        );
+        displayMatches(filtered);
+      }
+    });
+  }
+
+  function displayMatches(matches) {
+    const container = document.getElementById("matches");
+    container.innerHTML = "";
+
+    if (matches.length === 0) {
+      container.innerHTML = "No matches found.";
+      return;
+    }
+
+    matches.forEach(match => {
+      container.innerHTML += `
+        <div class="match-card">
+          <div class="league">
+            ${match.league.name} (${match.league.country})
+          </div>
+          <div class="teams">
+            ${match.teams.home.name} vs ${match.teams.away.name}
+          </div>
+          <div class="status">
+            ${match.fixture.status.long}
+          </div>
+          <div class="score">
+            ${match.goals.home ?? "-"} - ${match.goals.away ?? "-"}
+          </div>
+        </div>
+      `;
+    });
   }
 
   loadMatches();
