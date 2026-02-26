@@ -12,7 +12,7 @@ app.get("/", (req, res) => {
 app.get("/api/matches", async (req, res) => {
   try {
     const response = await fetch(
-      "https://v3.football.api-sports.io/fixtures?next=20",
+      https://v3.football.api-sports.io/fixtures?date=${new Date().toISOString().split("T")[0]}`,
       {
         headers: {
           "x-apisports-key": process.env.API_KEY,
