@@ -77,7 +77,28 @@ app.get("/api/h2h/:home/:away", async (req, res) => {
   }
 });
 
+// ✅ Team last 10 matches
+app.get("/api/team/:id", async (req, res) => {
+  try {
+    const teamId = req.params.id;
 
+    const response = await fetch(
+      `https://v3.football.api-sports.io/fixtures?team=${teamId}&season=2024`,
+      {
+        headers: {
+          "x-apisports-key": process.env.API_KEY,
+        },
+      }
+    );
+
+    const data = await response.json();
+    res.json(data);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch team stats" });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
