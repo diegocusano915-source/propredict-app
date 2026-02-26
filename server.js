@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 // ✅ Serve frontend
 app.use(express.static(path.join(__dirname)));
 
-// ✅ Today's matches
+// ✅ Today's matches (live + finished today)
 app.get("/api/matches", async (req, res) => {
   try {
     const today = new Date().toISOString().split("T")[0];
@@ -31,20 +31,13 @@ app.get("/api/matches", async (req, res) => {
   }
 });
 
-// ✅ League-based upcoming fixtures (next 7 days)
+// ✅ League upcoming fixtures (Not Started only)
 app.get("/api/league/:id", async (req, res) => {
   try {
     const leagueId = req.params.id;
 
-    const today = new Date();
-    const next7Days = new Date();
-    next7Days.setDate(today.getDate() + 7);
-
-    const from = today.toISOString().split("T")[0];
-    const to = next7Days.toISOString().split("T")[0];
-
     const response = await fetch(
-      `https://v3.football.api-sports.io/fixtures?league=${leagueId}&season=2024&from=${from}&to=${to}`,
+      `https://v3.football.api-sports.io/fixtures?league=${leagueId}&season=2024&status=NS`,
       {
         headers: {
           "x-apisports-key": process.env.API_KEY,
