@@ -5,10 +5,15 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve frontend
+// ✅ Serve static frontend
 app.use(express.static(path.join(__dirname)));
 
-// ✅ LIVE matches only
+// ✅ Explicit homepage route
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// ✅ LIVE matches
 app.get("/api/matches", async (req, res) => {
   try {
     const response = await fetch(
@@ -29,7 +34,7 @@ app.get("/api/matches", async (req, res) => {
   }
 });
 
-// ✅ Upcoming next 10 fixtures by league
+// ✅ Upcoming fixtures by league (next 10)
 app.get("/api/league/:id", async (req, res) => {
   try {
     const leagueId = req.params.id;
@@ -52,6 +57,7 @@ app.get("/api/league/:id", async (req, res) => {
   }
 });
 
+// ✅ Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
