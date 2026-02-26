@@ -4,8 +4,9 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Serve frontend (index.html)
+// ✅ Serve frontend
 app.use(express.static(__dirname));
+
 
 // ✅ LIVE matches
 app.get("/api/matches", async (req, res) => {
@@ -28,13 +29,14 @@ app.get("/api/matches", async (req, res) => {
   }
 });
 
-// ✅ Upcoming fixtures by league (next 10)
+
+// ✅ League fixtures (season only — free plan safe)
 app.get("/api/league/:id", async (req, res) => {
   try {
     const leagueId = req.params.id;
 
     const response = await fetch(
-      `https://v3.football.api-sports.io/fixtures?league=${leagueId}&next=10`,
+      `https://v3.football.api-sports.io/fixtures?league=${leagueId}&season=2024`,
       {
         headers: {
           "x-apisports-key": process.env.API_KEY,
@@ -51,13 +53,14 @@ app.get("/api/league/:id", async (req, res) => {
   }
 });
 
-// ✅ Head-to-Head (last 5 matches)
+
+// ✅ Head-to-Head (free plan safe — no last parameter)
 app.get("/api/h2h/:home/:away", async (req, res) => {
   try {
     const { home, away } = req.params;
 
     const response = await fetch(
-      `https://v3.football.api-sports.io/fixtures/headtohead?h2h=${home}-${away}&last=5`,
+      `https://v3.football.api-sports.io/fixtures/headtohead?h2h=${home}-${away}`,
       {
         headers: {
           "x-apisports-key": process.env.API_KEY,
@@ -74,7 +77,7 @@ app.get("/api/h2h/:home/:away", async (req, res) => {
   }
 });
 
-// ✅ Start server
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
