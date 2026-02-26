@@ -1,13 +1,11 @@
 const express = require("express");
 require("dotenv").config();
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Root route (for testing server)
-app.get("/", (req, res) => {
-  res.send("ProPredict API is running ✅");
-});
+app.use(express.static(path.join(__dirname)));
 
 // Matches route
 app.get("/api/matches", async (req, res) => {
