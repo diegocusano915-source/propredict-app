@@ -152,7 +152,7 @@
 
     matches.forEach(match => {
       container.innerHTML += `
-        <div class="match-card">
+        <div class="match-card" onclick="openMatch(${match.teams.home.id}, ${match.teams.away.id})" style="cursor:pointer;">
           <div class="league">
             ${match.league?.name || ""}
           </div>
@@ -172,9 +172,55 @@
       `;
     });
   }
+async function openMatch(homeId, awayId) {
+  document.getElementById("matchModal").style.display = "block";
+  document.getElementById("h2hContent").innerHTML = "Loading...";
 
+  try {
+    const response = await fetch(
+      `https://propredict-app.onrender.com/api/h2h/${homeId}/${awayId}`
+    );
+
+    const data = await response.json();
+    const container = document.getElementById("h2hContent");
+    container.innerHTML = "";
+
+    if (!data.response || data.response.length === 0) {
+      container.innerHTML = "No H2H data found.";
+      return;
+    }
+
+    const lastFive = data.response.slice(0, 5);
+
+    lastFive.forEach(match => {
+      container.innerHTML += `
+        <div style="margin-bottom:10px;">
+          ${match.teams.home.name} ${match.goals.home} -
+          ${match.goals.away} ${match.teams.away.name}
+        </div>
+      `;
+    });
+
+  } catch (error) {
+    document.getElementById("h2hContent").innerHTML = "Error loading H2H.";
+  }
+}
+
+function closeModal() {
+  document.getElementById("matchModal").style.display = "none";
+  }
   loadTodayMatches();
 </script>
-
+<!-- ✅ Match Detail Modal -->
+<div id="matchModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000000cc; padding:20px; overflow:auto; z-index:1000;">
+  <div style="background:#111827; padding:20px; border-radius:10px; max-width:600px; margin:auto;">
+    <h3>Head‑to‑Head</h3>
+    <div id="h2hContent">Loading...</div>
+    <br>
+    <button onclick="closeModal()" style="padding:8px 12px; background:#22c55e; border:none; border-radius:6px; cursor:pointer;">
+      Close
+    </button>
+  </div>
+</div>
 </body>
 </html>
