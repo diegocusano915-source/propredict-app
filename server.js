@@ -4,7 +4,7 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Serve static frontend files (including index.html)
+// ✅ Serve frontend (index.html)
 app.use(express.static(__dirname));
 
 // ✅ LIVE matches
@@ -51,6 +51,30 @@ app.get("/api/league/:id", async (req, res) => {
   }
 });
 
+// ✅ Head-to-Head (last 5 matches)
+app.get("/api/h2h/:home/:away", async (req, res) => {
+  try {
+    const { home, away } = req.params;
+
+    const response = await fetch(
+      `https://v3.football.api-sports.io/fixtures/headtohead?h2h=${home}-${away}&last=5`,
+      {
+        headers: {
+          "x-apisports-key": process.env.API_KEY,
+        },
+      }
+    );
+
+    const data = await response.json();
+    res.json(data);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch H2H data" });
+  }
+});
+
+// ✅ Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
