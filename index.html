@@ -193,7 +193,9 @@
       return;
     }
 
-    matches.forEach(match => {
+    matches
+  .filter(match => match.fixture?.status?.short === "NS")
+  .forEach(match => {
       container.innerHTML += `
         <div class="match-card" onclick="openMatch(${match.teams.home.id}, ${match.teams.away.id})">
           <div class="league">
