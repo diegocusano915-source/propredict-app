@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ProPredict Live Matches</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    header {
+      background: #111827;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      border-bottom: 2px solid #22c55e;
+    }
+
+    .container {
+      padding: 15px;
+    }
+
+    .match-card {
+      background: #1e293b;
+      margin-bottom: 12px;
+      padding: 15px;
+      border-radius: 10px;
+      border-left: 4px solid #22c55e;
+    }
+
+    .league {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+
+    .teams {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .status {
+      font-size: 13px;
+      color: #22c55e;
+    }
+
+    .score {
+      font-size: 18px;
+      margin-top: 5px;
+    }
+
+    .loading {
+      text-align: center;
+      margin-top: 40px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  ⚽ ProPredict Live Matches
+</header>
+
+<div class="container">
+  <div id="matches" class="loading">
+    Loading matches...
+  </div>
+</div>
+
+<script>
+  async function loadMatches() {
+    try {
+      const response = await fetch("https://propredict-app.onrender.com/api/matches");
+      const data = await response.json();
+
+      const container = document.getElementById("matches");
+      container.innerHTML = "";
+
+      if (!data.response || data.response.length === 0) {
+        container.innerHTML = "No matches today.";
+        return;
+      }
+
+      data.response.forEach(match => {
+        container.innerHTML += `
+          <div class="match-card">
+            <div class="league">
+              ${match.league.name} (${match.league.country})
+            </div>
+            <div class="teams">
+              ${match.teams.home.name} vs ${match.teams.away.name}
+            </div>
+            <div class="status">
+              ${match.fixture.status.long}
+            </div>
+            <div class="score">
+              ${match.goals.home ?? "-"} - ${match.goals.away ?? "-"}
+            </div>
+          </div>
+        `;
+      });
+
+    } catch (error) {
+      document.getElementById("matches").innerHTML =
+        "Error loading matches.";
+    }
+  }
+
+  loadMatches();
+</script>
+
+</body>
+</html>
