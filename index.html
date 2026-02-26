@@ -175,7 +175,7 @@
   }
 
   async function loadLeague(id) {
-    try {
+    
       const response = await fetch(`https://propredict-app.onrender.com/api/league/${id}`);
       const data = await response.json();
       displayMatches(data.response || [], "leagueMatches");
@@ -184,39 +184,47 @@
     }
   }
 
-  function displayMatches(matches, targetId) {
-    const container = document.getElementById(targetId);
-    container.innerHTML = "";
+  
+    
+    function displayMatches(matches, targetId) {
+  const container = document.getElementById(targetId);
+  container.innerHTML = "";
 
-    if (!matches || matches.length === 0) {
-      container.innerHTML = "No matches found.";
-      return;
-    }
-
-    matches
-  .filter(match => match.fixture?.status?.short === "NS")
-  .forEach(match => {
-      container.innerHTML += `
-        <div class="match-card" onclick="openMatch(${match.teams.home.id}, ${match.teams.away.id})">
-          <div class="league">
-            ${match.league?.name || ""}
-          </div>
-          <div class="teams">
-            ${match.teams?.home?.name || ""} vs ${match.teams?.away?.name || ""}
-          </div>
-          <div class="status">
-            ${match.fixture?.status?.long || ""}
-            ${match.fixture?.status?.short !== "NS" && match.fixture?.status?.short !== "FT"
-              ? '<span class="live-badge">LIVE</span>'
-              : ''}
-          </div>
-          <div class="score">
-            ${match.goals?.home ?? "-"} - ${match.goals?.away ?? "-"}
-          </div>
-        </div>
-      `;
-    });
+  if (!matches || matches.length === 0) {
+    container.innerHTML = "No matches found.";
+    return;
   }
+
+  let filteredMatches = matches;
+
+  if (targetId === "leagueMatches") {
+    filteredMatches = matches.filter(
+      match => match.fixture?.status?.short === "NS"
+    );
+  }
+
+  filteredMatches.forEach(match => {
+    container.innerHTML += `
+      <div class="match-card" onclick="openMatch(${match.teams.home.id}, ${match.teams.away.id})">
+        <div class="league">
+          ${match.league?.name || ""}
+        </div>
+        <div class="teams">
+          ${match.teams?.home?.name || ""} vs ${match.teams?.away?.name || ""}
+        </div>
+        <div class="status">
+          ${match.fixture?.status?.long || ""}
+          ${match.fixture?.status?.short !== "NS" && match.fixture?.status?.short !== "FT"
+            ? '<span class="live-badge">LIVE</span>'
+            : ''}
+        </div>
+        <div class="score">
+          ${match.goals?.home ?? "-"} - ${match.goals?.away ?? "-"}
+        </div>
+      </div>
+    `;
+  });
+}
 
   async function openMatch(homeId, awayId) {
     document.getElementById("matchModal").style.display = "block";
