@@ -56,16 +56,17 @@ async function loadTopPicks(leagueCode) {
             : "Live calculation";
 
         if (!data.topPicks || data.topPicks.length === 0) {
-            topPicksContainer.innerHTML = "<p>No projections available.</p>";
+            topPicksContainer.innerHTML =
+                "<p>No projections available.</p>";
             return;
         }
 
-        data.topPicks.slice(0, 5).forEach(match => {
+        data.topPicks.forEach(match => {
             const card = document.createElement("div");
             card.className = "card";
 
             const title = document.createElement("h4");
-            title.textContent = match.match || "Match";
+            title.textContent = match.match;
             card.appendChild(title);
 
             const metrics = [
@@ -82,27 +83,26 @@ async function loadTopPicks(leagueCode) {
                 label.textContent = item.label;
 
                 const value = document.createElement("span");
-                value.textContent = formatPercent(item.value);
+                value.textContent = `${item.value}%`;
 
                 row.appendChild(label);
                 row.appendChild(value);
                 card.appendChild(row);
             });
 
-            if (match.confidence) {
-                const confidence = document.createElement("div");
-                confidence.className = `metric ${getConfidenceClass(match.confidence)}`;
+            const confidenceRow = document.createElement("div");
+            confidenceRow.className =
+                `metric ${getConfidenceClass(match.confidence)}`;
 
-                const label = document.createElement("span");
-                label.textContent = "Confidence";
+            const confLabel = document.createElement("span");
+            confLabel.textContent = "Confidence";
 
-                const value = document.createElement("span");
-                value.textContent = match.confidence;
+            const confValue = document.createElement("span");
+            confValue.textContent = match.confidence;
 
-                confidence.appendChild(label);
-                confidence.appendChild(value);
-                card.appendChild(confidence);
-            }
+            confidenceRow.appendChild(confLabel);
+            confidenceRow.appendChild(confValue);
+            card.appendChild(confidenceRow);
 
             topPicksContainer.appendChild(card);
         });
@@ -114,7 +114,7 @@ async function loadTopPicks(leagueCode) {
 }
 
 // =============================
-// TEAM ANALYSIS
+// TEAM ANALYSIS (EXPANDED)
 // =============================
 
 async function loadTeamAnalysis(teamId) {
@@ -131,16 +131,16 @@ async function loadTeamAnalysis(teamId) {
         const fullTimeMetrics = [
             ["Avg Goals Scored", data.avgGoalsScored],
             ["Avg Goals Conceded", data.avgGoalsConceded],
-            ["Over 0.5", formatPercent(data.over05)],
-            ["Over 1.5", formatPercent(data.over15)],
-            ["Over 2.5", formatPercent(data.over25)],
-            ["Over 3.5", formatPercent(data.over35)],
-            ["BTTS", formatPercent(data.btts)],
-            ["Win %", formatPercent(data.winPercentage)],
-            ["Draw %", formatPercent(data.drawPercentage)],
-            ["Loss %", formatPercent(data.lossPercentage)],
-            ["Double Chance", data.doubleChance],
-            ["Confidence", data.confidence]
+            ["Over 0.5", `${data.over05}%`],
+            ["Over 1.5", `${data.over15}%`],
+            ["Over 2.5", `${data.over25}%`],
+            ["Over 3.5", `${data.over35}%`],
+            ["BTTS", `${data.btts}%`],
+            ["Win %", `${data.winPercentage}%`],
+            ["Draw %", `${data.drawPercentage}%`],
+            ["Loss %", `${data.lossPercentage}%`],
+            ["Double Chance 1X", `${data.doubleChance1X}%`],
+            ["Double Chance X2", `${data.doubleChanceX2}%`]
         ];
 
         fullTimeMetrics.forEach(([labelText, valueText]) => {
@@ -153,10 +153,6 @@ async function loadTeamAnalysis(teamId) {
             const value = document.createElement("span");
             value.textContent = valueText ?? "-";
 
-            if (labelText === "Confidence") {
-                value.classList.add(getConfidenceClass(valueText));
-            }
-
             item.appendChild(label);
             item.appendChild(value);
 
@@ -164,12 +160,12 @@ async function loadTeamAnalysis(teamId) {
         });
 
         const firstHalfMetrics = [
-            ["FH Over 0.5", formatPercent(data.fhOver05)],
-            ["FH Over 1.5", formatPercent(data.fhOver15)],
-            ["FH BTTS", formatPercent(data.fhBtts)],
-            ["FH Win %", formatPercent(data.fhWinPercentage)],
-            ["FH Draw %", formatPercent(data.fhDrawPercentage)],
-            ["FH Loss %", formatPercent(data.fhLossPercentage)]
+            ["FH Over 0.5", `${data.fhOver05}%`],
+            ["FH Over 1.5", `${data.fhOver15}%`],
+            ["FH BTTS", `${data.fhBtts}%`],
+            ["FH Win %", `${data.fhWinPercentage}%`],
+            ["FH Draw %", `${data.fhDrawPercentage}%`],
+            ["FH Loss %", `${data.fhLossPercentage}%`]
         ];
 
         firstHalfMetrics.forEach(([labelText, valueText]) => {
@@ -196,7 +192,7 @@ async function loadTeamAnalysis(teamId) {
 }
 
 // =============================
-// EVENT LISTENERS
+// EVENTS
 // =============================
 
 leagueSelect.addEventListener("change", (e) => {
