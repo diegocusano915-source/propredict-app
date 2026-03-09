@@ -9,6 +9,22 @@ const analysisPanel = document.getElementById("analysisPanel");
 const fullTimeGrid = document.getElementById("fullTimeGrid");
 const firstHalfGrid = document.getElementById("firstHalfGrid");
 
+/* =============================
+   BUILDER STATE
+============================= */
+
+let builderSelections = [];
+
+const builderSelectionsContainer = document.getElementById("builderSelections");
+const combinedProbabilityEl = document.getElementById("combinedProbability");
+const combinedOddsEl = document.getElementById("combinedOdds");
+const riskLevelEl = document.getElementById("riskLevel");
+const clearBuilderBtn = document.getElementById("clearBuilderBtn");
+
+/* =============================
+   UTILITY
+============================= */
+
 function getConfidenceClass(label) {
     if (!label) return "";
     const value = label.toLowerCase();
@@ -23,6 +39,98 @@ function clearElement(element) {
         element.removeChild(element.firstChild);
     }
 }
+
+/* =============================
+   BUILDER FUNCTIONS
+============================= */
+
+function addToBuilder(matchName, market, probability) {
+    const id = `${matchName}-${market}`;
+
+    if (builderSelections.find(item => item.id === id)) return;
+
+    builderSelections.push({
+        id,
+        matchName,
+        market,
+        probability: parseFloat(probability)
+    });
+
+    renderBuilder();
+}
+
+function removeFromBuilder(id) {
+    builderSelections = builderSelections.filter(item => item.id !== id);
+    renderBuilder();
+}
+
+function calculateCombinedProbability() {
+    if (builderSelections.length === 0) return 0;
+
+    let combined = 1;
+
+    builderSelections.forEach(item => {
+        combined *= item.probability / 100;
+    });
+
+    return combined * 100;
+}
+
+function getRiskLevel(prob) {
+    if (prob >= 60) return "Low Risk";
+    if (prob >= 40) return "Moderate Risk";
+    if (prob >= 20) return "High Risk";
+    return "Very High Risk";
+}
+
+function renderBuilder() {
+    clearElement(builderSelectionsContainer);
+
+    if (builderSelections.length === 0) {
+        builderSelectionsContainer.innerHTML =
+            '<p class="builder-empty">No selections added.</p>';
+        combinedProbabilityEl.textContent = "0%";
+        combinedOddsEl.textContent = "-";
+        riskLevelEl.textContent = "-";
+        return;
+    }
+
+    builderSelections.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "builder-selection-item";
+
+        const text = document.createElement("span");
+        text.textContent =
+            `${item.matchName} — ${item.market} (${item.probability}%)`;
+
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "Remove";
+        removeBtn.className = "remove-selection-btn";
+        removeBtn.onclick = () => removeFromBuilder(item.id);
+
+        row.appendChild(text);
+        row.appendChild(removeBtn);
+
+        builderSelectionsContainer.appendChild(row);
+    });
+
+    const combinedProb = calculateCombinedProbability();
+    combinedProbabilityEl.textContent = `${combinedProb.toFixed(2)}%`;
+
+    if (combinedProb > 0) {
+        const impliedOdds = (100 / combinedProb).toFixed(2);
+        combinedOddsEl.textContent = impliedOdds;
+        riskLevelEl.textContent = getRiskLevel(combinedProb);
+    } else {
+        combinedOddsEl.textContent = "-";
+        riskLevelEl.textContent = "-";
+    }
+}
+
+clearBuilderBtn.addEventListener("click", () => {
+    builderSelections = [];
+    renderBuilder();
+});
 
 /* =============================
    LOAD TEAMS
@@ -79,24 +187,27 @@ async function loadTopPicks(leagueCode) {
             title.textContent = match.match;
             card.appendChild(title);
 
-            const metrics = [
+            const markets = [
                 { label: "Over 2.5", value: match.over25 },
                 { label: "BTTS", value: match.btts },
                 { label: "Home Win", value: match.homeWin }
             ];
 
-            metrics.forEach(item => {
+            markets.forEach(item => {
                 const row = document.createElement("div");
                 row.className = "metric";
 
                 const label = document.createElement("span");
-                label.textContent = item.label;
+                label.textContent = `${item.label} — ${item.value}%`;
 
-                const value = document.createElement("span");
-                value.textContent = `${item.value}%`;
+                const addBtn = document.createElement("button");
+                addBtn.textContent = "Add";
+                addBtn.className = "add-selection-btn";
+                addBtn.onclick = () =>
+                    addToBuilder(match.match, item.label, item.value);
 
                 row.appendChild(label);
-                row.appendChild(value);
+                row.appendChild(addBtn);
                 card.appendChild(row);
             });
 
