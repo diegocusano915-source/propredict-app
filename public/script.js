@@ -1,36 +1,21 @@
-// =============================
-// DOM ELEMENTS
-// =============================
-
 const leagueSelect = document.getElementById("leagueSelect");
+const teamSelect = document.getElementById("teamSelect");
+const analyzeBtn = document.getElementById("analyzeBtn");
+
 const topPicksContainer = document.getElementById("topPicksContainer");
 const cacheStatus = document.getElementById("cacheStatus");
-
-const analyzeBtn = document.getElementById("analyzeBtn");
-const teamIdInput = document.getElementById("teamIdInput");
 
 const analysisPanel = document.getElementById("analysisPanel");
 const fullTimeGrid = document.getElementById("fullTimeGrid");
 const firstHalfGrid = document.getElementById("firstHalfGrid");
 
-// =============================
-// UTILITY FUNCTIONS
-// =============================
-
 function getConfidenceClass(label) {
     if (!label) return "";
-
     const value = label.toLowerCase();
-
     if (value.includes("elite")) return "confidence-elite";
     if (value.includes("strong")) return "confidence-strong";
     if (value.includes("medium")) return "confidence-medium";
     return "confidence-low";
-}
-
-function formatPercent(value) {
-    if (value === null || value === undefined) return "-";
-    return `${Number(value).toFixed(1)}%`;
 }
 
 function clearElement(element) {
@@ -39,9 +24,34 @@ function clearElement(element) {
     }
 }
 
-// =============================
-// TOP PICKS
-// =============================
+/* =============================
+   LOAD TEAMS
+============================= */
+
+async function loadTeams(leagueCode) {
+    try {
+        teamSelect.innerHTML = `<option value="">Loading teams...</option>`;
+
+        const response = await fetch(`/api/teams/${leagueCode}`);
+        const data = await response.json();
+
+        teamSelect.innerHTML = `<option value="">Select Team</option>`;
+
+        data.teams.forEach(team => {
+            const option = document.createElement("option");
+            option.value = team.id;
+            option.textContent = team.name;
+            teamSelect.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Error loading teams:", error);
+    }
+}
+
+/* =============================
+   TOP PICKS
+============================= */
 
 async function loadTopPicks(leagueCode) {
     try {
@@ -57,7 +67,7 @@ async function loadTopPicks(leagueCode) {
 
         if (!data.topPicks || data.topPicks.length === 0) {
             topPicksContainer.innerHTML =
-                "<p>No projections available.</p>";
+                "<p>No projections available for this league.</p>";
             return;
         }
 
@@ -113,9 +123,9 @@ async function loadTopPicks(leagueCode) {
     }
 }
 
-// =============================
-// TEAM ANALYSIS (EXPANDED)
-// =============================
+/* =============================
+   TEAM ANALYSIS
+============================= */
 
 async function loadTeamAnalysis(teamId) {
     try {
@@ -125,8 +135,6 @@ async function loadTeamAnalysis(teamId) {
 
         const response = await fetch(`/api/team-analysis/${teamId}`);
         const data = await response.json();
-
-        if (!data) return;
 
         const fullTimeMetrics = [
             ["Avg Goals Scored", data.avgGoalsScored],
@@ -151,11 +159,10 @@ async function loadTeamAnalysis(teamId) {
             label.textContent = labelText;
 
             const value = document.createElement("span");
-            value.textContent = valueText ?? "-";
+            value.textContent = valueText;
 
             item.appendChild(label);
             item.appendChild(value);
-
             fullTimeGrid.appendChild(item);
         });
 
@@ -176,11 +183,10 @@ async function loadTeamAnalysis(teamId) {
             label.textContent = labelText;
 
             const value = document.createElement("span");
-            value.textContent = valueText ?? "-";
+            value.textContent = valueText;
 
             item.appendChild(label);
             item.appendChild(value);
-
             firstHalfGrid.appendChild(item);
         });
 
@@ -191,24 +197,27 @@ async function loadTeamAnalysis(teamId) {
     }
 }
 
-// =============================
-// EVENTS
-// =============================
+/* =============================
+   EVENTS
+============================= */
 
 leagueSelect.addEventListener("change", (e) => {
-    loadTopPicks(e.target.value);
+    const leagueCode = e.target.value;
+    loadTopPicks(leagueCode);
+    loadTeams(leagueCode);
 });
 
 analyzeBtn.addEventListener("click", () => {
-    const teamId = teamIdInput.value.trim();
+    const teamId = teamSelect.value;
     if (!teamId) return;
     loadTeamAnalysis(teamId);
 });
 
-// =============================
-// INITIAL LOAD
-// =============================
+/* =============================
+   INITIAL LOAD
+============================= */
 
 document.addEventListener("DOMContentLoaded", () => {
     loadTopPicks("PL");
+    loadTeams("PL");
 });
