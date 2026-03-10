@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ProPredict — Multi‑Sport Probability Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="logo">
+      <h1>ProPredict</h1>
+      <span class="subtitle">Multi‑Sport Probability Intelligence Dashboard</span>
+    </div>
+
+    <div class="controls">
+
+      <div class="control-group">
+        <label for="sportSelect">Sport</label>
+        <select id="sportSelect">
+          <option value="football">Football</option>
+          <option value="basketball">Basketball</option>
+          <option value="darts">Darts</option>
+          <option value="tabletennis">Table Tennis</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="competitionSelect">Competition</label>
+        <select id="competitionSelect">
+          <option value="PL">Premier League</option>
+          <option value="PD">La Liga</option>
+          <option value="SA">Serie A</option>
+          <option value="BL1">Bundesliga</option>
+          <option value="FL1">Ligue 1</option>
+        </select>
+      </div>
+
+      <div class="control-group toggle-group">
+        <label for="eliteToggle">Elite Picks Only</label>
+        <input type="checkbox" id="eliteToggle">
+      </div>
+
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- TOP PICKS -->
+    <section class="section">
+      <h2>Today's High Confidence Projections</h2>
+      <div id="topPicksContainer">
+        <p class="placeholder">Loading projections...</p>
+      </div>
+    </section>
+
+    <!-- ACCUMULATOR -->
+    <section class="section accumulator-section">
+      <h2>Probability Accumulator</h2>
+
+      <div id="accumulatorSelections">
+        <p class="builder-empty">No selections added.</p>
+      </div>
+
+      <div class="accumulator-summary">
+        <div class="summary-row">
+          <span>Combined Probability</span>
+          <span id="combinedProbability">0%</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Implied Fair Odds</span>
+          <span id="decimalOdds">-</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Risk Level</span>
+          <span id="riskLevel">-</span>
+        </div>
+      </div>
+
+      <button id="clearAccumulatorBtn" class="btn-secondary">
+        Clear Selections
+      </button>
+    </section>
+    <!-- PERFORMANCE TRACKING SECTION -->
+    <section class="section performance-section">
+      <h2>Performance Summary</h2>
+
+      <div class="performance-grid">
+
+        <div class="perf-item">
+          <span>Total Picks</span>
+          <strong id="perfTotal">0</strong>
+        </div>
+
+        <div class="perf-item">
+          <span>Settled Picks</span>
+          <strong id="perfSettled">0</strong>
+        </div>
+
+        <div class="perf-item">
+          <span>Wins</span>
+          <strong id="perfWins">0</strong>
+        </div>
+
+        <div class="perf-item">
+          <span>Losses</span>
+          <strong id="perfLosses">0</strong>
+        </div>
+
+        <div class="perf-item">
+          <span>Win Rate</span>
+          <strong id="perfWinRate">0%</strong>
+        </div>
+
+        <div class="perf-item">
+          <span>ROI</span>
+          <strong id="perfROI">0%</strong>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TEAM ANALYSIS -->
+    <section class="section">
+      <h2>Team Analysis</h2>
+
+      <div class="team-analysis-controls">
+        <select id="teamSelect">
+          <option value="">Select Team</option>
+        </select>
+        <button id="analyzeBtn" class="btn-primary">Analyze</button>
+      </div>
+
+      <div id="teamAnalysisContainer">
+        <p class="placeholder">Select a team to view analytical breakdown.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p>
+        ProPredict — Analytical Probability Intelligence System
+      </p>
+      <p class="disclaimer">
+        18+ | Bet Responsibly | Gambling can be addictive.
+        This platform provides analytical probabilities, not betting advice.
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
