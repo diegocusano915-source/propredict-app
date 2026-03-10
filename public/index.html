@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ProPredict — Multi-Sport Probability Intelligence Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>ProPredict</h1>
+        <p>Multi-Sport Probability Intelligence Dashboard</p>
+    </header>
+
+    <hr />
+
+    <!-- ============================= -->
+    <!-- SPORT SELECTION -->
+    <!-- ============================= -->
+
+    <section>
+        <label for="sportSelect"><strong>Select Sport:</strong></label>
+        <select id="sportSelect">
+            <option value="">-- Choose Sport --</option>
+            <option value="football">Football</option>
+            <option value="basketball">Basketball</option>
+            <option value="darts">Darts</option>
+            <option value="tableTennis">Table Tennis</option>
+        </select>
+    </section>
+
+    <br />
+
+    <!-- ============================= -->
+    <!-- COMPETITION SELECTION -->
+    <!-- ============================= -->
+
+    <section>
+        <label for="competitionSelect"><strong>Select Competition:</strong></label>
+        <select id="competitionSelect">
+            <option value="">-- Choose Competition --</option>
+        </select>
+    </section>
+
+    <br />
+
+    <!-- ============================= -->
+    <!-- ELITE TOGGLE -->
+    <!-- ============================= -->
+
+    <section>
+        <label>
+            <input type="checkbox" id="eliteToggle" onchange="loadTopPicks()" />
+            Show Elite Picks Only
+        </label>
+    </section>
+
+    <hr />
+
+    <!-- ============================= -->
+    <!-- PICKS DISPLAY -->
+    <!-- ============================= -->
+
+    <section>
+        <h2>Top Picks</h2>
+        <div id="picksContainer">
+            <p>Select sport and competition to load picks.</p>
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- ============================= -->
+    <!-- ACCUMULATOR -->
+    <!-- ============================= -->
+
+    <section>
+        <h2>Accumulator</h2>
+        <div id="accumulatorContainer">
+            <p>No selections added.</p>
+        </div>
+    </section>
+    <hr />
+
+    <!-- ============================= -->
+    <!-- PERFORMANCE DASHBOARD -->
+    <!-- ============================= -->
+
+    <section>
+        <h2>Performance Dashboard</h2>
+
+        <div id="performancePanel">
+            <p><strong>Total Picks:</strong> <span id="totalPicks">0</span></p>
+            <p><strong>Settled Picks:</strong> <span id="settledPicks">0</span></p>
+            <p><strong>Win Rate:</strong> <span id="winRate">0%</span></p>
+            <p><strong>ROI:</strong> <span id="roi">0%</span></p>
+        </div>
+
+        <br />
+
+        <h3>Pick Log</h3>
+        <div id="performanceLog">
+            <p>No recorded picks yet.</p>
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- ============================= -->
+    <!-- RESPONSIBLE GAMBLING NOTICE -->
+    <!-- ============================= -->
+
+    <footer>
+        <p style="font-size: 12px; color: gray;">
+            ProPredict provides probabilistic analysis for informational and educational purposes only.
+            This is not financial advice. Betting involves risk and may result in financial loss.
+            Please gamble responsibly.
+        </p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
