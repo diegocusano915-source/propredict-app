@@ -1,104 +1,21 @@
-// engines/basketballEngine.js
+const CACHE_DURATION = 10 * 60 * 1000;
 
-const axios = require('axios');
-const { getCache, setCache } = require('../services/multiSportCache');
+const cache = {};
 
-/*
-|--------------------------------------------------------------------------
-| CONFIGURATION
-|--------------------------------------------------------------------------
-*/
-
-const BASE_URL = 'https://api-basketball.p.rapidapi.com';
-
-const HEADERS = {
-  'X-RapidAPI-Key': process.env.BASKETBALL_API_KEY,
-  'X-RapidAPI-Host': process.env.BASKETBALL_API_HOST
-};
-
-/*
-|--------------------------------------------------------------------------
-| SAFE REQUEST WRAPPER
-|--------------------------------------------------------------------------
-*/
-
-async function safeRequest(url, params = {}) {
-  try {
-    const response = await axios.get(url, {
-      headers: HEADERS,
-      params
-    });
-
-    return response.data;
-
-  } catch (error) {
-
-    if (error.response && error.response.status === 429) {
-      console.warn('Basketball API rate limit hit (429)');
-      return null;
-    }
-
-    console.error('Basketball API Error:', error.message);
-    return null;
-  }
+/* --------------------------------------------------
+   CONFIDENCE ENGINE (SHARED LOGIC STYLE)
+-------------------------------------------------- */
+function getConfidenceLabel(value) {
+  const num = parseFloat(value);
+  if (num >= 80) return "Elite";
+  if (num >= 70) return "Strong";
+  if (num >= 60) return "Medium";
+  return "Low";
 }
 
-/*
-|--------------------------------------------------------------------------
-| FETCH FIXTURES (STRUCTURE ONLY)
-|--------------------------------------------------------------------------
-*/
-
-async function fetchFixtures(leagueId, season) {
-  const cacheKey = `basketball-fixtures-${leagueId}-${season}`;
-
-  const cached = getCache(cacheKey);
-  if (cached) return cached;
-
-  const data = await safeRequest(`${BASE_URL}/games`, {
-    league: leagueId,
-    season: season,
-    next: 10
-  });
-
-  if (!data || !data.response) return null;
-
-  setCache(cacheKey, data.response);
-
-  return data.response;
-}
-
-/*
-|--------------------------------------------------------------------------
-| FETCH TEAM LAST MATCHES (STRUCTURE ONLY)
-|--------------------------------------------------------------------------
-*/
-
-async function fetchLastMatches(teamId, season) {
-  const cacheKey = `basketball-last-${teamId}-${season}`;
-
-  const cached = getCache(cacheKey);
-  if (cached) return cached;
-
-  const data = await safeRequest(`${BASE_URL}/games`, {
-    team: teamId,
-    season: season,
-    last: 10
-  });
-
-  if (!data || !data.response) return null;
-
-  setCache(cacheKey, data.response);
-
-  return data.response;
-}
-
-/*
-|--------------------------------------------------------------------------
-| NORMALIZED RESPONSE FORMAT
-|--------------------------------------------------------------------------
-*/
-
+/* --------------------------------------------------
+   NORMALIZED PICK STRUCTURE
+-------------------------------------------------- */
 function normalizePick(matchId, homeTeam, awayTeam, market, probability, confidence) {
   return {
     matchId,
@@ -110,8 +27,43 @@ function normalizePick(matchId, homeTeam, awayTeam, market, probability, confide
   };
 }
 
+/* --------------------------------------------------
+   BASKETBALL TOP PICKS (ARCHITECTURE PLACEHOLDER)
+-------------------------------------------------- */
+async function getBasketballTopPicks(competition) {
+
+  const cacheKey = `basketball-top-picks-${competition}`;
+  const now = Date.now();
+
+  // Return cached if valid
+  if (cache[cacheKey]) {
+    const cacheAge = now - cache[cacheKey].timestamp;
+    if (cacheAge < CACHE_DURATION) {
+      return cache[cacheKey].data;
+    }
+  }
+
+  /*
+    IMPORTANT:
+    No external API connected yet.
+    No simulated matches.
+    No fake probabilities.
+
+    This returns an empty array until
+    a real provider is connected.
+  */
+
+  const picks = [];
+
+  cache[cacheKey] = {
+    data: picks,
+    timestamp: now
+  };
+
+  return picks;
+}
+
 module.exports = {
-  fetchFixtures,
-  fetchLastMatches,
+  getBasketballTopPicks,
   normalizePick
 };
