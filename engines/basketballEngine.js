@@ -18,21 +18,7 @@ function getConfidenceLabel(value) {
 }
 
 /* --------------------------------------------------
-   NORMALIZED PICK STRUCTURE
--------------------------------------------------- */
-function normalizePick(matchId, homeTeam, awayTeam, market, probability, confidence) {
-  return {
-    matchId,
-    homeTeam,
-    awayTeam,
-    market,
-    probability,
-    confidence
-  };
-}
-
-/* --------------------------------------------------
-   IMPLIED PROBABILITY FROM DECIMAL ODDS
+   IMPLIED PROBABILITY
 -------------------------------------------------- */
 function calculateImpliedProbability(decimalOdds) {
   if (!decimalOdds || decimalOdds <= 0) return 0;
@@ -40,7 +26,7 @@ function calculateImpliedProbability(decimalOdds) {
 }
 
 /* --------------------------------------------------
-   MAP COMPETITION TO ODDS API SPORT KEY
+   MAP COMPETITION TO SPORT KEY
 -------------------------------------------------- */
 function mapCompetitionToSportKey(competition) {
   const comp = competition.toLowerCase();
@@ -49,12 +35,24 @@ function mapCompetitionToSportKey(competition) {
   if (comp === "wnba") return "basketball_wnba";
   if (comp === "ncaab") return "basketball_ncaab";
 
-  // Default fallback
   return "basketball_nba";
 }
 
 /* --------------------------------------------------
-   BASKETBALL TOP PICKS (REAL DATA)
+   SAFE AXIOS WRAPPER
+-------------------------------------------------- */
+async function safeRequest(url, params) {
+  try {
+    const response = await axios.get(url, { params });
+    return response.data;
+  } catch (error) {
+    console.error("Basketball API error:", error.response?.data || error.message);
+    return null;
+  }
+}
+
+/* --------------------------------------------------
+   BASKETBALL TOP PICKS (EXPANDED PRE-MATCH MARKETS)
 -------------------------------------------------- */
 async function getBasketballTopPicks(competition) {
 
@@ -68,69 +66,185 @@ async function getBasketballTopPicks(competition) {
     }
   }
 
-  try {
+  const apiKey = process.env.ODDS_API_KEY;
 
-    const sportKey = mapCompetitionToSportKey(competition);
-    const apiKey = process.env.ODDS_API_KEY;
+  if (!apiKey) {
+    console.error("ODDS_API_KEY missing");
+    return {
+      h2h: [],
+      spreads: [],
+      totals: [],
+      team_totals: [],
+      player_points: [],
+      player_rebounds: [],
+      player_assists: []
+    };
+  }
 
-    if (!apiKey) {
-      console.error("ODDS_API_KEY missing");
-      return [];
+  const sportKey = mapCompetitionToSportKey(competition);
+
+  const data = await safeRequest(
+    `${BASE_URL}/${sportKey}/odds`,
+    {
+      apiKey: apiKey,
+      regions: "us",
+      markets: "h2h,spreads,totals,team_totals,player_points,player_rebounds,player_assists",
+      oddsFormat: "decimal"
     }
+  );
 
-    const response = await axios.get(
-      `${BASE_URL}/${sportKey}/odds`,
-      {
-        params: {
-          apiKey: apiKey,
-          regions: "us",
-          markets: "h2h",
-          oddsFormat: "decimal"
+  if (!data) {
+    return {
+      h2h: [],
+      spreads: [],
+      totals: [],
+      team_totals: [],
+      player_points: [],
+      player_rebounds: [],
+      player_assists: []
+    };
+  }
+
+  const groupedMarkets = {
+    h2h: [],
+    spreads: [],
+    totals: [],
+    team_totals: [],
+    player_points: [],
+    player_rebounds: [],
+    player_assists: []
+  };
+
+  for (const game of data.slice(0, 5)) {
+
+    if (!game.bookmakers || game.bookmakers.length === 0) continue;
+
+    const bookmaker = game.bookmakers[0];
+    if (!bookmaker.markets) continue;
+
+    for (const market of bookmaker.markets) {
+
+      /* ---------------- H2H ---------------- */
+      if (market.key === "h2h") {
+        for (const outcome of market.outcomes) {
+          const probability = calculateImpliedProbability(outcome.price);
+
+          groupedMarkets.h2h.push({
+            matchId: game.id,
+            homeTeam: game.home_team,
+            awayTeam: game.away_team,
+            market: `Win: ${outcome.name}`,
+            probability: probability.toFixed(1),
+            confidence: getConfidenceLabel(probability)
+          });
         }
       }
-    );
 
-    const games = response.data || [];
-    const picks = [];
+      /* ---------------- SPREADS ---------------- */
+      if (market.key === "spreads") {
+        for (const outcome of market.outcomes) {
+          const probability = calculateImpliedProbability(outcome.price);
 
-    for (const game of games.slice(0, 5)) {
-
-      if (!game.bookmakers || game.bookmakers.length === 0) continue;
-
-      const bookmaker = game.bookmakers[0];
-      if (!bookmaker.markets) continue;
-
-      const market = bookmaker.markets.find(m => m.key === "h2h");
-      if (!market) continue;
-
-      for (const outcome of market.outcomes) {
-
-        const probability = calculateImpliedProbability(outcome.price);
-
-        picks.push(
-          normalizePick(
-            game.id,
-            game.home_team,
-            game.away_team,
-            `Win: ${outcome.name}`,
-            probability.toFixed(1),
-            getConfidenceLabel(probability)
-          )
-        );
+          groupedMarkets.spreads.push({
+            matchId: game.id,
+            homeTeam: game.home_team,
+            awayTeam: game.away_team,
+            market: `${outcome.name} ${outcome.point}`,
+            probability: probability.toFixed(1),
+            confidence: getConfidenceLabel(probability)
+          });
+        }
       }
+
+      /* ---------------- TOTALS ---------------- */
+      if (market.key === "totals") {
+        for (const outcome of market.outcomes) {
+          const probability = calculateImpliedProbability(outcome.price);
+
+          groupedMarkets.totals.push({
+            matchId: game.id,
+            homeTeam: game.home_team,
+            awayTeam: game.away_team,
+            market: `${outcome.name} ${outcome.point}`,
+            probability: probability.toFixed(1),
+            confidence: getConfidenceLabel(probability)
+          });
+        }
+      }
+
+      /* ---------------- TEAM TOTALS ---------------- */
+      if (market.key === "team_totals") {
+        for (const outcome of market.outcomes) {
+          const probability = calculateImpliedProbability(outcome.price);
+
+          groupedMarkets.team_totals.push({
+            matchId: game.id,
+            homeTeam: game.home_team,
+            awayTeam: game.away_team,
+            market: `${outcome.name} ${outcome.point}`,
+            probability: probability.toFixed(1),
+            confidence: getConfidenceLabel(probability)
+          });
+        }
+      }
+
+      /* ---------------- PLAYER POINTS ---------------- */
+      if (market.key === "player_points") {
+        for (const outcome of market.outcomes) {
+          const probability = calculateImpliedProbability(outcome.price);
+
+          groupedMarkets.player_points.push({
+            matchId: game.id,
+            homeTeam: game.home_team,
+            awayTeam: game.away_team,
+            market: `${outcome.name} ${outcome.point}`,
+            probability: probability.toFixed(1),
+            confidence: getConfidenceLabel(probability)
+          });
+        }
+      }
+
+      /* ---------------- PLAYER REBOUNDS ---------------- */
+      if (market.key === "player_rebounds") {
+        for (const outcome of market.outcomes) {
+          const probability = calculateImpliedProbability(outcome.price);
+
+          groupedMarkets.player_rebounds.push({
+            matchId: game.id,
+            homeTeam: game.home_team,
+            awayTeam: game.away_team,
+            market: `${outcome.name} ${outcome.point}`,
+            probability: probability.toFixed(1),
+            confidence: getConfidenceLabel(probability)
+          });
+        }
+      }
+
+      /* ---------------- PLAYER ASSISTS ---------------- */
+      if (market.key === "player_assists") {
+        for (const outcome of market.outcomes) {
+          const probability = calculateImpliedProbability(outcome.price);
+
+          groupedMarkets.player_assists.push({
+            matchId: game.id,
+            homeTeam: game.home_team,
+            awayTeam: game.away_team,
+            market: `${outcome.name} ${outcome.point}`,
+            probability: probability.toFixed(1),
+            confidence: getConfidenceLabel(probability)
+          });
+        }
+      }
+
     }
-
-    cache[cacheKey] = {
-      data: picks,
-      timestamp: now
-    };
-
-    return picks;
-
-  } catch (error) {
-    console.error("Basketball API error:", error.response?.data || error.message);
-    return [];
   }
+
+  cache[cacheKey] = {
+    data: groupedMarkets,
+    timestamp: now
+  };
+
+  return groupedMarkets;
 }
 
 module.exports = {
