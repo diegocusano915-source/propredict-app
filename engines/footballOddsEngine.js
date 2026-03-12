@@ -9,7 +9,7 @@ const BASE_URL = "https://api.the-odds-api.com/v4/sports";
    Regions expanded from:
    "us"
    to:
-   "us,uk,eu"
+   "us,uk,eu,au,ca"
    This increases bookmaker market availability globally.
 ========================================================== */
 
