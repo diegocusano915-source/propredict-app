@@ -277,7 +277,7 @@ async function getFootballOddsTopPicks(competition) {
     `${BASE_URL}/${sportKey}/odds`,
     {
       apiKey: apiKey,
-      regions: "us,uk,eu", // ✅ EXPANDED COVERAGE
+      regions: "us,uk,eu,au,ca", // ✅ EXPANDED COVERAGE
       markets: "h2h,totals",
       oddsFormat: "decimal"
     }
