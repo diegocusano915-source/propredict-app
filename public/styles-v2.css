@@ -1,1 +1,654 @@
+/* =========================================================
+   PRO PREDICT V2 — HERO MATCH REDESIGN
+   HALF 1 — FOUNDATION
+   ========================================================= */
 
+/* =========================
+   HERO MATCH CONTAINER
+   ========================= */
+
+body.sportsbook-layout .sportsbook-card {
+    background: #0f1726;
+    border: 1px solid #1f2d42;
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(121, 184, 255, 0.08);
+}
+
+/* =========================
+   HERO HEADER STRUCTURE
+   ========================= */
+
+body.sportsbook-layout .match-header {
+    border: none;
+    padding: 0;
+    margin-bottom: 18px;
+}
+
+/* =========================
+   TEAM TYPOGRAPHY SCALE
+   ========================= */
+
+body.sportsbook-layout .match-title .teams {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* =========================
+   VS SEPARATOR
+   ========================= */
+
+body.sportsbook-layout .vs-divider {
+    font-size: 14px;
+    font-weight: 500;
+    color: #5f7696;
+    margin: 0 12px;
+}
+
+/* =========================
+   META SUBTITLE
+   ========================= */
+
+body.sportsbook-layout .match-meta {
+    font-size: 12px;
+    margin-top: 6px;
+    color: #7f93ad;
+}
+/* =========================================================
+   PRO PREDICT V2 — HERO MATCH REDESIGN
+   HALF 2 — DUAL PROBABILITY BAR SYSTEM
+   ========================================================= */
+
+/* =========================
+   PROBABILITY BAR WRAPPER
+   ========================= */
+
+body.sportsbook-layout .match-body {
+    background: transparent;
+    padding: 0;
+}
+
+/* =========================
+   PROBABILITY CONTAINER
+   ========================= */
+
+body.sportsbook-layout .probability-container {
+    position: relative;
+    height: 12px;
+    background: #1a2333;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 18px 0 24px 0;
+}
+
+/* =========================
+   HOME SIDE BAR
+   ========================= */
+
+body.sportsbook-layout .prob-bar-home {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        #34f5b2,
+        #1fbf8a
+    );
+    transition: width 0.4s ease;
+}
+
+/* =========================
+   AWAY SIDE BAR
+   ========================= */
+
+body.sportsbook-layout .prob-bar-away {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(
+        to left,
+        #79b8ff,
+        #4e8ef7
+    );
+    transition: width 0.4s ease;
+}
+
+/* =========================
+   DRAW INDICATOR
+   ========================= */
+
+body.sportsbook-layout .prob-draw {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: 600;
+    color: #cfd6e4;
+}
+
+/* =========================
+   LARGE PROBABILITY TEXT
+   ========================= */
+
+body.sportsbook-layout .hero-probabilities {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+body.sportsbook-layout .hero-probabilities span {
+    color: #ffffff;
+}
+
+body.sportsbook-layout .hero-probabilities .home-prob {
+    color: #34f5b2;
+}
+
+body.sportsbook-layout .hero-probabilities .away-prob {
+    color: #79b8ff;
+}
+/* =========================================================
+   PRO PREDICT V2 — HERO MATCH REDESIGN
+   HALF 3 — MARKET BLOCK RESTRUCTURE
+   ========================================================= */
+
+/* =========================
+   MARKET ROW AS PANEL
+   ========================= */
+
+body.sportsbook-layout .sportsbook-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #141e2d;
+    border: 1px solid #243247;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+}
+
+/* =========================
+   MARKET HOVER DEPTH
+   ========================= */
+
+body.sportsbook-layout .sportsbook-row:hover {
+    background: #19273b;
+    border-color: #2f415d;
+    transform: translateY(-1px);
+}
+
+/* =========================
+   MARKET NAME STRONGER
+   ========================= */
+
+body.sportsbook-layout .market-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #eaf2ff;
+}
+
+/* =========================
+   PROBABILITY EMPHASIS
+   ========================= */
+
+body.sportsbook-layout .probability-value {
+    font-size: 16px;
+    font-weight: 700;
+    margin-right: 14px;
+}
+
+/* =========================
+   CONFIDENCE BADGE REFINED
+   ========================= */
+
+body.sportsbook-layout .confidence-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+}
+
+/* =========================
+   ODDS BUTTON — PREMIUM
+   ========================= */
+
+body.sportsbook-layout .odds-button {
+    background: #0f1726;
+    border: 1px solid #2de3a1;
+    color: #2de3a1;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+body.sportsbook-layout .odds-button:hover {
+    background: #2de3a1;
+    color: #0e1624;
+}
+
+body.sportsbook-layout .odds-button:disabled {
+    border-color: #33465f;
+    color: #7c8ea9;
+    background: #121b29;
+}
+/* =========================================================
+   PRO PREDICT V2 — HERO MATCH REDESIGN
+   HALF 4 — STRUCTURAL RHYTHM & SECTION DOMINANCE
+   ========================================================= */
+
+/* =========================
+   CONTENT COLUMN VISUAL FLOW
+   ========================= */
+
+body.sportsbook-layout .content-column {
+    gap: 56px;
+}
+
+/* =========================
+   SECTION TITLE DOMINANCE
+   ========================= */
+
+body.sportsbook-layout .section-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 18px;
+}
+
+/* =========================
+   TOP PICKS SECTION EMPHASIS
+   ========================= */
+
+body.sportsbook-layout .content-column > .sportsbook-section:first-child {
+    padding-top: 36px;
+    padding-bottom: 36px;
+}
+
+/* =========================
+   SIDEBAR VISUAL BALANCE
+   ========================= */
+
+body.sportsbook-layout .sidebar-column {
+    padding-top: 12px;
+}
+
+body.sportsbook-layout .sportsbook-sidebar {
+    background: #0e1624;
+    border: 1px solid #1f2d42;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.55);
+}
+
+/* =========================
+   ACCUMULATOR TITLE SCALE
+   ========================= */
+
+body.sportsbook-layout .sportsbook-sidebar h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+/* =========================
+   SUMMARY EMPHASIS
+   ========================= */
+
+body.sportsbook-layout .accumulator-summary {
+    background: #0c1422;
+    border: 1px solid #243247;
+    padding: 16px;
+}
+
+/* =========================
+   PERFORMANCE SECTION SEPARATION
+   ========================= */
+
+body.sportsbook-layout .performance-section {
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+/* =========================
+   TEAM ANALYSIS BALANCE
+   ========================= */
+
+body.sportsbook-layout .analysis-card {
+    padding: 20px;
+}
+/* =========================================================
+   PRO PREDICT V2 — HERO MATCH REDESIGN
+   HALF 5 — TYPOGRAPHY AUTHORITY & DATA EMPHASIS
+   ========================================================= */
+
+/* =========================
+   HERO TEAM NAME SCALING
+   ========================= */
+
+body.sportsbook-layout .match-title .teams {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+}
+
+/* =========================
+   LARGE PROBABILITY NUMBERS
+   ========================= */
+
+body.sportsbook-layout .hero-probabilities {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* =========================
+   DRAW EMPHASIS
+   ========================= */
+
+body.sportsbook-layout .prob-draw {
+    font-size: 13px;
+    font-weight: 600;
+    color: #a8b8d2;
+}
+
+/* =========================
+   SECTION HEADLINE AUTHORITY
+   ========================= */
+
+body.sportsbook-layout h1 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+body.sportsbook-layout h2 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* =========================
+   PERFORMANCE NUMBER SCALE
+   ========================= */
+
+body.sportsbook-layout .perf-item strong {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+/* =========================
+   ACCUMULATOR KEY VALUE SCALE
+   ========================= */
+
+body.sportsbook-layout #combinedProbability,
+body.sportsbook-layout #decimalOdds,
+body.sportsbook-layout #riskLevel {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* =========================
+   TEAM ANALYSIS VALUE SCALE
+   ========================= */
+
+body.sportsbook-layout .analysis-value {
+    font-size: 20px;
+    font-weight: 800;
+}
+/* =========================================================
+   PRO PREDICT V2 — HERO MATCH REDESIGN
+   HALF 6 — PREMIUM LIGHTING & DEPTH SYSTEM
+   ========================================================= */
+
+/* =========================
+   SOFT EDGE LIGHTING ON CARDS
+   ========================= */
+
+body.sportsbook-layout .sportsbook-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    pointer-events: none;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        inset 0 -1px 0 rgba(0,0,0,0.4);
+}
+
+/* =========================
+   PREMIUM BORDER GLOW
+   ========================= */
+
+body.sportsbook-layout .sportsbook-card {
+    position: relative;
+    border: 1px solid rgba(79, 142, 247, 0.18);
+}
+
+/* =========================
+   HERO BAR SOFT GLOW
+   ========================= */
+
+body.sportsbook-layout .prob-bar-home,
+body.sportsbook-layout .prob-bar-away {
+    box-shadow:
+        0 0 8px rgba(79, 142, 247, 0.35);
+}
+
+/* =========================
+   SIDEBAR PANEL DEPTH
+   ========================= */
+
+body.sportsbook-layout .sportsbook-sidebar {
+    border: 1px solid rgba(79, 142, 247, 0.15);
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.65);
+}
+
+/* =========================
+   PERFORMANCE PANEL DEPTH
+   ========================= */
+
+body.sportsbook-layout .perf-item {
+    border: 1px solid rgba(79, 142, 247, 0.12);
+}
+
+/* =========================
+   SUBTLE BACKGROUND DEPTH ZONES
+   ========================= */
+
+body.sportsbook-layout::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(79, 142, 247, 0.05),
+            transparent 60%
+        );
+    pointer-events: none;
+    z-index: -2;
+}
+/* =========================================================
+   PRO PREDICT V2 — HERO MATCH REDESIGN
+   HALF 7 — MOTION & INTERACTION AUTHORITY
+   ========================================================= */
+
+/* =========================
+   SMOOTH CARD TRANSITIONS
+   ========================= */
+
+body.sportsbook-layout .sportsbook-card {
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+body.sportsbook-layout .sportsbook-card:hover {
+    transform: translateY(-4px);
+}
+
+/* =========================
+   MARKET PANEL INTERACTION
+   ========================= */
+
+body.sportsbook-layout .sportsbook-row {
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+body.sportsbook-layout .sportsbook-row:hover {
+    transform: translateX(4px);
+}
+
+/* =========================
+   BUTTON MICRO-INTERACTION
+   ========================= */
+
+body.sportsbook-layout button {
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+body.sportsbook-layout button:hover {
+    transform: translateY(-2px);
+}
+
+body.sportsbook-layout button:active {
+    transform: translateY(0);
+}
+
+/* =========================
+   PROBABILITY PULSE EFFECT
+   ========================= */
+
+@keyframes subtlePulse {
+    0% { opacity: 0.85; }
+    50% { opacity: 1; }
+    100% { opacity: 0.85; }
+}
+
+body.sportsbook-layout .hero-probabilities .home-prob {
+    animation: subtlePulse 3s infinite ease-in-out;
+}
+
+/* =========================
+   ACCORDION ROTATION SMOOTH
+   ========================= */
+
+body.sportsbook-layout .match-header .toggle-indicator {
+    transition: transform 0.2s ease;
+}
+
+body.sportsbook-layout .match-header:hover .toggle-indicator {
+    transform: rotate(180deg);
+}
+/* =========================================================
+   PRO PREDICT V2 — HERO MATCH REDESIGN
+   HALF 8 — FINAL COHESION & PREMIUM FINISH
+   ========================================================= */
+
+/* =========================
+   GLOBAL TEXT SHARPENING
+   ========================= */
+
+body.sportsbook-layout {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================
+   SECTION EDGE ACCENT
+   ========================= */
+
+body.sportsbook-layout .sportsbook-section::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(79, 142, 247, 0.35),
+        transparent
+    );
+    opacity: 0.6;
+}
+
+/* =========================
+   SIDEBAR VISUAL LOCK
+   ========================= */
+
+body.sportsbook-layout .sidebar-column {
+    border-left: 1px solid rgba(79, 142, 247, 0.08);
+    padding-left: 16px;
+}
+
+/* =========================
+   PERFORMANCE METRIC ALIGNMENT
+   ========================= */
+
+body.sportsbook-layout .performance-grid {
+    align-items: stretch;
+}
+
+body.sportsbook-layout .perf-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* =========================
+   ACCUMULATOR EDGE HIGHLIGHT
+   ========================= */
+
+body.sportsbook-layout .accumulator-summary {
+    position: relative;
+}
+
+body.sportsbook-layout .accumulator-summary::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(79, 142, 247, 0.2);
+}
+
+/* =========================
+   HERO MATCH FINAL BALANCE
+   ========================= */
+
+body.sportsbook-layout .match-body {
+    margin-top: 12px;
+}
+
+/* =========================
+   REMOVE EXCESS GLOW
+   ========================= */
+
+body.sportsbook-layout .prob-bar-home,
+body.sportsbook-layout .prob-bar-away {
+    box-shadow: none;
+}
