@@ -797,6 +797,7 @@ app.post("/api/paystack/initialize-subscription", authenticateToken, async (req,
       {
         email: user.email,
         plan: selectedPlan,
+         amount: 0,
         reference: reference,
         metadata: {
           userId: user.id,
