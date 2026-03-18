@@ -1,17 +1,19 @@
 {
-  "name": "betting-bot",
+  "name": "propredict-bot",
   "version": "1.0.0",
-  "description": "Betting prediction bot with authentication",
+  "description": "ProPredict Betting Bot with Authentication and Subscription System",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "author": "YourApp",
+  "author": "ProPredict",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.0",
     "bcrypt": "^5.1.0",
+    "dotenv": "^16.4.5",
     "express": "^4.18.2",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
     "uuid": "^9.0.1"
