@@ -516,19 +516,25 @@ function ppSetupAuthListeners() {
         });
     }
 
-    if (DOM.sportSelect) {
-        DOM.sportSelect.addEventListener("change", (e) => {
-            currentSport = e.target.value;
-            updateCompetitionOptions();
+    // ✅ FIXED SPORT SELECT HANDLER (CLEAN + CONTROLLED)
+if (DOM.sportSelect) {
+    DOM.sportSelect.onchange = (e) => {
+        currentSport = e.target.value;
 
-            if (ppCanAccessProtectedApp()) {
-                loadTopPicks();
-                if (currentSport === "football") {
-                    loadTeams(currentCompetition);
-                }
+        // Reset competition correctly
+        updateCompetitionOptions();
+
+        // Only load data if user can access
+        if (ppCanAccessProtectedApp()) {
+            loadTopPicks();
+
+            // Only football has teams
+            if (currentSport === "football") {
+                loadTeams(currentCompetition);
             }
-        });
-    }
+        }
+    };
+}
 
     if (DOM.competitionSelect) {
         DOM.competitionSelect.addEventListener("change", (e) => {
