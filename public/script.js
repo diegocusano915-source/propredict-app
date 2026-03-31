@@ -235,7 +235,7 @@ function ppIsFreeRole() {
 }
 
 function ppCanAccessProtectedApp() {
-    return ppIsLoggedIn();
+    return true;
 }
 
 // ==========================================================
