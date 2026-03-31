@@ -516,19 +516,44 @@ function ppSetupAuthListeners() {
         });
     }
 
-    // ✅ FIXED SPORT SELECT HANDLER (CLEAN + CONTROLLED)
-if (DOM.sportSelect) {
+    if (DOM.sportSelect) {
     DOM.sportSelect.onchange = (e) => {
-        currentSport = e.target.value;
+        const rawSport = String(e.target.value || "").toLowerCase();
 
-        // Reset competition correctly
+        // normalize HTML values to JS competitionMap keys
+        const sportMap = {
+            football: "football",
+            basketball: "basketball",
+            nfl: "americanfootball",
+            americanfootball: "americanfootball",
+            nhl: "nhl",
+            rugbyleague: "rugbyleague",
+            rugbyunion: "rugbyunion",
+            mlb: "baseball",
+            baseball: "baseball",
+            tennis: "tennis",
+            darts: "darts",
+            tabletennis: "tabletennis"
+        };
+
+        currentSport = sportMap[rawSport] || rawSport;
+
+        // rebuild competitions for selected sport
         updateCompetitionOptions();
 
-        // Only load data if user can access
+        // force currentCompetition to the new first option
+        if (DOM.competitionSelect && DOM.competitionSelect.options.length > 0) {
+            currentCompetition = DOM.competitionSelect.value;
+        }
+
+        // reset football-only team area for non-football sports
+        if (currentSport !== "football" && DOM.teamSelect) {
+            DOM.teamSelect.innerHTML = `<option value="">Select Team</option>`;
+        }
+
         if (ppCanAccessProtectedApp()) {
             loadTopPicks();
 
-            // Only football has teams
             if (currentSport === "football") {
                 loadTeams(currentCompetition);
             }
