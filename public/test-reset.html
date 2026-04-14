@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test Reset</title></head>
+<body style="background:#0a0e1a;color:#fff;padding:20px;">
+<h2>Test Password Reset API</h2>
+<input type="email" id="email" placeholder="Enter email" value="propredict.support@gmail.com" style="width:100%;padding:12px;margin:10px 0;background:#111;color:#fff;border:1px solid #333;">
+<button onclick="testReset()" style="padding:15px;background:#00f5ff;color:#000;font-weight:bold;border:none;width:100%;">Send Reset Request</button>
+<div id="result" style="margin-top:20px;padding:15px;background:#111;"></div>
+
+<script>
+async function testReset() {
+  const email = document.getElementById('email').value;
+  const result = document.getElementById('result');
+  
+  result.textContent = 'Sending...';
+  result.style.color = '#a0b3d9';
+  
+  try {
+    const res = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    });
+    
+    const data = await res.json();
+    
+    if (res.ok) {
+      result.textContent = '✅ SUCCESS: ' + (data.message || 'Reset email sent!');
+      result.style.color = '#22c55e';
+    } else {
+      result.textContent = '❌ ERROR: ' + (data.error || 'Failed');
+      result.style.color = '#ef4444';
+    }
+  } catch(e) {
+    result.textContent = '❌ NETWORK ERROR: ' + e.message;
+    result.style.color = '#ef4444';
+  }
+}
+</script>
+</body>
+</html>
