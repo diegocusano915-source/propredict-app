@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — ProPredict</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300f5ff'/%3E%3Cstop offset='100%25' stop-color='%239c27b0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='%230a0e1a'/%3E%3Ctext x='50' y='70' font-size='54' font-weight='bold' font-family='Arial' text-anchor='middle' fill='url(%23g)'%3EPP%3C/text%3E%3C/svg%3E">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-v2.css">
+  <link rel="stylesheet" href="styles-ui.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 20% 30%, #1a1040, #0a0e1a 50%, #050810 90%);
+      color: #ffffff;
+      min-height: 100vh;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .about-header {
+      text-align: center;
+      padding: 60px 24px 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .about-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 8vw, 56px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff, #00f5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    .about-header .subtitle {
+      color: #a0b3d9;
+      font-size: 18px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .about-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .mission-card {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(156, 39, 176, 0.08));
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 28px;
+      padding: 40px;
+      margin-bottom: 48px;
+      text-align: center;
+    }
+
+    .mission-card i {
+      font-size: 48px;
+      color: #00f5ff;
+      margin-bottom: 20px;
+    }
+
+    .mission-card h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      margin-bottom: 16px;
+      color: #ffffff;
+    }
+
+    .mission-card p {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin: 48px 0;
+    }
+
+    .feature-card {
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 245, 255, 0.25);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(156, 39, 176, 0.15));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .feature-icon i {
+      font-size: 28px;
+      color: #00f5ff;
+    }
+
+    .feature-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .feature-card p {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .stats-section {
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 48px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      margin: 48px 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 32px;
+      text-align: center;
+    }
+
+    .stat-item h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 42px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .stat-item p {
+      color: #a0b3d9;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .how-it-works {
+      margin: 48px 0;
+    }
+
+    .how-it-works h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 40px;
+      color: #ffffff;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+    }
+
+    .step {
+      text-align: center;
+      padding: 24px;
+    }
+
+    .step-number {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-weight: 700;
+      font-size: 20px;
+      color: #0a0e1a;
+    }
+
+    .step h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .step p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+    }
+
+    .sports-section {
+      margin: 48px 0;
+      text-align: center;
+    }
+
+    .sports-section h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      margin-bottom: 16px;
+      color: #ffffff;
+    }
+
+    .sports-section p {
+      color: #a0b3d9;
+      margin-bottom: 32px;
+    }
+
+    .sports-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .sport-tag {
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 40px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #e0e7ff;
+    }
+
+    .sport-tag i {
+      margin-right: 8px;
+      color: #00f5ff;
+    }
+
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      color: #a0b3d9;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .back-home:hover {
+      background: rgba(0, 245, 255, 0.08);
+      border-color: rgba(0, 245, 255, 0.25);
+      color: #00f5ff;
+      transform: translateY(-2px);
+    }
+
+    .footer-note {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+      color: #6b7da3;
+      font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+      .mission-card {
+        padding: 28px 20px;
+      }
+
+      .stats-section {
+        padding: 32px 20px;
+      }
+
+      .stat-item h3 {
+        font-size: 32px;
+      }
+
+      .about-header {
+        padding: 40px 20px 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="about-header">
+    <h1>About ProPredict</h1>
+    <div class="subtitle">AI-Powered Sports Intelligence for Smarter Betting Decisions</div>
+  </header>
+
+  <main class="about-container">
+
+    <div class="mission-card">
+      <i class="fas fa-brain"></i>
+      <h2>Our Mission</h2>
+      <p>To democratize sports analytics by providing everyday bettors with institutional-grade AI predictions — making data-driven betting accessible to everyone.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3>Advanced AI Models</h3>
+        <p>Our predictions are powered by deep learning algorithms trained on millions of historical matches across 10+ sports.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-percent"></i>
+        </div>
+        <h3>Probability Analysis</h3>
+        <p>Every prediction comes with detailed probability breakdowns and confidence scores — no guesswork.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-futbol"></i>
+        </div>
+        <h3>Multi-Sport Coverage</h3>
+        <p>Football, Basketball, NFL, NHL, MLB, Tennis, Rugby, Darts, Table Tennis — we cover the major leagues worldwide.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-calculator"></i>
+        </div>
+        <h3>Accumulator Builder</h3>
+        <p>Build smart accumulators with real-time combined probability calculations and risk assessment.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3>Team Analysis</h3>
+        <p>Deep dive into team form, head-to-head records, scoring patterns, and defensive strengths.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-bolt"></i>
+        </div>
+        <h3>Real-Time Updates</h3>
+        <p>Predictions update as new data becomes available — injuries, lineups, weather, and odds movements.</p>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <h3>10+</h3>
+          <p>Sports Covered</p>
+        </div>
+        <div class="stat-item">
+          <h3>50+</h3>
+          <p>Leagues Tracked</p>
+        </div>
+        <div class="stat-item">
+          <h3>1M+</h3>
+          <p>Predictions Generated</p>
+        </div>
+        <div class="stat-item">
+          <h3>24/7</h3>
+          <p>AI Processing</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="how-it-works">
+      <h2>How ProPredict Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h4>Data Collection</h4>
+          <p>We aggregate real-time data from official sports APIs, historical databases, and betting markets.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h4>AI Processing</h4>
+          <p>Our neural networks analyze team form, player stats, H2H records, and market movements.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h4>Probability Calculation</h4>
+          <p>Each outcome is assigned a win/draw/loss probability with confidence scoring.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <h4>Smart Picks Delivery</h4>
+          <p>Top picks are ranked and delivered to your dashboard with clear reasoning.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sports-section">
+      <h2>Sports We Cover</h2>
+      <p>From Premier League to NFL — comprehensive coverage across the world's biggest competitions.</p>
+      <div class="sports-tags">
+        <span class="sport-tag"><i class="fas fa-futbol"></i> Football</span>
+        <span class="sport-tag"><i class="fas fa-basketball"></i> Basketball</span>
+        <span class="sport-tag"><i class="fas fa-football"></i> NFL</span>
+        <span class="sport-tag"><i class="fas fa-hockey-puck"></i> NHL</span>
+        <span class="sport-tag"><i class="fas fa-baseball"></i> MLB</span>
+        <span class="sport-tag"><i class="fas fa-table-tennis"></i> Tennis</span>
+        <span class="sport-tag"><i class="fas fa-rugby"></i> Rugby League</span>
+        <span class="sport-tag"><i class="fas fa-rugby"></i> Rugby Union</span>
+        <span class="sport-tag"><i class="fas fa-bullseye"></i> Darts</span>
+        <span class="sport-tag"><i class="fas fa-table-tennis"></i> Table Tennis</span>
+      </div>
+    </div>
+
+    <a href="/" class="back-home">
+      <i class="fas fa-arrow-left"></i>
+      Back to ProPredict
+    </a>
+
+    <div class="footer-note">
+      © 2026 ProPredict Analytics. All rights reserved.
+    </div>
+  </main>
+
+</body>
+  </html>
