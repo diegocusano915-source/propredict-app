@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ProPredict Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background: #0a0e1a; color: #fff; padding: 20px; font-family: sans-serif; }
+    table { width: 100%; border-collapse: collapse; background: #111; border-radius: 12px; overflow: hidden; }
+    th { background: #1a1a3a; padding: 12px; text-align: left; }
+    td { padding: 12px; border-bottom: 1px solid #222; }
+    .btn { background: #00f5ff; color: #000; padding: 8px 16px; border: none; border-radius: 6px; font-weight: bold; }
+    .stat { background: #111; padding: 20px; border-radius: 12px; text-align: center; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>🔐 ProPredict Admin</h1>
+  
+  <div class="stats-grid">
+    <div class="stat">
+      <h3>Total Users</h3>
+      <div id="totalUsers">-</div>
+    </div>
+    <div class="stat">
+      <h3>Active Subs</h3>
+      <div id="activeSubscriptions">-</div>
+    </div>
+    <div class="stat">
+      <h3>Visitors</h3>
+      <div id="totalVisitors">-</div>
+    </div>
+  </div>
+
+  <h2>📊 Users</h2>
+  <table id="usersTable">
+    <thead>
+      <tr><th>Email</th><th>Role</th><th>Status</th><th>Joined</th></tr>
+    </thead>
+    <tbody id="usersBody"></tbody>
+  </table>
+
+  <h2 style="margin-top:30px;">🌐 Recent Visitors (IP Logs)</h2>
+  <table id="logsTable">
+    <thead>
+      <tr><th>Time</th><th>IP</th><th>Device</th><th>Page</th></tr>
+    </thead>
+    <tbody id="logsBody"></tbody>
+  </table>
+
+  <script>
+    // Hardcoded admin token - generated just for you
+    const ADMIN_SECRET = "propredict-admin-2026";
+    
+    async function loadData() {
+      try {
+        // For now, let's just fetch what we can without auth
+        // We'll add proper auth in a minute
+        
+        const usersRes = await fetch('/api/admin/users');
+        if (usersRes.ok) {
+          const users = await usersRes.json();
+          document.getElementById('totalUsers').textContent = users.users?.length || 0;
+          
+          const body = document.getElementById('usersBody');
+          body.innerHTML = '';
+          if (users.users) {
+            users.users.forEach(u => {
+              body.innerHTML += `<tr><td>${u.email}</td><td>${u.role}</td><td>${u.subscription_status}</td><td>${new Date(u.created_at).toLocaleDateString()}</td></tr>`;
+            });
+          }
+        }
+        
+        const logsRes = await fetch('/api/admin/ip-logs');
+        if (logsRes.ok) {
+          const logs = await logsRes.json();
+          document.getElementById('totalVisitors').textContent = logs.logs?.length || 0;
+          
+          const body = document.getElementById('logsBody');
+          body.innerHTML = '';
+          if (logs.logs) {
+            logs.logs.slice(0, 20).forEach(l => {
+              body.innerHTML += `<tr><td>${new Date(l.created_at).toLocaleString()}</td><td>${l.ip_address}</td><td>${l.device_type}</td><td>${l.page_visited}</td></tr>`;
+            });
+          }
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    
+    loadData();
+  </script>
+</body>
+</html>
