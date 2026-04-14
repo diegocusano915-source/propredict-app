@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test Referral API</title></head>
+<body style="background:#0a0e1a;color:#fff;padding:20px;">
+<h2>Referral API Test</h2>
+<button onclick="testReferral()" style="padding:15px 30px;background:#00f5ff;border:none;border-radius:8px;font-weight:bold;">Test Referral Stats</button>
+<div id="result" style="margin-top:20px;padding:15px;background:#111;border-radius:8px;"></div>
+
+<script>
+async function testReferral() {
+  const result = document.getElementById('result');
+  const token = localStorage.getItem('propredict_token') || 
+                localStorage.getItem('pp_token') || 
+                localStorage.getItem('token');
+  
+  if (!token) {
+    result.innerHTML = '❌ Not logged in. Please login first.';
+    result.style.color = '#ef4444';
+    return;
+  }
+  
+  result.innerHTML = 'Testing...';
+  result.style.color = '#a0b3d9';
+  
+  try {
+    const res = await fetch('/api/user/referral-stats', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    const data = await res.json();
+    
+    if (res.ok) {
+      result.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+      result.style.color = '#22c55e';
+    } else {
+      result.innerHTML = '❌ Error: ' + (data.error || 'Failed');
+      result.style.color = '#ef4444';
+    }
+  } catch(e) {
+    result.innerHTML = '❌ Network error: ' + e.message;
+    result.style.color = '#ef4444';
+  }
+}
+
+// Show login status
+const token = localStorage.getItem('propredict_token') || 
+              localStorage.getItem('pp_token') || 
+              localStorage.getItem('token');
+document.getElementById('result').innerHTML = token ? 
+  '✅ Logged in. Click "Test Referral Stats"' : 
+  '❌ Not logged in. Please login first.';
+</script>
+</body>
+</html>
