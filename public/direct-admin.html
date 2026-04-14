@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Direct Admin - ProPredict</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background: #0a0e1a; color: #fff; padding: 20px; font-family: sans-serif; }
+    table { width: 100%; border-collapse: collapse; background: #111; border-radius: 12px; margin: 15px 0; }
+    th { background: #1a1a3a; padding: 12px; text-align: left; }
+    td { padding: 12px; border-bottom: 1px solid #222; }
+    .stat { background: #111; padding: 20px; border-radius: 12px; text-align: center; }
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0; }
+    .stat-value { font-size: 40px; font-weight: bold; color: #00f5ff; }
+    button { background: #00f5ff; color: #000; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; margin: 10px 5px; }
+    input { width: 100%; padding: 15px; background: #111; border: 1px solid #333; color: #fff; border-radius: 8px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>🔐 Direct Database Admin</h1>
+  
+  <div class="stats-grid">
+    <div class="stat">
+      <h3>Total Users</h3>
+      <div class="stat-value" id="totalUsers">-</div>
+    </div>
+    <div class="stat">
+      <h3>IP Logs</h3>
+      <div class="stat-value" id="totalLogs">-</div>
+    </div>
+  </div>
+
+  <h2>📊 Users in Database</h2>
+  <button onclick="loadUsers()">Load Users</button>
+  <button onclick="loadLogs()">Load IP Logs</button>
+  <button onclick="addTestUser()">Add Test User</button>
+  
+  <div id="usersList"></div>
+  <div id="logsList"></div>
+
+  <script>
+    // DIRECT SUPABASE CONNECTION
+    const SUPABASE_URL = 'https://veyydrngucgtnwqffnew.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZleXlkcm5ndWNndG53cWZmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDYwNzcsImV4cCI6MjA5MTcyMjA3N30.PFSkDWntIx0eVMZCfto6SVyQY6yv_GfI2NaK1l2UVM8';
+    
+    async function supabaseQuery(table) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      return await res.json();
+    }
+    
+    async function loadUsers() {
+      try {
+        const users = await supabaseQuery('users');
+        document.getElementById('totalUsers').textContent = users.length;
+        
+        let html = '<table><tr><th>Email</th><th>Role</th><th>Status</th><th>Joined</th></tr>';
+        users.forEach(u => {
+          html += `<tr><td>${u.email || 'N/A'}</td><td>${u.role || 'free'}</td><td>${u.subscription_status || 'inactive'}</td><td>${new Date(u.created_at).toLocaleDateString()}</td></tr>`;
+        });
+        html += '</table>';
+        document.getElementById('usersList').innerHTML = html;
+      } catch(e) {
+        document.getElementById('usersList').innerHTML = 'Error: ' + e.message;
+      }
+    }
+    
+    async function loadLogs() {
+      try {
+        const logs = await supabaseQuery('ip_logs');
+        document.getElementById('totalLogs').textContent = logs.length;
+        
+        let html = '<table><tr><th>Time</th><th>IP</th><th>Device</th><th>Page</th></tr>';
+        logs.slice(0, 20).forEach(l => {
+          html += `<tr><td>${new Date(l.created_at).toLocaleString()}</td><td>${l.ip_address}</td><td>${l.device_type}</td><td>${l.page_visited}</td></tr>`;
+        });
+        html += '</table>';
+        document.getElementById('logsList').innerHTML = html;
+      } catch(e) {
+        document.getElementById('logsList').innerHTML = 'Error: ' + e.message;
+      }
+    }
+    
+    async function addTestUser() {
+      const email = prompt('Enter email:');
+      if (!email) return;
+      
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({
+            id: crypto.randomUUID(),
+            email: email,
+            password_hash: 'test',
+            role: 'free',
+            subscription_status: 'inactive'
+          })
+        });
+        
+        if (res.ok) {
+          alert('User added!');
+          loadUsers();
+        } else {
+          const err = await res.json();
+          alert('Error: ' + JSON.stringify(err));
+        }
+      } catch(e) {
+        alert('Error: ' + e.message);
+      }
+    }
+    
+    // Auto-load on page open
+    loadUsers();
+  </script>
+</body>
+</html>
