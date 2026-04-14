@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test</title></head>
+<body style="background:#0a0e1a;color:#fff;padding:20px;">
+<h2>ProPredict Debug</h2>
+<div id="results"></div>
+<script>
+const SUPABASE_URL = 'https://veyydrngucgtnwqffnew.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZleXlkcm5ndWNndG53cWZmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDYwNzcsImV4cCI6MjA5MTcyMjA3N30.PFSkDWntIx0eVMZCfto6SVyQY6yv_GfI2NaK1l2UVM8';
+
+async function testReset() {
+  const email = prompt('Enter email for password reset:');
+  if (!email) return;
+  
+  document.getElementById('results').innerHTML = 'Sending...';
+  
+  try {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/recover`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email,
+        redirect_to: 'https://propredict-app.onrender.com/reset-password.html'
+      })
+    });
+    
+    if (res.ok) {
+      document.getElementById('results').innerHTML = '✅ Reset email sent! Check your inbox/spam.';
+    } else {
+      const err = await res.json();
+      document.getElementById('results').innerHTML = '❌ Error: ' + (err.msg || 'Unknown error');
+    }
+  } catch(e) {
+    document.getElementById('results').innerHTML = '❌ Network error: ' + e.message;
+  }
+}
+</script>
+<button onclick="testReset()" style="padding:15px 30px;background:#00f5ff;border:none;border-radius:8px;font-weight:bold;">
+Test Password Reset
+</button>
+<p style="margin-top:20px;color:#a0b3d9;">Click the button, enter your email, and tell me what message appears.</p>
+</body>
+</html>
