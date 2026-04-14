@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head><title>DOM Test</title></head>
+<body style="background:#0a0e1a;color:#fff;padding:20px;">
+<h2>DOM Test</h2>
+<button onclick="testDOM()" style="padding:15px 30px;background:#00f5ff;border:none;border-radius:8px;font-weight:bold;">Test DOM</button>
+<div id="result" style="margin-top:20px;padding:15px;background:#111;"></div>
+
+<script>
+function testDOM() {
+  const result = document.getElementById('result');
+  
+  let html = '';
+  html += 'window.DOM exists: ' + (typeof window.DOM !== 'undefined') + '<br>';
+  html += 'window.DOM.loginBtn: ' + (window.DOM?.loginBtn ? 'Found' : 'NULL') + '<br>';
+  html += 'window.DOM.authModal: ' + (window.DOM?.authModal ? 'Found' : 'NULL') + '<br>';
+  html += 'window.DOM.sportSelect: ' + (window.DOM?.sportSelect ? 'Found' : 'NULL') + '<br>';
+  html += '<br>';
+  html += 'window.mapDOM exists: ' + (typeof window.mapDOM === 'function') + '<br>';
+  html += 'window.bindEvents exists: ' + (typeof window.bindEvents === 'function') + '<br>';
+  html += 'window.ppInitAuth exists: ' + (typeof window.ppInitAuth === 'function') + '<br>';
+  
+  result.innerHTML = html;
+}
+
+// Auto-run on page load
+setTimeout(testDOM, 500);
+</script>
+</body>
+</html>
