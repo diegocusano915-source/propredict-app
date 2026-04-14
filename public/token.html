@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Viewer — ProPredict</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 30%, #1a1040, #0a0e1a 50%, #050810 90%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(15, 25, 45, 0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 20px;
+      color: #00f5ff;
+    }
+    .token-box {
+      width: 100%;
+      height: 200px;
+      background: #0a0e1a;
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      color: #00f5ff;
+      font-family: monospace;
+      font-size: 13px;
+      resize: vertical;
+      margin-bottom: 20px;
+      word-break: break-all;
+    }
+    .copy-btn {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      border-radius: 12px;
+      color: #0a0e1a;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .admin-link {
+      display: inline-block;
+      padding: 14px 28px;
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      border-radius: 12px;
+      color: #00f5ff;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    .error {
+      color: #ef4444;
+      margin: 20px 0;
+    }
+    .success {
+      color: #22c55e;
+      margin: 20px 0;
+    }
+    .storage-info {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .storage-info code {
+      background: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #ffd166;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Your Authentication Token</h1>
+    
+    <p style="margin-bottom: 16px; color: #a0b3d9;">Copy this token to access the admin panel:</p>
+    
+    <textarea id="tokenDisplay" class="token-box" readonly>Loading token...</textarea>
+    
+    <button class="copy-btn" onclick="copyToken()">📋 Copy Token</button>
+    
+    <div id="message"></div>
+    
+    <a href="#" id="adminLink" class="admin-link" target="_blank">🚀 Open Admin Panel with Token →</a>
+    
+    <div class="storage-info">
+      <strong>🔍 Debug Info:</strong><br>
+      <span id="debugInfo"></span>
+    </div>
+  </div>
+
+  <script>
+    // Try all possible token keys
+    function findToken() {
+      const keys = [
+        'propredict_token',
+        'pp_token', 
+        'token',
+        'auth_token',
+        'jwt_token'
+      ];
+      
+      for (let key of keys) {
+        const val = localStorage.getItem(key);
+        if (val && val.length > 20) {
+          return { token: val, key: key };
+        }
+      }
+      
+      // Try to find any key containing 'token'
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.toLowerCase().includes('token')) {
+          const val = localStorage.getItem(key);
+          if (val && val.length > 20) {
+            return { token: val, key: key };
+          }
+        }
+      }
+      
+      return null;
+    }
+
+    const tokenData = findToken();
+    const tokenDisplay = document.getElementById('tokenDisplay');
+    const messageDiv = document.getElementById('message');
+    const adminLink = document.getElementById('adminLink');
+    const debugInfo = document.getElementById('debugInfo');
+    
+    if (tokenData) {
+      tokenDisplay.value = tokenData.token;
+      adminLink.href = '/admin.html?token=' + encodeURIComponent(tokenData.token);
+      messageDiv.innerHTML = '<div class="success">✅ Token found! Click the button below to open admin panel.</div>';
+      debugInfo.innerHTML = `Found token with key: <code>${tokenData.key}</code><br>Token length: ${tokenData.token.length} chars`;
+    } else {
+      tokenDisplay.value = 'No token found. Please log in first at propredict-app.onrender.com';
+      messageDiv.innerHTML = '<div class="error">❌ No token found. Please <a href="/" style="color:#00f5ff;">log in</a> first.</div>';
+      debugInfo.innerHTML = 'Checked keys: propredict_token, pp_token, token, auth_token, jwt_token<br>No valid token found in localStorage.';
+      
+      // Show all localStorage keys for debugging
+      const allKeys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        allKeys.push(localStorage.key(i));
+      }
+      debugInfo.innerHTML += '<br><br>All localStorage keys: ' + (allKeys.length ? allKeys.join(', ') : 'None');
+    }
+    
+    function copyToken() {
+      if (tokenData) {
+        tokenDisplay.select();
+        document.execCommand('copy');
+        messageDiv.innerHTML = '<div class="success">✅ Token copied to clipboard!</div>';
+      } else {
+        messageDiv.innerHTML = '<div class="error">❌ No token to copy.</div>';
+      }
+    }
+  </script>
+</body>
+</html>
