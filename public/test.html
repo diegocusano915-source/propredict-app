@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head><title>Debug</title></head>
+<body style="background:#0a0e1a;color:#fff;padding:20px;font-family:monospace;">
+<h2>ProPredict Debug Console</h2>
+<div id="logs" style="background:#111;padding:15px;border-radius:8px;margin:15px 0;max-height:300px;overflow:auto;"></div>
+<button onclick="testReset()" style="padding:15px 30px;background:#00f5ff;border:none;border-radius:8px;font-weight:bold;">Test Reset</button>
+<button onclick="clearLogs()" style="padding:10px 20px;background:#333;color:#fff;border:none;border-radius:8px;margin-left:10px;">Clear</button>
+
+<script>
+const SUPABASE_URL = 'https://veyydrngucgtnwqffnew.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZleXlkcm5ndWNndG53cWZmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDYwNzcsImV4cCI6MjA5MTcyMjA3N30.PFSkDWntIx0eVMZCfto6SVyQY6yv_GfI2NaK1l2UVM8';
+
+function log(msg, isError = false) {
+  const logs = document.getElementById('logs');
+  const entry = document.createElement('div');
+  entry.style.color = isError ? '#ef4444' : '#22c55e';
+  entry.style.marginBottom = '5px';
+  entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  logs.appendChild(entry);
+  logs.scrollTop = logs.scrollHeight;
+}
+
+function clearLogs() {
+  document.getElementById('logs').innerHTML = '';
+}
+
+// Check what's blocking
+log('🔍 Debug started');
+log('📱 User Agent: ' + navigator.userAgent.substring(0, 50) + '...');
+log('🔧 Service Worker: ' + (navigator.serviceWorker ? 'Supported' : 'Not supported'));
+
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    log('📦 SW Registrations: ' + regs.length);
+    regs.forEach(r => log('   - Scope: ' + r.scope));
+  });
+}
+
+async function testReset() {
+  const email = prompt('Enter email:');
+  if (!email) return;
+  
+  log('📧 Testing reset for: ' + email);
+  log('🔄 Sending request to Supabase...');
+  
+  try {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/recover`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email,
+        redirect_to: 'https://propredict-app.onrender.com/reset-password.html'
+      })
+    });
+    
+    log('📡 Response status: ' + res.status);
+    
+    if (res.ok) {
+      log('✅ SUCCESS! Reset email sent. Check inbox/spam.');
+    } else {
+      const err = await res.json();
+      log('❌ ERROR: ' + (err.msg || JSON.stringify(err)), true);
+    }
+  } catch(e) {
+    log('❌ NETWORK ERROR: ' + e.message, true);
+    log('💡 This suggests CORS or Service Worker blocking', true);
+  }
+}
+
+// Unregister service worker to test
+async function unregisterSW() {
+  if (!navigator.serviceWorker) return;
+  const regs = await navigator.serviceWorker.getRegistrations();
+  for (let reg of regs) {
+    await reg.unregister();
+  }
+  log('🗑️ All Service Workers unregistered. Refresh page.');
+}
+
+window.unregisterSW = unregisterSW;
+log('✅ Debug page ready');
+</script>
+
+<button onclick="unregisterSW()" style="padding:10px 20px;background:#ef4444;color:#fff;border:none;border-radius:8px;margin-top:10px;">Unregister Service Workers</button>
+<p style="margin-top:20px;color:#a0b3d9;">Click "Unregister", then refresh page, then try Test Reset.</p>
+</body>
+</html>
