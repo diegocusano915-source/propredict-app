@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>SW Killer</title></head>
+<body>
+<h2>Service Worker Remover</h2>
+<button onclick="killSW()">Unregister All SW</button>
+<div id="result"></div>
+<script>
+async function killSW() {
+  const regs = await navigator.serviceWorker.getRegistrations();
+  for (let reg of regs) {
+    await reg.unregister();
+  }
+  document.getElementById('result').innerHTML = '✅ Unregistered ' + regs.length + ' service workers. Now clear your browser cache.';
+}
+</script>
+</body>
+</html>
