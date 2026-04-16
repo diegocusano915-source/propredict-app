@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing & Plans — ProPredict</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300f5ff'/%3E%3Cstop offset='100%25' stop-color='%239c27b0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='%230a0e1a'/%3E%3Ctext x='50' y='70' font-size='54' font-weight='bold' font-family='Arial' text-anchor='middle' fill='url(%23g)'%3EPP%3C/text%3E%3C/svg%3E">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-v2.css">
+  <link rel="stylesheet" href="styles-ui.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 20% 30%, #1a1040, #0a0e1a 50%, #050810 90%);
+      color: #ffffff;
+      min-height: 100vh;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* ===================================================== */
+    /* 🔥 ANIMATIONS */
+    /* ===================================================== */
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 8px 20px rgba(0, 245, 255, 0.25); }
+      50% { transform: scale(1.02); box-shadow: 0 15px 40px rgba(0, 245, 255, 0.4); }
+    }
+    
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .pricing-header {
+      text-align: center;
+      padding: 60px 24px 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .pricing-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 8vw, 56px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff, #00f5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      animation: fadeInDown 0.7s ease-out forwards;
+    }
+    .pricing-header .subtitle {
+      color: #a0b3d9;
+      font-size: 18px;
+      max-width: 600px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out 0.2s forwards;
+    }
+    
+    .pricing-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    
+    /* Free vs Pro Toggle */
+    .compare-toggle {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 48px;
+    }
+    .toggle-wrapper {
+      background: rgba(15, 25, 45, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 60px;
+      padding: 6px;
+      display: inline-flex;
+      backdrop-filter: blur(10px);
+    }
+    .toggle-btn {
+      padding: 12px 32px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      background: transparent;
+      color: #8a9bb5;
+    }
+    .toggle-btn.active {
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      color: #0a0e1a;
+    }
+    
+    /* Pricing Cards */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    .pricing-card {
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 32px 24px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0, 245, 255, 0.25);
+      box-shadow: 0 25px 40px rgba(0, 0, 0, 0.4);
+    }
+    .pricing-card.featured {
+      border-color: rgba(0, 245, 255, 0.4);
+      box-shadow: 0 0 30px rgba(0, 245, 255, 0.1);
+    }
+    .popular-tag {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      padding: 6px 20px;
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #0a0e1a;
+      white-space: nowrap;
+    }
+    .plan-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .plan-price {
+      margin-bottom: 20px;
+    }
+    .plan-price .currency {
+      font-size: 20px;
+      vertical-align: super;
+    }
+    .plan-price .amount {
+      font-size: 48px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, #00f5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .plan-price .period {
+      color: #8a9bb5;
+      font-size: 14px;
+    }
+    .plan-features {
+      list-style: none;
+      margin: 24px 0;
+      text-align: left;
+    }
+    .plan-features li {
+      padding: 8px 0;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .plan-features li i {
+      color: #46e6a6;
+      font-size: 16px;
+      width: 20px;
+    }
+    .plan-features li i.fa-times {
+      color: #6b7da3;
+    }
+    .plan-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      border-radius: 14px;
+      color: #0a0e1a;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .plan-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 25px rgba(0, 245, 255, 0.3);
+    }
+    
+    /* Comparison Table */
+    .comparison-section {
+      margin: 60px 0;
+    }
+    .comparison-section h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .comparison-table {
+      background: rgba(15, 25, 45, 0.5);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .table-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .table-row:last-child {
+      border-bottom: none;
+    }
+    .table-row.header {
+      background: rgba(0, 245, 255, 0.08);
+      font-weight: 700;
+      color: #00f5ff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 13px;
+    }
+    .table-row .feature {
+      color: #e0e7ff;
+    }
+    .table-row .check {
+      color: #46e6a6;
+      text-align: center;
+    }
+    .table-row .times {
+      color: #6b7da3;
+      text-align: center;
+    }
+    
+    /* Payment Methods */
+    .payment-section {
+      margin: 60px 0;
+    }
+    .payment-section h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .payment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+    .payment-card {
+      background: rgba(15, 25, 45, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .payment-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 245, 255, 0.2);
+    }
+    .payment-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+    }
+    .payment-card h4 {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .payment-card p {
+      color: #8a9bb5;
+      font-size: 13px;
+    }
+    .payment-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+    .badge-instant {
+      background: rgba(70, 230, 166, 0.15);
+      color: #46e6a6;
+      border: 1px solid rgba(70, 230, 166, 0.3);
+    }
+    .badge-manual {
+      background: rgba(255, 179, 71, 0.15);
+      color: #ffb347;
+      border: 1px solid rgba(255, 179, 71, 0.3);
+    }
+    
+    /* Refund Policy */
+    .refund-card {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(239, 68, 68, 0.02));
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 20px;
+      padding: 32px;
+      margin: 40px 0;
+      text-align: center;
+    }
+    .refund-card i {
+      font-size: 40px;
+      color: #ef4444;
+      margin-bottom: 20px;
+    }
+    .refund-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .refund-card p {
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* FAQ */
+    .faq-section {
+      margin: 60px 0;
+    }
+    .faq-section h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .faq-item {
+      background: rgba(15, 25, 45, 0.45);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.3s ease;
+    }
+    .faq-item:hover {
+      border-color: rgba(0, 245, 255, 0.15);
+    }
+    .faq-item h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #00f5ff;
+    }
+    .faq-item p {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 14px;
+    }
+    
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      color: #a0b3d9;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .back-home:hover {
+      background: rgba(0, 245, 255, 0.08);
+      border-color: rgba(0, 245, 255, 0.25);
+      color: #00f5ff;
+      transform: translateY(-2px);
+    }
+    .footer-note {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+      color: #6b7da3;
+      font-size: 13px;
+    }
+    
+    @media (max-width: 768px) {
+      .pricing-header { padding: 40px 20px 30px; }
+      .table-row { grid-template-columns: 1.5fr 1fr 1fr; padding: 12px 16px; font-size: 13px; }
+      .plan-price .amount { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="pricing-header">
+    <h1>Simple, Transparent Pricing</h1>
+    <div class="subtitle">Choose the plan that fits your betting strategy. Upgrade anytime.</div>
+  </header>
+
+  <main class="pricing-container">
+    
+    <!-- Pricing Cards -->
+    <div class="pricing-grid">
+      
+      <div class="pricing-card scroll-reveal">
+        <div class="plan-name">Weekly</div>
+        <div class="plan-price">
+          <span class="currency">₦</span>
+          <span class="amount">4,500</span>
+          <span class="period">/ week</span>
+        </div>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i> Unlimited predictions</li>
+          <li><i class="fas fa-check"></i> Elite picks access</li>
+          <li><i class="fas fa-check"></i> Team analysis</li>
+          <li><i class="fas fa-check"></i> Accumulator builder</li>
+          <li><i class="fas fa-check"></i> Performance tracking</li>
+        </ul>
+        <button class="plan-btn" onclick="window.location.href='/'"><i class="fas fa-crown" style="margin-right: 8px;"></i>Get Weekly</button>
+      </div>
+      
+      <div class="pricing-card featured scroll-reveal">
+        <div class="popular-tag"><i class="fas fa-star"></i> MOST POPULAR</div>
+        <div class="plan-name">Monthly</div>
+        <div class="plan-price">
+          <span class="currency">₦</span>
+          <span class="amount">12,500</span>
+          <span class="period">/ month</span>
+        </div>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i> Unlimited predictions</li>
+          <li><i class="fas fa-check"></i> Elite picks access</li>
+          <li><i class="fas fa-check"></i> Team analysis</li>
+          <li><i class="fas fa-check"></i> Accumulator builder</li>
+          <li><i class="fas fa-check"></i> Performance tracking</li>
+          <li><i class="fas fa-check"></i> Priority support</li>
+        </ul>
+        <button class="plan-btn" onclick="window.location.href='/'"><i class="fas fa-crown" style="margin-right: 8px;"></i>Get Monthly</button>
+      </div>
+      
+      <div class="pricing-card scroll-reveal">
+        <div class="plan-name">Quarterly</div>
+        <div class="plan-price">
+          <span class="currency">₦</span>
+          <span class="amount">30,000</span>
+          <span class="period">/ 3 months</span>
+        </div>
+        <div style="background: rgba(70, 230, 166, 0.1); color: #46e6a6; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; margin: 8px 0;">
+          Save 20%
+        </div>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i> Unlimited predictions</li>
+          <li><i class="fas fa-check"></i> Elite picks access</li>
+          <li><i class="fas fa-check"></i> Team analysis</li>
+          <li><i class="fas fa-check"></i> Accumulator builder</li>
+          <li><i class="fas fa-check"></i> Performance tracking</li>
+          <li><i class="fas fa-check"></i> Priority support</li>
+        </ul>
+        <button class="plan-btn" onclick="window.location.href='/'"><i class="fas fa-crown" style="margin-right: 8px;"></i>Get Quarterly</button>
+      </div>
+      
+      <div class="pricing-card scroll-reveal">
+        <div class="plan-name">Yearly</div>
+        <div class="plan-price">
+          <span class="currency">₦</span>
+          <span class="amount">120,000</span>
+          <span class="period">/ year</span>
+        </div>
+        <div style="background: rgba(70, 230, 166, 0.1); color: #46e6a6; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; margin: 8px 0;">
+          Save 33%
+        </div>
+        <ul class="plan-features">
+          <li><i class="fas fa-check"></i> Unlimited predictions</li>
+          <li><i class="fas fa-check"></i> Elite picks access</li>
+          <li><i class="fas fa-check"></i> Team analysis</li>
+          <li><i class="fas fa-check"></i> Accumulator builder</li>
+          <li><i class="fas fa-check"></i> Performance tracking</li>
+          <li><i class="fas fa-check"></i> Priority support</li>
+          <li><i class="fas fa-check"></i> Early access to new features</li>
+        </ul>
+        <button class="plan-btn" onclick="window.location.href='/'"><i class="fas fa-crown" style="margin-right: 8px;"></i>Get Yearly</button>
+      </div>
+    </div>
+    
+    <!-- Free vs Pro Comparison -->
+    <div class="comparison-section scroll-reveal">
+      <h2><i class="fas fa-balance-scale" style="margin-right: 12px; color: #00f5ff;"></i>Free vs Pro</h2>
+      <div class="comparison-table">
+        <div class="table-row header">
+          <div class="feature">Feature</div>
+          <div class="check">FREE</div>
+          <div class="check">PRO</div>
+        </div>
+        <div class="table-row">
+          <div class="feature">Daily Predictions</div>
+          <div class="check">3 picks/day</div>
+          <div class="check">Unlimited</div>
+        </div>
+        <div class="table-row">
+          <div class="feature">Elite Picks</div>
+          <div class="times"><i class="fas fa-times"></i></div>
+          <div class="check"><i class="fas fa-check"></i></div>
+        </div>
+        <div class="table-row">
+          <div class="feature">Team Analysis</div>
+          <div class="times"><i class="fas fa-times"></i></div>
+          <div class="check"><i class="fas fa-check"></i></div>
+        </div>
+        <div class="table-row">
+          <div class="feature">Market Options</div>
+          <div class="times"><i class="fas fa-times"></i></div>
+          <div class="check"><i class="fas fa-check"></i></div>
+        </div>
+        <div class="table-row">
+          <div class="feature">Accumulator Builder</div>
+          <div class="times"><i class="fas fa-times"></i></div>
+          <div class="check"><i class="fas fa-check"></i></div>
+        </div>
+        <div class="table-row">
+          <div class="feature">Performance Log</div>
+          <div class="times"><i class="fas fa-times"></i></div>
+          <div class="check"><i class="fas fa-check"></i></div>
+        </div>
+        <div class="table-row">
+          <div class="feature">ROI Tracking</div>
+          <div class="times"><i class="fas fa-times"></i></div>
+          <div class="check"><i class="fas fa-check"></i></div>
+        </div>
+        <div class="table-row">
+          <div class="feature">Personal Stats Ticker</div>
+          <div class="check">Generic</div>
+          <div class="check">Personalized</div>
+        </div>
+        <div class="table-row">
+          <div class="feature">Support</div>
+          <div class="check">Email</div>
+          <div class="check">Priority Email</div>
+        </div>
+        <div class="table-row">
+          <div class="feature">Price</div>
+          <div class="check">Free</div>
+          <div class="check">From ₦4,500/week</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Payment Methods -->
+    <div class="payment-section scroll-reveal">
+      <h2><i class="fas fa-credit-card" style="margin-right: 12px; color: #00f5ff;"></i>Payment Methods</h2>
+      <div class="payment-grid">
+        <div class="payment-card">
+          <div class="payment-icon">🇳🇬</div>
+          <h4>Nigerian Naira (NGN)</h4>
+          <p>Paystack · Cards, Bank Transfer, USSD</p>
+          <span class="payment-badge badge-instant"><i class="fas fa-bolt"></i> Instant Activation</span>
+        </div>
+        <div class="payment-card">
+          <div class="payment-icon">🇺🇸</div>
+          <h4>US Dollar (USD)</h4>
+          <p>Bank Transfer · ACH, Wire</p>
+          <span class="payment-badge badge-manual"><i class="fas fa-clock"></i> Manual (24h)</span>
+        </div>
+        <div class="payment-card">
+          <div class="payment-icon">🇬🇧</div>
+          <h4>British Pound (GBP)</h4>
+          <p>Bank Transfer · Faster Payments</p>
+          <span class="payment-badge badge-manual"><i class="fas fa-clock"></i> Manual (24h)</span>
+        </div>
+        <div class="payment-card">
+          <div class="payment-icon">💎</div>
+          <h4>USDC / USDT</h4>
+          <p>Crypto · BEP20, TRC20, Solana</p>
+          <span class="payment-badge badge-manual"><i class="fas fa-clock"></i> Manual (24h)</span>
+        </div>
+      </div>
+      <p style="text-align: center; margin-top: 24px; color: #8a9bb5; font-size: 14px;">
+        <i class="fas fa-lock" style="margin-right: 6px;"></i> All payments are secure and encrypted
+      </p>
+    </div>
+    
+    <!-- Refund Policy -->
+    <div class="refund-card scroll-reveal">
+      <i class="fas fa-exclamation-circle"></i>
+      <h3>Refund Policy</h3>
+      <p><strong>All subscription payments are final and non-refundable.</strong> ProPredict does not provide refunds, partial refunds, or credits for any unused portion of a subscription period. By subscribing, you acknowledge and accept this no-refund policy. You may cancel your subscription at any time — cancellation will take effect at the end of your current billing period.</p>
+    </div>
+    
+    <!-- FAQ -->
+    <div class="faq-section scroll-reveal">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4><i class="fas fa-sync-alt" style="margin-right: 8px;"></i> Can I switch plans?</h4>
+          <p>Yes! You can upgrade or downgrade your plan at any time from your account dashboard. Changes take effect at the start of your next billing cycle.</p>
+        </div>
+        <div class="faq-item">
+          <h4><i class="fas fa-ban" style="margin-right: 8px;"></i> How do I cancel?</h4>
+          <p>You can cancel your subscription anytime from your dashboard. You'll continue to have Pro access until the end of your paid period.</p>
+        </div>
+        <div class="faq-item">
+          <h4><i class="fas fa-globe" style="margin-right: 8px;"></i> Can I pay in my local currency?</h4>
+          <p>We support NGN (Paystack), USD, GBP, USDC, and USDT. More currencies coming soon!</p>
+        </div>
+        <div class="faq-item">
+          <h4><i class="fas fa-shield-alt" style="margin-right: 8px;"></i> Is my payment secure?</h4>
+          <p>Absolutely. All payments are processed through Paystack with bank-level security. We never store your full card details.</p>
+        </div>
+      </div>
+    </div>
+
+    <a href="/" class="back-home">
+      <i class="fas fa-arrow-left"></i>
+      Back to ProPredict
+    </a>
+
+    <div class="footer-note">
+      © 2026 ProPredict Analytics. All rights reserved.
+    </div>
+  </main>
+
+  <script>
+    // Scroll reveal animation
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -30px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+    
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
