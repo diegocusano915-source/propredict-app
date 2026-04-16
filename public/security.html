@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security & Protection — ProPredict</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300f5ff'/%3E%3Cstop offset='100%25' stop-color='%239c27b0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='%230a0e1a'/%3E%3Ctext x='50' y='70' font-size='54' font-weight='bold' font-family='Arial' text-anchor='middle' fill='url(%23g)'%3EPP%3C/text%3E%3C/svg%3E">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-v2.css">
+  <link rel="stylesheet" href="styles-ui.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 20% 30%, #1a1040, #0a0e1a 50%, #050810 90%);
+      color: #ffffff;
+      min-height: 100vh;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .page-header {
+      text-align: center;
+      padding: 60px 24px 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .page-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 8vw, 56px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff, #00f5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      animation: fadeInDown 0.7s ease-out forwards;
+    }
+    .page-header .subtitle {
+      color: #a0b3d9;
+      font-size: 18px;
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out 0.2s forwards;
+    }
+    
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    
+    .security-badge-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .security-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 28px;
+      background: rgba(15, 25, 45, 0.6);
+      border: 1px solid rgba(70, 230, 166, 0.2);
+      border-radius: 60px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    .security-badge:hover {
+      border-color: #46e6a6;
+      transform: translateY(-3px);
+    }
+    .security-badge i {
+      font-size: 24px;
+      color: #46e6a6;
+    }
+    .security-badge span {
+      font-weight: 600;
+      color: #e0e7ff;
+    }
+    
+    .section-card {
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 32px;
+      transition: all 0.3s ease;
+    }
+    .section-card:hover {
+      border-color: rgba(0, 245, 255, 0.15);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .section-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(156, 39, 176, 0.15));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .section-icon i {
+      font-size: 28px;
+      color: #00f5ff;
+    }
+    .section-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: #00f5ff;
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .feature-item {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.3s ease;
+    }
+    .feature-item:hover {
+      background: rgba(0, 245, 255, 0.04);
+      border-color: rgba(0, 245, 255, 0.15);
+    }
+    .feature-item i {
+      font-size: 24px;
+      color: #46e6a6;
+      margin-bottom: 16px;
+    }
+    .feature-item h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+    .feature-item p {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 14px;
+    }
+    
+    .check-list {
+      list-style: none;
+      margin: 20px 0;
+    }
+    .check-list li {
+      padding: 10px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      color: rgba(255, 255, 255, 0.85);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .check-list li:last-child {
+      border-bottom: none;
+    }
+    .check-list li i {
+      color: #46e6a6;
+      font-size: 18px;
+      margin-top: 3px;
+    }
+    
+    .compliance-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(70, 230, 166, 0.1);
+      border: 1px solid rgba(70, 230, 166, 0.25);
+      border-radius: 30px;
+      color: #46e6a6;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .report-card {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(156, 39, 176, 0.08));
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 20px;
+      padding: 32px;
+      text-align: center;
+      margin-top: 24px;
+    }
+    .report-card i {
+      font-size: 48px;
+      color: #00f5ff;
+      margin-bottom: 20px;
+    }
+    .report-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .report-card p {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 24px;
+    }
+    .report-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      border-radius: 40px;
+      color: #0a0e1a;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .report-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(0, 245, 255, 0.3);
+    }
+    
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      color: #a0b3d9;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .back-home:hover {
+      background: rgba(0, 245, 255, 0.08);
+      border-color: rgba(0, 245, 255, 0.25);
+      color: #00f5ff;
+      transform: translateY(-2px);
+    }
+    .footer-note {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+      color: #6b7da3;
+      font-size: 13px;
+    }
+    
+    @media (max-width: 768px) {
+      .section-card { padding: 28px 20px; }
+      .page-header { padding: 40px 20px 30px; }
+      .section-header { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>Security & Protection</h1>
+    <div class="subtitle">Your data is protected with bank-level security — here's how we keep you safe</div>
+  </header>
+
+  <main class="container">
+    
+    <div class="security-badge-bar">
+      <div class="security-badge scroll-reveal"><i class="fas fa-lock"></i><span>256-bit TLS Encryption</span></div>
+      <div class="security-badge scroll-reveal"><i class="fas fa-shield-hal"></i><span>bcrypt Password Hashing</span></div>
+      <div class="security-badge scroll-reveal"><i class="fas fa-database"></i><span>Encrypted at Rest</span></div>
+      <div class="security-badge scroll-reveal"><i class="fas fa-credit-card"></i><span>PCI DSS Compliant</span></div>
+    </div>
+
+    <!-- Encryption Section -->
+    <div class="section-card scroll-reveal">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-lock"></i></div>
+        <h2>Encryption & Data Protection</h2>
+      </div>
+      <p style="margin-bottom: 24px; color: rgba(255, 255, 255, 0.85);">Every piece of data you send to ProPredict is protected by multiple layers of encryption — both in transit and at rest.</p>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <i class="fas fa-globe"></i>
+          <h4>TLS 1.3 Encryption</h4>
+          <p>All connections to ProPredict use TLS 1.3, the most secure encryption protocol available. Your data is unreadable to anyone intercepting the connection.</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-key"></i>
+          <h4>bcrypt Password Hashing</h4>
+          <p>Your password is never stored in plain text. We use bcrypt with a high work factor — even if our database were compromised, your password remains secure.</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-hdd"></i>
+          <h4>Encrypted at Rest</h4>
+          <p>All user data stored in Supabase is encrypted at rest using AES-256. Your personal information, subscription data, and activity logs are fully protected.</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-user-secret"></i>
+          <h4>Zero-Knowledge Architecture</h4>
+          <p>We never store your full payment details. Paystack processes all payments, and we only receive confirmation tokens and subscription status.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Security Section -->
+    <div class="section-card scroll-reveal">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-credit-card"></i></div>
+        <h2>Payment Security</h2>
+      </div>
+      <p style="margin-bottom: 24px; color: rgba(255, 255, 255, 0.85);">Your payment information is handled by industry-leading processors with the highest security certifications.</p>
+      <ul class="check-list">
+        <li><i class="fas fa-check-circle"></i> <strong>PCI DSS Level 1 Compliance</strong> — Paystack is certified to the highest payment security standard.</li>
+        <li><i class="fas fa-check-circle"></i> <strong>No Card Storage</strong> — ProPredict never sees or stores your credit card, bank account, or crypto wallet details.</li>
+        <li><i class="fas fa-check-circle"></i> <strong>3D Secure Authentication</strong> — Additional verification layer for card transactions to prevent fraud.</li>
+        <li><i class="fas fa-check-circle"></i> <strong>Crypto Payment Security</strong> — USDC and USDT payments use secure wallet addresses with multi-signature protection.</li>
+        <li><i class="fas fa-check-circle"></i> <strong>Fraud Monitoring</strong> — Real-time transaction monitoring to detect and block suspicious activity.</li>
+      </ul>
+    </div>
+
+    <!-- Account Protection Section -->
+    <div class="section-card scroll-reveal">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-user-shield"></i></div>
+        <h2>Account Protection</h2>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <i class="fas fa-envelope"></i>
+          <h4>Email Verification</h4>
+          <p>All new accounts must verify their email address before gaining full access. This prevents unauthorized account creation.</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-history"></i>
+          <h4>Session Management</h4>
+          <p>Sessions expire after 30 days (or 7 days if "Remember Me" is unchecked). You can view and revoke active sessions.</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-exclamation-triangle"></i>
+          <h4>Login Alerts</h4>
+          <p>We notify you via email when a new device or location logs into your account. Suspicious activity triggers immediate alerts.</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-key"></i>
+          <h4>Strong Password Policy</h4>
+          <p>Passwords must be at least 8 characters with uppercase, lowercase, numbers, and special characters. We enforce this on registration.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Infrastructure Security -->
+    <div class="section-card scroll-reveal">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-server"></i></div>
+        <h2>Infrastructure Security</h2>
+      </div>
+      <ul class="check-list">
+        <li><i class="fas fa-check-circle"></i> <strong>Supabase Secure Hosting</strong> — Our database runs on Supabase with enterprise-grade security, firewalls, and network isolation.</li>
+        <li><i class="fas fa-check-circle"></i> <strong>Render Cloud Infrastructure</strong> — Application hosted on Render with DDoS protection and automatic security patching.</li>
+        <li><i class="fas fa-check-circle"></i> <strong>Regular Security Audits</strong> — We conduct quarterly security reviews and penetration testing.</li>
+        <li><i class="fas fa-check-circle"></i> <strong>Automated Backups</strong> — Database backups occur daily with point-in-time recovery capability.</li>
+        <li><i class="fas fa-check-circle"></i> <strong>Rate Limiting</strong> — API endpoints are rate-limited to prevent brute force and denial-of-service attacks.</li>
+      </ul>
+    </div>
+
+    <!-- Compliance Section -->
+    <div class="section-card scroll-reveal">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-check-double"></i></div>
+        <h2>Compliance & Certifications</h2>
+      </div>
+      <p style="margin-bottom: 20px;">ProPredict is committed to meeting global data protection and privacy standards.</p>
+      <div style="margin-bottom: 20px;">
+        <span class="compliance-badge"><i class="fas fa-check"></i> GDPR Ready</span>
+        <span class="compliance-badge"><i class="fas fa-check"></i> CCPA Compliant</span>
+        <span class="compliance-badge"><i class="fas fa-check"></i> NDPR (Nigeria)</span>
+        <span class="compliance-badge"><i class="fas fa-check"></i> PCI DSS (via Paystack)</span>
+      </div>
+      <p style="color: rgba(255, 255, 255, 0.75); font-size: 14px;">We regularly review and update our practices to align with evolving global standards. For detailed information, see our <a href="/privacy.html" style="color: #00f5ff;">Privacy Policy</a>.</p>
+    </div>
+
+    <!-- Report Security Issue -->
+    <div class="report-card scroll-reveal">
+      <i class="fas fa-bug"></i>
+      <h3>Report a Security Issue</h3>
+      <p>Found a vulnerability or security concern? We take all reports seriously and respond within 48 hours.</p>
+      <a href="mailto:security@propredict.app" class="report-btn"><i class="fas fa-shield"></i> Report Security Issue</a>
+      <p style="margin-top: 20px; font-size: 13px; color: #8a9bb5;">Or email: propredict.support@gmail.com (Subject: Security Report)</p>
+    </div>
+
+    <a href="/" class="back-home">
+      <i class="fas fa-arrow-left"></i>
+      Back to ProPredict
+    </a>
+
+    <div class="footer-note">
+      © 2026 ProPredict Analytics. All rights reserved. | Security is our priority.
+    </div>
+  </main>
+
+  <script>
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -30px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, observerOptions);
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+  </html>
