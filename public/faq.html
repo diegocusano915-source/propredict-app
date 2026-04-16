@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frequently Asked Questions — ProPredict</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300f5ff'/%3E%3Cstop offset='100%25' stop-color='%239c27b0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='%230a0e1a'/%3E%3Ctext x='50' y='70' font-size='54' font-weight='bold' font-family='Arial' text-anchor='middle' fill='url(%23g)'%3EPP%3C/text%3E%3C/svg%3E">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-v2.css">
+  <link rel="stylesheet" href="styles-ui.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 20% 30%, #1a1040, #0a0e1a 50%, #050810 90%);
+      color: #ffffff;
+      min-height: 100vh;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .page-header {
+      text-align: center;
+      padding: 60px 24px 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .page-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 8vw, 56px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff, #00f5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      animation: fadeInDown 0.7s ease-out forwards;
+    }
+    .page-header .subtitle {
+      color: #a0b3d9;
+      font-size: 18px;
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out 0.2s forwards;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    
+    .faq-categories {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .category-btn {
+      padding: 12px 24px;
+      background: rgba(15, 25, 45, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 40px;
+      color: #8a9bb5;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .category-btn.active {
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      color: #0a0e1a;
+      border-color: transparent;
+    }
+    .category-btn:hover:not(.active) {
+      background: rgba(0, 245, 255, 0.1);
+      color: #00f5ff;
+    }
+    
+    .faq-section {
+      margin-bottom: 40px;
+    }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      margin-bottom: 24px;
+      color: #00f5ff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .faq-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .faq-item {
+      background: rgba(15, 25, 45, 0.5);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .faq-item:hover {
+      border-color: rgba(0, 245, 255, 0.15);
+    }
+    .faq-question {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    .faq-question i {
+      color: #00f5ff;
+      transition: transform 0.3s ease;
+    }
+    .faq-item.active .faq-question i {
+      transform: rotate(180deg);
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      padding: 0 24px;
+    }
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+      padding-bottom: 20px;
+    }
+    .faq-answer p {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 12px;
+    }
+    .faq-answer ul {
+      margin-left: 20px;
+      color: rgba(255, 255, 255, 0.75);
+    }
+    
+    .contact-card {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(156, 39, 176, 0.08));
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      margin-top: 48px;
+    }
+    .contact-card i {
+      font-size: 48px;
+      color: #00f5ff;
+      margin-bottom: 20px;
+    }
+    .contact-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    .contact-card p {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 24px;
+    }
+    .contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      border-radius: 40px;
+      color: #0a0e1a;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(0, 245, 255, 0.3);
+    }
+    
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      color: #a0b3d9;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .back-home:hover {
+      background: rgba(0, 245, 255, 0.08);
+      border-color: rgba(0, 245, 255, 0.25);
+      color: #00f5ff;
+      transform: translateY(-2px);
+    }
+    .footer-note {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+      color: #6b7da3;
+      font-size: 13px;
+    }
+    
+    @media (max-width: 768px) {
+      .page-header { padding: 40px 20px 30px; }
+      .contact-card { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>Frequently Asked Questions</h1>
+    <div class="subtitle">Find answers to the most common questions about ProPredict</div>
+  </header>
+
+  <main class="container">
+    
+    <div class="faq-categories scroll-reveal">
+      <button class="category-btn active">All</button>
+      <button class="category-btn">Account</button>
+      <button class="category-btn">Billing</button>
+      <button class="category-btn">Features</button>
+      <button class="category-btn">Technical</button>
+    </div>
+
+    <!-- Account FAQs -->
+    <div class="faq-section scroll-reveal">
+      <div class="section-title"><i class="fas fa-user-circle"></i> Account & Registration</div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-question">How do I create an account? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Click "Create Account" in the top right corner. Enter your email and a strong password. You'll receive a verification email — click the link to activate your account. That's it!</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">I forgot my password. How do I reset it? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Click "Login" then "Forgot password?" Enter your email address and we'll send you a password reset link. The link expires in 1 hour for security.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Can I change my email address? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Currently, email changes require support assistance. Contact propredict.support@gmail.com with subject "Change Email" and we'll help you update it securely.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Is email verification required? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Yes. All accounts must verify their email address before gaining full access. This prevents spam and protects your account security.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Billing FAQs -->
+    <div class="faq-section scroll-reveal">
+      <div class="section-title"><i class="fas fa-credit-card"></i> Billing & Subscriptions</div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-question">What payment methods do you accept? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>We accept NGN (Paystack - cards, bank transfer, USSD), USD/GBP (bank transfer), and crypto (USDC, USDT). NGN payments activate instantly; others require manual verification (within 24h).</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Can I get a refund? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>No. All subscription payments are final and non-refundable. This is clearly stated in our Refund Policy. You may cancel anytime to stop future billing.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">How do I cancel my subscription? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Log into your dashboard, go to Account Settings, and click "Manage Subscription" then "Cancel Subscription." You'll retain Pro access until the end of your current billing period.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Can I switch from monthly to yearly? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Yes! Cancel your current plan and subscribe to the new plan. Your new plan will start immediately, and you'll receive a prorated credit for unused time on your previous plan.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Why was my payment declined? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Common reasons: insufficient funds, bank restrictions on online payments, or incorrect card details. Try a different payment method or contact your bank.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features FAQs -->
+    <div class="faq-section scroll-reveal">
+      <div class="section-title"><i class="fas fa-star"></i> Features & Usage</div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-question">What's the difference between Free and Pro? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Free users get 3 picks/day. Pro users get unlimited picks, elite selections, team analysis, accumulator builder, market options, and performance tracking. See our Pricing page for full comparison.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">How accurate are the predictions? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Our AI achieves 65-75% accuracy on average, but NO prediction is guaranteed. Sports are unpredictable. Use our predictions as entertainment and guidance, not financial advice.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">How do I use the Accumulator Builder? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Click "Add" on any pick to add it to your accumulator. The builder calculates combined probability and risk level. You can also use "Smart Acca" for AI-generated combinations.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">What sports do you cover? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Football (Premier League, La Liga, Serie A, Bundesliga, Ligue 1, UCL), Basketball (NBA, EuroLeague), NFL, NHL, MLB, Tennis, Rugby League, Rugby Union, Darts, and Table Tennis.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">How does the referral program work? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Share your unique referral link. When a friend signs up and verifies their email, you BOTH get 7 days of Pro access FREE. Track referrals in your dashboard.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technical FAQs -->
+    <div class="faq-section scroll-reveal">
+      <div class="section-title"><i class="fas fa-cog"></i> Technical Support</div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-question">The site isn't loading properly. What should I do? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Try clearing your browser cache (Ctrl+Shift+Delete), disabling ad blockers, or using a different browser. Check our Status page for any ongoing issues.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Is ProPredict mobile-friendly? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Yes! ProPredict is fully responsive and works on all devices. A dedicated mobile app is in development (ETA June 2026).</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">How do I report a bug? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Use the feedback button (bottom right) or email propredict.support@gmail.com with "Bug Report" in the subject. Include screenshots if possible.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Do you have an API? <i class="fas fa-chevron-down"></i></div>
+          <div class="faq-answer"><p>Not yet, but a public API is on our roadmap for Q4 2026. Developers will be able to access predictions programmatically.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-card scroll-reveal">
+      <i class="fas fa-question-circle"></i>
+      <h3>Still have questions?</h3>
+      <p>We're here to help! Reach out to our support team and we'll respond within 24 hours.</p>
+      <a href="/contact.html" class="contact-btn"><i class="fas fa-envelope"></i> Contact Support</a>
+    </div>
+
+    <a href="/" class="back-home">
+      <i class="fas fa-arrow-left"></i>
+      Back to ProPredict
+    </a>
+
+    <div class="footer-note">
+      © 2026 ProPredict Analytics. All rights reserved.
+    </div>
+  </main>
+
+  <script>
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -30px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, observerOptions);
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+    
+    document.querySelectorAll('.faq-question').forEach(q => {
+      q.addEventListener('click', () => {
+        const item = q.closest('.faq-item');
+        item.classList.toggle('active');
+      });
+    });
+  </script>
+
+</body>
+  </html>
