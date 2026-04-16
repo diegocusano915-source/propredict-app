@@ -1,0 +1,97 @@
+{
+  "header": {
+    "sport": "Esporte",
+    "competition": "Competição",
+    "elite_picks": "Elite",
+    "theme": "Tema",
+    "dark": "Escuro",
+    "light": "Claro",
+    "login": "Entrar",
+    "register": "Criar Conta",
+    "upgrade": "Upgrade",
+    "logout": "Sair",
+    "free": "GRÁTIS",
+    "pro": "PRO"
+  },
+  "dashboard": {
+    "welcome_back": "Bem-vindo de volta",
+    "top_picks": "Melhores Escolhas",
+    "top_picks_desc": "Seleções classificadas por IA — clique para expandir",
+    "team_lookup": "Busca de Times",
+    "select_team": "Selecionar Time",
+    "analyze_team": "Analisar Time",
+    "team_analysis": "Análise do Time",
+    "market_options": "Opções de Mercado",
+    "accumulator": "Construtor de Acumulador",
+    "clear_accumulator": "Limpar Acumulador",
+    "performance_summary": "Resumo de Desempenho",
+    "total_picks": "Total de Escolhas",
+    "wins": "Vitórias",
+    "losses": "Derrotas",
+    "win_rate": "Taxa de Vitória",
+    "roi": "ROI",
+    "performance_log": "Registro de Desempenho",
+    "upgrade_to_pro": "Fazer Upgrade para Pro"
+  },
+  "pro_lock": {
+    "pro_feature": "Recurso Pro",
+    "upgrade_to_unlock": "Faça upgrade para Pro para desbloquear",
+    "upgrade_now": "Upgrade Agora"
+  },
+  "footer": {
+    "about": "Sobre",
+    "pricing": "Preços",
+    "contact": "Contato",
+    "faq": "Perguntas Frequentes",
+    "status": "Status",
+    "roadmap": "Roteiro",
+    "security": "Segurança",
+    "careers": "Carreiras",
+    "press": "Imprensa",
+    "affiliates": "Afiliados",
+    "terms": "Termos",
+    "privacy": "Privacidade",
+    "disclaimer": "Aviso Legal",
+    "refunds": "Reembolsos",
+    "no_guarantee": "Sem Garantia",
+    "accessibility": "Acessibilidade",
+    "responsible_gambling": "Jogo Responsável"
+  },
+  "auth": {
+    "secure_access": "Acesso Seguro",
+    "email": "E-mail",
+    "password": "Senha",
+    "remember_me": "Lembrar-me por 30 dias",
+    "forgot_password": "Esqueceu a senha?",
+    "submit": "Enviar",
+    "dont_have_account": "Não tem conta? Cadastre-se",
+    "already_have_account": "Já tem conta? Entrar"
+  },
+  "subscription": {
+    "premium_access": "Acesso Premium",
+    "choose_plan": "Escolha seu Plano",
+    "weekly": "Semanal",
+    "monthly": "Mensal",
+    "quarterly": "Trimestral",
+    "yearly": "Anual",
+    "most_popular": "Mais Popular",
+    "subscribe": "Assinar",
+    "secure_payments": "Pagamentos seguros via Paystack."
+  },
+  "chat": {
+    "support": "Chat com Suporte",
+    "how_can_we_help": "Olá! Como podemos ajudar?",
+    "type_message": "Digite aqui e pressione Enter."
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "add": "Adicionar",
+    "added": "Adicionado",
+    "copy": "Copiar",
+    "copied": "Copiado!"
+  }
+}
