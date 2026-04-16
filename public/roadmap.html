@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roadmap — ProPredict</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300f5ff'/%3E%3Cstop offset='100%25' stop-color='%239c27b0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='%230a0e1a'/%3E%3Ctext x='50' y='70' font-size='54' font-weight='bold' font-family='Arial' text-anchor='middle' fill='url(%23g)'%3EPP%3C/text%3E%3C/svg%3E">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-v2.css">
+  <link rel="stylesheet" href="styles-ui.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 20% 30%, #1a1040, #0a0e1a 50%, #050810 90%);
+      color: #ffffff;
+      min-height: 100vh;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 245, 255, 0.2); }
+      50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(0, 245, 255, 0.3); }
+    }
+    
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .page-header {
+      text-align: center;
+      padding: 60px 24px 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .page-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 8vw, 56px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff, #00f5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      animation: fadeInDown 0.7s ease-out forwards;
+    }
+    .page-header .subtitle {
+      color: #a0b3d9;
+      font-size: 18px;
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out 0.2s forwards;
+    }
+    
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    
+    .timeline-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+    .timeline-tab {
+      padding: 12px 28px;
+      background: rgba(15, 25, 45, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 40px;
+      color: #8a9bb5;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .timeline-tab.active {
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      color: #0a0e1a;
+      border-color: transparent;
+    }
+    .timeline-tab:hover:not(.active) {
+      background: rgba(0, 245, 255, 0.1);
+      color: #00f5ff;
+    }
+    
+    .roadmap-section {
+      margin-bottom: 48px;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .section-title .badge {
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .badge-completed {
+      background: rgba(70, 230, 166, 0.15);
+      border: 1px solid rgba(70, 230, 166, 0.3);
+      color: #46e6a6;
+    }
+    .badge-progress {
+      background: rgba(0, 245, 255, 0.15);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      color: #00f5ff;
+    }
+    .badge-planned {
+      background: rgba(255, 179, 71, 0.15);
+      border: 1px solid rgba(255, 179, 71, 0.3);
+      color: #ffb347;
+    }
+    .badge-future {
+      background: rgba(156, 39, 176, 0.15);
+      border: 1px solid rgba(156, 39, 176, 0.3);
+      color: #9c27b0;
+    }
+    .section-title h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 245, 255, 0.2);
+    }
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(156, 39, 176, 0.15));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .feature-icon i {
+      font-size: 26px;
+      color: #00f5ff;
+    }
+    .feature-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    .feature-card p {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .feature-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-green { background: #46e6a6; box-shadow: 0 0 10px #46e6a6; }
+    .dot-cyan { background: #00f5ff; box-shadow: 0 0 10px #00f5ff; }
+    .dot-yellow { background: #ffb347; box-shadow: 0 0 10px #ffb347; }
+    .dot-purple { background: #9c27b0; box-shadow: 0 0 10px #9c27b0; }
+    
+    .timeline-roadmap {
+      margin: 48px 0;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 24px;
+      padding: 24px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .timeline-item:last-child {
+      border-bottom: none;
+    }
+    .timeline-quarter {
+      min-width: 120px;
+    }
+    .timeline-quarter .q-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #00f5ff;
+      margin-bottom: 8px;
+    }
+    .timeline-quarter .year {
+      color: #6b7da3;
+      font-size: 13px;
+    }
+    .timeline-content h4 {
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .timeline-content ul {
+      list-style: none;
+    }
+    .timeline-content li {
+      padding: 6px 0;
+      color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .timeline-content li i {
+      color: #46e6a6;
+      font-size: 14px;
+    }
+    
+    .suggestion-card {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(156, 39, 176, 0.08));
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 24px;
+      padding: 48px 40px;
+      text-align: center;
+      margin-top: 48px;
+    }
+    .suggestion-card i {
+      font-size: 56px;
+      color: #00f5ff;
+      margin-bottom: 24px;
+    }
+    .suggestion-card h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+    .suggestion-card p {
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 600px;
+      margin: 0 auto 28px;
+    }
+    .suggestion-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 40px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      border-radius: 60px;
+      color: #0a0e1a;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      animation: pulse 2.5s infinite;
+    }
+    .suggestion-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(0, 245, 255, 0.3);
+      animation: none;
+    }
+    
+    .feedback-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .feedback-modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: rgba(15, 25, 45, 0.95);
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 28px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      animation: fadeInScale 0.3s ease-out;
+    }
+    .modal-content h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      margin-bottom: 24px;
+      color: #00f5ff;
+    }
+    .modal-content input,
+    .modal-content select,
+    .modal-content textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      color: #fff;
+      margin-bottom: 16px;
+      outline: none;
+    }
+    .modal-content textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .modal-actions button {
+      flex: 1;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      color: #0a0e1a;
+    }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #a0b3d9;
+    }
+    
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      color: #a0b3d9;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .back-home:hover {
+      background: rgba(0, 245, 255, 0.08);
+      border-color: rgba(0, 245, 255, 0.25);
+      color: #00f5ff;
+      transform: translateY(-2px);
+    }
+    .footer-note {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+      color: #6b7da3;
+      font-size: 13px;
+    }
+    
+    @media (max-width: 768px) {
+      .page-header { padding: 40px 20px 30px; }
+      .timeline-item { flex-direction: column; gap: 12px; }
+      .suggestion-card { padding: 32px 20px; }
+      .modal-content { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>Product Roadmap</h1>
+    <div class="subtitle">See what we're building next — and help shape the future of ProPredict</div>
+  </header>
+
+  <main class="container">
+    
+    <!-- Timeline Tabs -->
+    <div class="timeline-tabs scroll-reveal">
+      <button class="timeline-tab active">All Features</button>
+      <button class="timeline-tab">Completed</button>
+      <button class="timeline-tab">In Progress</button>
+      <button class="timeline-tab">Planned</button>
+    </div>
+
+    <!-- COMPLETED Section -->
+    <div class="roadmap-section scroll-reveal">
+      <div class="section-title">
+        <span class="badge badge-completed"><i class="fas fa-check-circle"></i> COMPLETED</span>
+        <h2>Q1-Q2 2026 — Shipped</h2>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-robot"></i></div>
+          <h3>Multi-Sport AI Predictions</h3>
+          <p>Football, Basketball, NFL, NHL, MLB, Tennis, Rugby, Darts, Table Tennis — 10+ sports covered with AI-powered picks.</p>
+          <div class="feature-status"><span class="status-dot dot-green"></span> Completed — Apr 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-crown"></i></div>
+          <h3>Free vs Pro Tier System</h3>
+          <p>Free users get 3 picks/day. Pro users unlock unlimited picks, elite selections, team analysis, and performance tracking.</p>
+          <div class="feature-status"><span class="status-dot dot-green"></span> Completed — Apr 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-gift"></i></div>
+          <h3>Referral Program</h3>
+          <p>Invite friends and both get 7 days of Pro access FREE. Track your referrals and rewards in dashboard.</p>
+          <div class="feature-status"><span class="status-dot dot-green"></span> Completed — Apr 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-globe"></i></div>
+          <h3>Multi-Currency Payments</h3>
+          <p>Pay in NGN (Paystack), USD, GBP, USDC, and USDT. Instant activation for NGN, manual verification for others.</p>
+          <div class="feature-status"><span class="status-dot dot-green"></span> Completed — Apr 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-comments"></i></div>
+          <h3>Live Chat Support (Tawk.to)</h3>
+          <p>Real-time customer support directly on the platform. Get answers to your questions within minutes.</p>
+          <div class="feature-status"><span class="status-dot dot-green"></span> Completed — Apr 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-envelope"></i></div>
+          <h3>Email Notifications</h3>
+          <p>Welcome emails, contact form submissions, and subscription confirmations via Resend.</p>
+          <div class="feature-status"><span class="status-dot dot-green"></span> Completed — Apr 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IN PROGRESS Section -->
+    <div class="roadmap-section scroll-reveal">
+      <div class="section-title">
+        <span class="badge badge-progress"><i class="fas fa-spinner fa-pulse"></i> IN PROGRESS</span>
+        <h2>Q2 2026 — Currently Building</h2>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-chart-pie"></i></div>
+          <h3>Team Analysis for All Sports</h3>
+          <p>Deep-dive analytics for every sport — form, H2H, advanced stats. Currently live for Football, expanding to all sports.</p>
+          <div class="feature-status"><span class="status-dot dot-cyan"></span> 60% Complete — ETA May 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-bell"></i></div>
+          <h3>Push Notifications</h3>
+          <p>Browser notifications for new elite picks, odds changes, and match start reminders.</p>
+          <div class="feature-status"><span class="status-dot dot-cyan"></span> 40% Complete — ETA May 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+          <h3>Mobile App (iOS & Android)</h3>
+          <p>Native mobile experience with offline access, widgets, and faster performance.</p>
+          <div class="feature-status"><span class="status-dot dot-cyan"></span> 25% Complete — ETA June 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+          <h3>Match Section Redesign</h3>
+          <p>Card grid layout with expandable markets — cleaner, faster, more intuitive.</p>
+          <div class="feature-status"><span class="status-dot dot-cyan"></span> 70% Complete — ETA May 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANNED Section -->
+    <div class="roadmap-section scroll-reveal">
+      <div class="section-title">
+        <span class="badge badge-planned"><i class="fas fa-calendar-check"></i> PLANNED</span>
+        <h2>Q3 2026 — Coming Soon</h2>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-language"></i></div>
+          <h3>Multi-Language Support</h3>
+          <p>Spanish, French, Portuguese, and German translations for global accessibility.</p>
+          <div class="feature-status"><span class="status-dot dot-yellow"></span> Planned — Q3 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+          <h3>Advanced Analytics Dashboard</h3>
+          <p>Interactive charts, ROI tracking, betting history insights, and performance trends.</p>
+          <div class="feature-status"><span class="status-dot dot-yellow"></span> Planned — Q3 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-users"></i></div>
+          <h3>Social Betting Groups</h3>
+          <p>Create or join betting groups, share picks, and compete on leaderboards.</p>
+          <div class="feature-status"><span class="status-dot dot-yellow"></span> Planned — Q3 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FUTURE Section -->
+    <div class="roadmap-section scroll-reveal">
+      <div class="section-title">
+        <span class="badge badge-future"><i class="fas fa-star"></i> FUTURE</span>
+        <h2>Q4 2026 & Beyond — On the Horizon</h2>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-brain"></i></div>
+          <h3>AI Model v2.0</h3>
+          <p>Next-generation prediction engine with 30% higher accuracy using transformer models.</p>
+          <div class="feature-status"><span class="status-dot dot-purple"></span> Research Phase — Q4 2026</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-video"></i></div>
+          <h3>Live Match Tracking</h3>
+          <p>Real-time score updates and in-play prediction adjustments during matches.</p>
+          <div class="feature-status"><span class="status-dot dot-purple"></span> Research Phase — Q1 2027</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-robot"></i></div>
+          <h3>AI Chat Assistant</h3>
+          <p>Ask questions about picks, get explanations, and receive personalized recommendations.</p>
+          <div class="feature-status"><span class="status-dot dot-purple"></span> Research Phase — Q2 2027</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline View -->
+    <div class="section-card scroll-reveal" style="margin-top: 48px;">
+      <div class="section-title" style="margin-bottom: 24px;">
+        <h2 style="font-size: 24px;">📅 Timeline Overview</h2>
+      </div>
+      <div class="timeline-roadmap">
+        <div class="timeline-item">
+          <div class="timeline-quarter">
+            <span class="q-badge">Q1-Q2 2026</span>
+            <div class="year">Completed</div>
+          </div>
+          <div class="timeline-content">
+            <h4>Foundation & Core Features</h4>
+            <ul>
+              <li><i class="fas fa-check-circle"></i> Multi-sport AI predictions</li>
+              <li><i class="fas fa-check-circle"></i> Free vs Pro tiers</li>
+              <li><i class="fas fa-check-circle"></i> Referral system</li>
+              <li><i class="fas fa-check-circle"></i> Multi-currency payments</li>
+              <li><i class="fas fa-check-circle"></i> Live chat & email notifications</li>
+            </ul>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-quarter">
+            <span class="q-badge" style="background: rgba(0, 245, 255, 0.15); color: #00f5ff;">Q2 2026</span>
+            <div class="year">In Progress</div>
+          </div>
+          <div class="timeline-content">
+            <h4>Enhancement & Engagement</h4>
+            <ul>
+              <li><i class="fas fa-spinner"></i> Team analysis for all sports</li>
+              <li><i class="fas fa-spinner"></i> Push notifications</li>
+              <li><i class="fas fa-spinner"></i> Mobile app (beta)</li>
+              <li><i class="fas fa-spinner"></i> Match section redesign</li>
+            </ul>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-quarter">
+            <span class="q-badge" style="background: rgba(255, 179, 71, 0.15); color: #ffb347;">Q3 2026</span>
+            <div class="year">Planned</div>
+          </div>
+          <div class="timeline-content">
+            <h4>Global Expansion & Community</h4>
+            <ul>
+              <li><i class="far fa-circle"></i> Multi-language (ES, FR, PT, DE)</li>
+              <li><i class="far fa-circle"></i> Advanced analytics dashboard</li>
+              <li><i class="far fa-circle"></i> Social betting groups</li>
+            </ul>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-quarter">
+            <span class="q-badge" style="background: rgba(156, 39, 176, 0.15); color: #9c27b0;">Q4 2026+</span>
+            <div class="year">Future</div>
+          </div>
+          <div class="timeline-content">
+            <h4>Next-Gen AI & Innovation</h4>
+            <ul>
+              <li><i class="far fa-circle"></i> AI Model v2.0</li>
+              <li><i class="far fa-circle"></i> Live match tracking</li>
+              <li><i class="far fa-circle"></i> AI chat assistant</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggestion Box -->
+    <div class="suggestion-card scroll-reveal">
+      <i class="fas fa-lightbulb"></i>
+      <h2>Have a Feature Idea?</h2>
+      <p>We build ProPredict based on YOUR feedback. Tell us what you want to see next!</p>
+      <button class="suggestion-btn" onclick="openFeedbackModal()"><i class="fas fa-comment"></i> Suggest a Feature</button>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="feedback-modal" id="feedbackModal">
+      <div class="modal-content">
+        <h3><i class="fas fa-lightbulb" style="margin-right: 12px;"></i> Suggest a Feature</h3>
+        <input type="text" id="feedbackName" placeholder="Your Name (optional)">
+        <input type="email" id="feedbackEmail" placeholder="Your Email (optional)">
+        <select id="feedbackCategory">
+          <option value="Feature Request">Feature Request</option>
+          <option value="Improvement">Improvement Suggestion</option>
+          <option value="Bug Report">Bug Report</option>
+          <option value="Other">Other</option>
+        </select>
+        <textarea id="feedbackMessage" placeholder="Describe your idea or suggestion in detail..."></textarea>
+        <div class="modal-actions">
+          <button class="btn-primary" onclick="submitFeedback()"><i class="fas fa-paper-plane"></i> Submit</button>
+          <button class="btn-secondary" onclick="closeFeedbackModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <a href="/" class="back-home">
+      <i class="fas fa-arrow-left"></i>
+      Back to ProPredict
+    </a>
+
+    <div class="footer-note">
+      © 2026 ProPredict Analytics. All rights reserved. | Roadmap subject to change based on user feedback.
+    </div>
+  </main>
+
+  <script>
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -30px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, observerOptions);
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+    
+    function openFeedbackModal() {
+      document.getElementById('feedbackModal').classList.add('active');
+    }
+    function closeFeedbackModal() {
+      document.getElementById('feedbackModal').classList.remove('active');
+    }
+    function submitFeedback() {
+      const message = document.getElementById('feedbackMessage').value.trim();
+      if (!message) {
+        alert('Please enter your feedback message.');
+        return;
+      }
+      alert('✅ Thank you! Your feedback has been submitted. We review every suggestion.');
+      closeFeedbackModal();
+      document.getElementById('feedbackMessage').value = '';
+    }
+    document.getElementById('feedbackModal').addEventListener('click', function(e) {
+      if (e.target === this) closeFeedbackModal();
+    });
+  </script>
+
+</body>
+            </html>
