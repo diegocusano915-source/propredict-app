@@ -1,0 +1,97 @@
+{
+  "header": {
+    "sport": "Sport",
+    "competition": "Compétition",
+    "elite_picks": "Élite",
+    "theme": "Thème",
+    "dark": "Sombre",
+    "light": "Clair",
+    "login": "Connexion",
+    "register": "Créer un compte",
+    "upgrade": "Améliorer",
+    "logout": "Déconnexion",
+    "free": "GRATUIT",
+    "pro": "PRO"
+  },
+  "dashboard": {
+    "welcome_back": "Bon retour",
+    "top_picks": "Meilleurs Choix",
+    "top_picks_desc": "Sélections classées par IA — cliquez pour développer",
+    "team_lookup": "Recherche d'Équipe",
+    "select_team": "Sélectionner une Équipe",
+    "analyze_team": "Analyser l'Équipe",
+    "team_analysis": "Analyse d'Équipe",
+    "market_options": "Options de Marché",
+    "accumulator": "Constructeur d'Accumulateur",
+    "clear_accumulator": "Effacer l'Accumulateur",
+    "performance_summary": "Résumé de Performance",
+    "total_picks": "Total des Choix",
+    "wins": "Victoires",
+    "losses": "Défaites",
+    "win_rate": "Taux de Victoire",
+    "roi": "ROI",
+    "performance_log": "Journal de Performance",
+    "upgrade_to_pro": "Passer à Pro"
+  },
+  "pro_lock": {
+    "pro_feature": "Fonctionnalité Pro",
+    "upgrade_to_unlock": "Passez à Pro pour débloquer",
+    "upgrade_now": "Améliorer Maintenant"
+  },
+  "footer": {
+    "about": "À propos",
+    "pricing": "Tarifs",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "status": "Statut",
+    "roadmap": "Feuille de Route",
+    "security": "Sécurité",
+    "careers": "Carrières",
+    "press": "Presse",
+    "affiliates": "Affiliés",
+    "terms": "Conditions",
+    "privacy": "Confidentialité",
+    "disclaimer": "Avertissement",
+    "refunds": "Remboursements",
+    "no_guarantee": "Sans Garantie",
+    "accessibility": "Accessibilité",
+    "responsible_gambling": "Jeu Responsable"
+  },
+  "auth": {
+    "secure_access": "Accès Sécurisé",
+    "email": "Email",
+    "password": "Mot de passe",
+    "remember_me": "Se souvenir de moi (30 jours)",
+    "forgot_password": "Mot de passe oublié ?",
+    "submit": "Valider",
+    "dont_have_account": "Pas de compte ? S'inscrire",
+    "already_have_account": "Déjà un compte ? Se connecter"
+  },
+  "subscription": {
+    "premium_access": "Accès Premium",
+    "choose_plan": "Choisissez votre Plan",
+    "weekly": "Hebdomadaire",
+    "monthly": "Mensuel",
+    "quarterly": "Trimestriel",
+    "yearly": "Annuel",
+    "most_popular": "Le Plus Populaire",
+    "subscribe": "S'abonner",
+    "secure_payments": "Paiements sécurisés via Paystack."
+  },
+  "chat": {
+    "support": "Chat avec le Support",
+    "how_can_we_help": "Bonjour ! Comment pouvons-nous aider ?",
+    "type_message": "Écrivez ici et appuyez sur Entrée."
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "add": "Ajouter",
+    "added": "Ajouté",
+    "copy": "Copier",
+    "copied": "Copié !"
+  }
+}
