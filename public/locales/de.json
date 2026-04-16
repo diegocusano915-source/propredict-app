@@ -1,0 +1,97 @@
+{
+  "header": {
+    "sport": "Sport",
+    "competition": "Wettbewerb",
+    "elite_picks": "Elite",
+    "theme": "Design",
+    "dark": "Dunkel",
+    "light": "Hell",
+    "login": "Anmelden",
+    "register": "Konto Erstellen",
+    "upgrade": "Upgrade",
+    "logout": "Abmelden",
+    "free": "KOSTENLOS",
+    "pro": "PRO"
+  },
+  "dashboard": {
+    "welcome_back": "Willkommen zurück",
+    "top_picks": "Top-Auswahl",
+    "top_picks_desc": "KI-bewertete Auswahl — zum Erweitern klicken",
+    "team_lookup": "Team-Suche",
+    "select_team": "Team Auswählen",
+    "analyze_team": "Team Analysieren",
+    "team_analysis": "Team-Analyse",
+    "market_options": "Marktoptionen",
+    "accumulator": "Kombi-Builder",
+    "clear_accumulator": "Kombi Löschen",
+    "performance_summary": "Leistungsübersicht",
+    "total_picks": "Gesamt-Tipps",
+    "wins": "Siege",
+    "losses": "Niederlagen",
+    "win_rate": "Siegquote",
+    "roi": "ROI",
+    "performance_log": "Leistungsprotokoll",
+    "upgrade_to_pro": "Zu Pro Upgraden"
+  },
+  "pro_lock": {
+    "pro_feature": "Pro-Funktion",
+    "upgrade_to_unlock": "Upgrade auf Pro zum Freischalten",
+    "upgrade_now": "Jetzt Upgraden"
+  },
+  "footer": {
+    "about": "Über Uns",
+    "pricing": "Preise",
+    "contact": "Kontakt",
+    "faq": "Häufige Fragen",
+    "status": "Status",
+    "roadmap": "Roadmap",
+    "security": "Sicherheit",
+    "careers": "Karriere",
+    "press": "Presse",
+    "affiliates": "Partner",
+    "terms": "AGB",
+    "privacy": "Datenschutz",
+    "disclaimer": "Haftungsausschluss",
+    "refunds": "Rückerstattungen",
+    "no_guarantee": "Keine Garantie",
+    "accessibility": "Barrierefreiheit",
+    "responsible_gambling": "Verantwortungsvolles Spielen"
+  },
+  "auth": {
+    "secure_access": "Sicherer Zugang",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "remember_me": "30 Tage angemeldet bleiben",
+    "forgot_password": "Passwort vergessen?",
+    "submit": "Absenden",
+    "dont_have_account": "Kein Konto? Registrieren",
+    "already_have_account": "Bereits Konto? Anmelden"
+  },
+  "subscription": {
+    "premium_access": "Premium-Zugang",
+    "choose_plan": "Wählen Sie Ihren Plan",
+    "weekly": "Wöchentlich",
+    "monthly": "Monatlich",
+    "quarterly": "Vierteljährlich",
+    "yearly": "Jährlich",
+    "most_popular": "Am Beliebtesten",
+    "subscribe": "Abonnieren",
+    "secure_payments": "Sichere Zahlungen mit Paystack."
+  },
+  "chat": {
+    "support": "Chat mit Support",
+    "how_can_we_help": "Hallo! Wie können wir helfen?",
+    "type_message": "Hier tippen und Enter drücken."
+  },
+  "common": {
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "add": "Hinzufügen",
+    "added": "Hinzugefügt",
+    "copy": "Kopieren",
+    "copied": "Kopiert!"
+  }
+}
