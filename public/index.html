@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ProPredict — Multi-Sport Probability Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b1220">
+  <!-- Favicon fix - removes 404 error -->
+  <link rel="icon" href="data:,">
+  <!-- Google Font for Premium Feel -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- ✅ ORIGINAL BASE STYLES -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- ✅ V2 PREMIUM REDESIGN LAYER (SAFE OVERRIDE) -->
+  <link rel="stylesheet" href="styles-v2.css">
+<link rel="stylesheet" href="styles-ui.css">
+  <!-- ✅ SAFE ADDITIVE UI PATCHES -->
+  <style>
+    .hidden {
+      display: none !important;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 10, 18, 0.78);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-overlay:not(.hidden) {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(100%, 680px);
+      background: linear-gradient(180deg, rgba(15, 23, 39, 0.98), rgba(7, 13, 24, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+      border-radius: 22px;
+      padding: 24px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .auth-modal-badge,
+    .subscription-modal-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(79, 255, 186, 0.08);
+      border: 1px solid rgba(79, 255, 186, 0.18);
+      color: #7ff0c5;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .auth-modal-subtitle,
+    .subscription-modal-subtitle {
+      color: rgba(232, 237, 245, 0.72);
+      margin-top: 8px;
+      margin-bottom: 18px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #dce5f2;
+    }
+
+    .form-group input,
+    .team-analysis-toolbar select {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      padding: 12px 14px;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .team-analysis-toolbar select:focus {
+      border-color: rgba(85, 255, 190, 0.5);
+      box-shadow: 0 0 0 3px rgba(85, 255, 190, 0.1);
+    }
+
+    /* ✅ Password Input Wrapper (ADDED for eye icon) */
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-input-wrapper input {
+      width: 100%;
+      padding-right: 48px !important;
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: #8a9bb5;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+
+    .password-toggle-btn:hover {
+      color: #7ff0c5;
+    }
+
+    .password-meta {
+      display: grid;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .password-strength {
+      min-height: 18px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .strength-weak {
+      color: #ff6b6b;
+    }
+
+    .strength-medium {
+      color: #ffd166;
+    }
+
+    .strength-strong {
+      color: #46e6a6;
+    }
+
+    .password-hints {
+      display: grid;
+      gap: 4px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: rgba(232, 237, 245, 0.7);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .auth-submit-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .auth-switch {
+      margin-top: 16px;
+      color: rgba(232, 237, 245, 0.78);
+      font-size: 14px;
+    }
+
+    .auth-switch span {
+      color: #7ff0c5;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .auth-message {
+      margin-top: 14px;
+      min-height: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* Remember Me & Forgot Password Styles */
+    .remember-forgot-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .remember-me input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #00f5ff;
+    }
+
+    .remember-me label {
+      cursor: pointer;
+      font-size: 14px;
+      color: #a0b3d9;
+      margin: 0;
+    }
+
+    .forgot-password-link {
+      color: #00f5ff;
+      font-size: 14px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .forgot-password-link:hover {
+      color: #9c27b0;
+      text-decoration: underline;
+    }
+
+    /* Referral Dashboard Styles */
+    .referral-dashboard-card {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(156, 39, 176, 0.08));
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 20px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+
+    .referral-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .referral-header i {
+      font-size: 28px;
+      color: #00f5ff;
+    }
+
+    .referral-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+
+    .referral-stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    .referral-stat {
+      text-align: center;
+    }
+
+    .referral-stat .number {
+      font-size: 32px;
+      font-weight: 800;
+      color: #00f5ff;
+    }
+
+    .referral-stat .label {
+      font-size: 12px;
+      color: #a0b3d9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .referral-link-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 4px 4px 4px 16px;
+    }
+
+    .referral-link-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-family: monospace;
+      outline: none;
+      padding: 12px 0;
+    }
+
+    .copy-btn {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      border-radius: 12px;
+      color: #0a0e1a;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 245, 255, 0.3);
+    }
+
+    .copy-btn.copied {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    .referral-reward-info {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: rgba(0, 245, 255, 0.05);
+      border-radius: 12px;
+      color: #a0b3d9;
+      font-size: 13px;
+    }
+
+    .referral-reward-info i {
+      color: #00f5ff;
+      margin-right: 8px;
+    }
+
+    .guest-hero-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .guest-hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(62, 255, 190, 0.08), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(59, 120, 255, 0.08), transparent 28%);
+      pointer-events: none;
+    }
+
+    .guest-badge,
+    .guest-title,
+    .guest-description,
+    .guest-cta-row,
+    .guest-feature-grid {
+      position: relative;
+      z-index: 1;
+    }
+
+    .guest-badge {
+      display: inline-flex;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(79, 255, 186, 0.08);
+      border: 1px solid rgba(79, 255, 186, 0.18);
+      color: #7ff0c5;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .guest-cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      margin-bottom: 22px;
+    }
+
+    .guest-feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .guest-feature-card {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .guest-feature-card h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    .guest-feature-card p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(232, 237, 245, 0.72);
+    }
+
+    .locked-notice-card {
+      margin-top: 18px;
+      border-radius: 18px;
+      padding: 18px;
+      background: rgba(255, 179, 71, 0.08);
+      border: 1px solid rgba(255, 179, 71, 0.18);
+    }
+
+    .locked-notice-content h3 {
+      margin: 0 0 8px 0;
+    }
+
+    .locked-notice-content p {
+      margin: 0;
+      color: rgba(232, 237, 245, 0.76);
+    }
+
+    .dashboard-hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .dashboard-label {
+      color: #7ff0c5;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .dashboard-access-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ===================================================== */
+    /* 🔥 PRO LOCK STYLES */
+    /* ===================================================== */
+    .pro-locked-section {
+      position: relative;
+    }
+    
+    .pro-locked-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 14, 26, 0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      border: 1px solid rgba(255, 179, 71, 0.3);
+    }
+    
+    .pro-locked-content {
+      text-align: center;
+      padding: 24px;
+    }
+    
+    .pro-locked-icon {
+      font-size: 48px;
+      color: #ffd166;
+      margin-bottom: 16px;
+    }
+    
+    .pro-locked-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffd166;
+      margin-bottom: 8px;
+    }
+    
+    .pro-locked-text {
+      color: #a0b3d9;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    
+    .pro-locked-btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      border-radius: 12px;
+      color: #0a0e1a;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .pro-locked-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 245, 255, 0.3);
+    }
+    
+    .free-picks-counter {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(255, 179, 71, 0.15);
+      border: 1px solid rgba(255, 179, 71, 0.3);
+      border-radius: 20px;
+      color: #ffd166;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 12px;
+    }
+    
+    .upgrade-banner {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(156, 39, 176, 0.1));
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    
+    .upgrade-banner-text {
+      color: #fff;
+      font-weight: 500;
+    }
+    
+    .upgrade-banner-text strong {
+      color: #00f5ff;
+    }
+    
+    .upgrade-banner-btn {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      border-radius: 10px;
+      color: #0a0e1a;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* ===================================================== */
+    /* 🔥 SKELETON LOADER STYLES */
+    /* ===================================================== */
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .skeleton-card {
+      background: rgba(15, 25, 45, 0.5);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(4px);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    .skeleton-title {
+      height: 24px;
+      width: 70%;
+      margin-bottom: 16px;
+    }
+
+    .skeleton-line {
+      height: 16px;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .skeleton-line-short {
+      height: 16px;
+      width: 60%;
+      margin-bottom: 12px;
+    }
+
+    .skeleton-badge {
+      height: 32px;
+      width: 100%;
+      margin-top: 16px;
+      border-radius: 20px;
+    }
+
+    .skeleton-pulse {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.7; }
+    }
+
+    /* ===================================================== */
+    /* 🔥 GLOBAL TICKER BAR STYLES */
+    /* ===================================================== */
+    .dashboard-welcome-section {
+      margin-bottom: 24px;
+    }
+
+    .welcome-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .welcome-greeting {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .welcome-name {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #7ff0c5, #00f5ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .welcome-emoji {
+      font-size: 28px;
+      margin-left: 4px;
+    }
+
+    .global-ticker-bar {
+      background: rgba(20, 30, 50, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(127, 240, 197, 0.2);
+      border-radius: 60px;
+      padding: 14px 24px;
+      margin: 8px 0 16px 0;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(127, 240, 197, 0.1) inset;
+      transition: opacity 0.4s ease;
+    }
+
+    .ticker-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      min-height: 28px;
+    }
+
+    .ticker-emoji {
+      font-size: 22px;
+      animation: tickerPulse 2s ease-in-out infinite;
+    }
+
+    .ticker-text {
+      font-size: 16px;
+      font-weight: 500;
+      color: #e0e8f5;
+      letter-spacing: 0.01em;
+      text-align: center;
+      transition: opacity 0.3s ease;
+    }
+
+    @keyframes tickerPulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .welcome-greeting, .welcome-name, .welcome-emoji {
+        font-size: 22px;
+      }
+      .global-ticker-bar {
+        padding: 12px 16px;
+      }
+      .ticker-text {
+        font-size: 14px;
+      }
+      .ticker-emoji {
+        font-size: 18px;
+      }
+    }
+
+    .team-analysis-toolbar {
+      display: grid;
+      gap: 12px;
+    }
+
+    .accumulator-metrics-grid,
+    .performance-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .accumulator-action-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .subscription-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .subscription-summary {
+      max-width: 460px;
+    }
+
+    .subscription-plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .plan-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+      padding: 20px 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      gap: 12px;
+      min-height: 260px;
+    }
+
+    .plan-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(62, 255, 190, 0.08), transparent 35%);
+      pointer-events: none;
+    }
+
+    .plan-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .featured-plan {
+      border-color: rgba(127, 240, 197, 0.35);
+      box-shadow: 0 12px 30px rgba(34, 255, 180, 0.1);
+    }
+
+    .plan-tag {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(79, 255, 186, 0.08);
+      border: 1px solid rgba(79, 255, 186, 0.18);
+      color: #7ff0c5;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .plan-price {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .plan-price strong {
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .plan-price span {
+      font-size: 14px;
+      color: rgba(232, 237, 245, 0.72);
+    }
+
+    .plan-features {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: rgba(232, 237, 245, 0.82);
+      font-size: 13px;
+    }
+
+    .plan-features li::before {
+      content: "✓";
+      color: #46e6a6;
+      font-weight: 900;
+      margin-right: 8px;
+    }
+
+    .plan-card .btn-primary {
+      margin-top: 8px;
+      width: 100%;
+    }
+
+    .subscription-footer-note {
+      margin-top: 18px;
+      color: rgba(232, 237, 245, 0.64);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .auth-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .user-status {
+      display: flex;
+      align-items: center;
+    }
+
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 60px;
+      min-height: 34px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .role-free {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #e8edf5;
+    }
+
+    .role-pro {
+      background: rgba(67, 206, 162, 0.12);
+      border: 1px solid rgba(127, 240, 197, 0.24);
+      color: #7ff0c5;
+    }
+
+    .role-vvip {
+      background: rgba(255, 207, 102, 0.12);
+      border: 1px solid rgba(255, 209, 102, 0.24);
+      color: #ffd166;
+    }
+
+    /* Footer Styles */
+    .main-footer {
+      margin-top: 60px;
+      padding: 40px 24px 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(6, 10, 18, 0.4);
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+
+    .footer-links a {
+      color: #8a9bb5;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: #00f5ff;
+    }
+
+    .footer-disclaimer {
+      text-align: center;
+      color: #5a6a85;
+      font-size: 12px;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto 20px;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .footer-disclaimer i {
+      color: #00f5ff;
+      margin-right: 6px;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      color: #4a5a7a;
+      font-size: 13px;
+    }
+
+    .footer-copyright a {
+      color: #6b7da3;
+      text-decoration: none;
+    }
+
+    .footer-copyright a:hover {
+      color: #00f5ff;
+    }
+
+    /* ===================================================== */
+    /* ✅ MULTI-CURRENCY TOGGLE STYLES */
+    /* ===================================================== */
+    
+    .currency-selector-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .currency-selector-row label {
+      color: #a0b3d9;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .currency-select {
+      min-height: 40px;
+      padding: 8px 32px 8px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(127, 240, 197, 0.25);
+      background: rgba(0, 0, 0, 0.25);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237ff0c5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 14px;
+    }
+
+    .currency-select option {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    .currency-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(127, 240, 197, 0.12);
+      border: 1px solid rgba(127, 240, 197, 0.2);
+      color: #7ff0c5;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 8px;
+    }
+
+    /* Manual Payment Modal Styles */
+    .manual-payment-modal {
+      max-width: 500px !important;
+    }
+
+    .payment-details-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    .payment-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .payment-detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .payment-detail-label {
+      color: #8a9bb5;
+      font-size: 13px;
+    }
+
+    .payment-detail-value {
+      color: #fff;
+      font-weight: 600;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    .copy-payment-btn {
+      background: transparent;
+      border: 1px solid rgba(127, 240, 197, 0.3);
+      color: #7ff0c5;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    .copy-payment-btn:hover {
+      background: rgba(127, 240, 197, 0.1);
+    }
+
+    .payment-instructions {
+      background: rgba(0, 245, 255, 0.05);
+      border-left: 3px solid #00f5ff;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin: 16px 0;
+      color: #c5d1eb;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .proof-upload-area {
+      margin: 16px 0;
+    }
+
+    .proof-upload-area label {
+      display: block;
+      color: #dce5f2;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .proof-input {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 12px;
+      border: 1px dashed rgba(127, 240, 197, 0.3);
+      background: rgba(0, 0, 0, 0.2);
+      color: #fff;
+      padding: 12px 14px;
+      font-size: 13px;
+    }
+
+    .proof-input::placeholder {
+      color: #6b7da3;
+    }
+
+    .payment-action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .payment-action-buttons .btn-primary,
+    .payment-action-buttons .btn-secondary {
+      flex: 1;
+    }
+
+    .network-selector {
+      display: flex;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .network-option {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #a0b3d9;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .network-option.active {
+      background: rgba(127, 240, 197, 0.15);
+      border-color: #7ff0c5;
+      color: #7ff0c5;
+    }
+
+    .plan-price-converted {
+      font-size: 13px;
+      color: #7ff0c5;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* ===================================================== */
+    /* 🔥 BEAST MODE: LOADING OVERLAY - FIXED MOBILE */
+    /* ===================================================== */
+    .beast-loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 10, 18, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .beast-loading-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .beast-loader-container {
+      text-align: center;
+      max-width: 90vw;
+      padding: 20px;
+    }
+
+    .beast-logo-pulse {
+      font-size: clamp(28px, 8vw, 64px);
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      animation: beastPulse 2s ease-in-out infinite;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      word-break: keep-all;
+    }
+
+    .beast-logo-pulse span {
+      display: inline-block;
+      animation: beastWave 1.5s ease-in-out infinite;
+    }
+
+    .beast-logo-pulse span:nth-child(1) { animation-delay: 0.0s; }
+    .beast-logo-pulse span:nth-child(2) { animation-delay: 0.1s; }
+    .beast-logo-pulse span:nth-child(3) { animation-delay: 0.2s; }
+    .beast-logo-pulse span:nth-child(4) { animation-delay: 0.3s; }
+    .beast-logo-pulse span:nth-child(5) { animation-delay: 0.4s; }
+    .beast-logo-pulse span:nth-child(6) { animation-delay: 0.5s; }
+    .beast-logo-pulse span:nth-child(7) { animation-delay: 0.6s; }
+    .beast-logo-pulse span:nth-child(8) { animation-delay: 0.7s; }
+    .beast-logo-pulse span:nth-child(9) { animation-delay: 0.8s; }
+    .beast-logo-pulse span:nth-child(10) { animation-delay: 0.9s; }
+
+    .beast-progress-wrapper {
+      width: min(300px, 80vw);
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      margin: 24px auto;
+      overflow: hidden;
+    }
+
+    .beast-progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #7ff0c5, #00f5ff, #7ff0c5);
+      background-size: 200% 100%;
+      border-radius: 4px;
+      animation: beastShimmer 1.5s linear infinite, beastProgress 3s ease-out forwards;
+      box-shadow: 0 0 20px rgba(127, 240, 197, 0.5);
+    }
+
+    .beast-message {
+      color: #fff;
+      font-size: clamp(14px, 4vw, 16px);
+      font-weight: 500;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      opacity: 0.9;
+      padding: 0 16px;
+    }
+
+    .beast-message .emoji {
+      font-size: 20px;
+      animation: beastBounce 1s ease-in-out infinite;
+    }
+
+    @keyframes beastPulse {
+      0%, 100% { opacity: 1; transform: scale(1); text-shadow: 0 0 20px rgba(127, 240, 197, 0.3); }
+      50% { opacity: 0.7; transform: scale(1.05); text-shadow: 0 0 40px rgba(127, 240, 197, 0.6); }
+    }
+
+    @keyframes beastWave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes beastShimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    @keyframes beastProgress {
+      0% { width: 0%; }
+      20% { width: 25%; }
+      50% { width: 55%; }
+      80% { width: 80%; }
+      100% { width: 95%; }
+    }
+
+    @keyframes beastBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* ===================================================== */
+    /* 🔥 BEAST MODE: THEME TOGGLE ENHANCED */
+    /* ===================================================== */
+    .theme-toggle-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .theme-toggle-btn:hover {
+      background: rgba(127, 240, 197, 0.15);
+      border-color: rgba(127, 240, 197, 0.3);
+      transform: scale(1.05);
+    }
+
+    /* Mobile Modal Fixes */
+    @media (max-width: 768px) {
+      .modal-box {
+        padding: 16px;
+        max-height: 85vh;
+      }
+      .subscription-plans {
+        grid-template-columns: 1fr;
+      }
+      .plan-price strong {
+        font-size: 24px;
+      }
+      .beast-logo-pulse {
+        font-size: clamp(24px, 7vw, 48px);
+        letter-spacing: 1px;
+      }
+    }
+  </style>
+</head>
+
+<body class="sportsbook-layout">
+
+  <!-- 🔥 BEAST LOADING OVERLAY -->
+  <div class="beast-loading-overlay" id="beastLoadingOverlay">
+    <div class="beast-loader-container">
+      <div class="beast-logo-pulse">
+        <span>P</span><span>R</span><span>O</span><span>P</span><span>R</span><span>E</span><span>D</span><span>I</span><span>C</span><span>T</span>
+      </div>
+      <div class="beast-progress-wrapper">
+        <div class="beast-progress-bar" id="beastProgressBar"></div>
+      </div>
+      <div class="beast-message" id="beastLoadingMessage">
+        <span class="emoji" id="beastEmoji">🔮</span>
+        <span id="beastMessageText">Consulting the AI oracle...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STICKY HEADER -->
+  <header class="header sportsbook-header">
+    <div class="header-left">
+      <div class="logo">
+        <h1>ProPredict</h1>
+        <span class="subtitle">Multi-Sport Probability Intelligence Platform</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="controls">
+        <div class="control-group">
+          <label for="sportSelect">Sport</label>
+          <select id="sportSelect">
+            <option value="football">Football</option>
+            <option value="basketball">Basketball</option>
+            <option value="nfl">NFL</option>
+            <option value="nhl">NHL</option>
+            <option value="rugbyleague">Rugby League</option>
+            <option value="rugbyunion">Rugby Union</option>
+            <option value="mlb">MLB</option>
+            <option value="tennis">Tennis</option>
+            <option value="darts">Darts</option>
+            <option value="tabletennis">Table Tennis</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="competitionSelect">Competition</label>
+          <select id="competitionSelect">
+            <optgroup label="Top 5 Leagues">
+              <option value="PL">Premier League</option>
+              <option value="PD">La Liga</option>
+              <option value="SA">Serie A</option>
+              <option value="BL1">Bundesliga</option>
+              <option value="FL1">Ligue 1</option>
+            </optgroup>
+            <optgroup label="Europe">
+              <option value="UCL">UEFA Champions League</option>
+              <option value="UEL">UEFA Europa League</option>
+              <option value="UECL">UEFA Europa Conference League</option>
+            </optgroup>
+            <optgroup label="International">
+              <option value="WC">FIFA World Cup</option>
+              <option value="EURO">UEFA European Championship</option>
+            </optgroup>
+            <optgroup label="Asia">
+              <option value="J1">Japan J1 League</option>
+              <option value="SPL">Saudi Pro League</option>
+              <option value="CSL">Chinese Super League</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="control-group toggle-group">
+          <label for="eliteToggle">Elite Picks</label>
+          <input type="checkbox" id="eliteToggle">
+        </div>
+        <div class="control-group theme-toggle-group">
+          <label for="themeToggleBtn">Theme</label>
+          <button id="themeToggleBtn" class="theme-toggle-btn">
+            <span id="themeIcon">🌙</span>
+            <span id="themeText">Dark</span>
+          </button>
+        </div>
+      </div>
+      <div class="auth-controls">
+        <div id="userStatus" class="user-status">
+          <span id="userRoleBadge" class="role-badge role-free">FREE</span>
+        </div>
+        <button id="loginBtn" class="btn-primary">Login</button>
+        <button id="registerBtn" class="btn-secondary">Create Account</button>
+        <button id="upgradeBtn" class="btn-secondary hidden" style="display:none;">Upgrade</button>
+        <button id="logoutBtn" class="btn-secondary hidden" style="display:none;">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main id="appRoot">
+    <section id="guestLanding" class="guest-landing">
+      <div class="guest-hero-card">
+        <div class="guest-badge">Multi-Sport AI Betting Intelligence</div>
+        <h2 class="guest-title">Unlock ProPredict</h2>
+        <p class="guest-description">Get access to smart match selections, advanced betting market options, accumulator tools, confidence breakdowns and team analysis after successful registration or login.</p>
+        <div class="guest-cta-row">
+          <button id="heroLoginBtn" class="btn-primary">Login</button>
+          <button id="heroRegisterBtn" class="btn-secondary">Create Account</button>
+        </div>
+        <div class="guest-feature-grid">
+          <div class="guest-feature-card"><h3>Top Picks</h3><p>AI ranked selections with confidence scoring.</p></div>
+          <div class="guest-feature-card"><h3>Accumulator Builder</h3><p>Build smarter slips with combined odds and probability view.</p></div>
+          <div class="guest-feature-card"><h3>Market Options</h3><p>See betting market choices for supported matches and sports.</p></div>
+          <div class="guest-feature-card"><h3>Team Analysis</h3><p>Form, edge, strength and matchup intelligence in one place.</p></div>
+        </div>
+      </div>
+    </section>
+    <section id="lockedNotice" class="locked-notice-card">
+      <div class="locked-notice-content">
+        <h3>Sign in to view picks, analysis and accumulators</h3>
+        <p>Matches, betting markets, team analysis and accumulator tools stay hidden until you successfully log in or register.</p>
+      </div>
+    </section>
+    <section id="protectedApp" class="protected-app-shell hidden">
+      <!-- 🔥 WELCOME SECTION WITH GLOBAL TICKER -->
+      <div class="dashboard-welcome-section">
+        <div class="welcome-header">
+          <span class="welcome-greeting" id="welcomeGreeting">Welcome back,</span>
+          <span class="welcome-name" id="welcomeName">User</span>
+          <span class="welcome-emoji" id="welcomeEmoji">👋</span>
+        </div>
+        <div class="global-ticker-bar" id="globalTickerBar">
+          <div class="ticker-content">
+            <span class="ticker-emoji" id="tickerEmoji">⚡</span>
+            <span class="ticker-text" id="tickerText">The algorithm is hungry today</span>
+          </div>
+        </div>
+      </div>
+      
+      <section class="dashboard-hero-row"><div class="dashboard-hero-card"><div class="dashboard-hero-top"><span class="dashboard-label">Live Intelligence Dashboard</span><span id="dashboardAccessBadge" class="dashboard-access-badge">Protected</span></div><h2 class="dashboard-hero-title">Smart picks, team analysis and accumulator intelligence</h2><p class="dashboard-hero-text">This area is visible only after successful authentication.</p></div></section>
+      
+      <!-- 🔥 REFERRAL DASHBOARD (Free users can see) -->
+      <section id="referralDashboard" class="referral-dashboard-card hidden"><div class="referral-header"><i class="fas fa-gift"></i><h3>Invite Friends & Earn Free Pro Access</h3></div><div class="referral-stats"><div class="referral-stat"><div class="number" id="referralCount">0</div><div class="label">Friends Invited</div></div><div class="referral-stat"><div class="number" id="referralRewardDays">7</div><div class="label">Days per Friend</div></div><div class="referral-stat"><div class="number" id="referralEarned">0</div><div class="label">Days Earned</div></div></div><div class="referral-link-box"><input type="text" id="referralLinkInput" readonly value="Loading..."><button class="copy-btn" id="copyReferralBtn"><i class="fas fa-copy"></i> Copy Link</button></div><div class="referral-reward-info"><i class="fas fa-info-circle"></i> Share your link. When friends sign up and verify their email, you both get <strong>7 days of Pro access FREE</strong>!</div></section>
+      
+      <!-- 🔥 TOP PICKS SECTION (Free: limited to 3, handled in picks.js) -->
+      <section id="matchesSection" class="content-section app-panel">
+        <div class="section-header">
+          <div>
+            <h2>Top Picks & Matches</h2>
+            <p>AI-ranked match selections will render here after login.</p>
+          </div>
+        </div>
+        
+        <!-- SKELETON LOADER (shown while loading) -->
+        <div id="picksSkeleton" class="skeleton-grid">
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line-short"></div>
+            <div class="skeleton skeleton-badge"></div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line-short"></div>
+            <div class="skeleton skeleton-badge"></div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line-short"></div>
+            <div class="skeleton skeleton-badge"></div>
+          </div>
+        </div>
+        
+        <!-- REAL CONTENT CONTAINER (hidden until loaded) -->
+        <div id="topPicksContainer" class="panel-content-grid"></div>
+      </section>
+      
+      <!-- 🔥 TEAM LOOKUP (Pro Only) -->
+      <section class="content-section app-panel pro-locked-section" data-pro-only="true">
+        <div class="section-header">
+          <div>
+            <h2>Football Team Lookup</h2>
+            <p>Select a football team to run deeper analysis.</p>
+          </div>
+        </div>
+        <div class="team-analysis-toolbar">
+          <select id="teamSelect"><option value="">Select Team</option></select>
+          <button id="analyzeBtn" class="btn-primary">Analyze Team</button>
+        </div>
+        <!-- Lock overlay injected by JS -->
+      </section>
+      
+      <!-- 🔥 TEAM ANALYSIS (Pro Only) -->
+      <section id="teamAnalysisSection" class="content-section app-panel pro-locked-section" data-pro-only="true">
+        <div class="section-header"><div><h2>Team Analysis</h2><p>Form, edge, recent performance and strength insights.</p></div></div>
+        <div id="teamAnalysisContainer" class="panel-content-grid"></div>
+      </section>
+      
+      <!-- 🔥 MARKET OPTIONS (Pro Only) -->
+      <section id="marketOptionsSection" class="content-section app-panel pro-locked-section" data-pro-only="true">
+        <div class="section-header"><div><h2>Betting Market Options</h2><p>Available market choices for the selected match or competition.</p></div></div>
+        <div id="marketOptionsContainer" class="panel-content-grid"></div>
+      </section>
+      
+      <!-- 🔥 ACCUMULATOR BUILDER (Pro Only) -->
+      <section id="accumulatorSection" class="content-section app-panel pro-locked-section" data-pro-only="true">
+        <div class="section-header"><div><h2>Accumulator Builder</h2><p>Selected picks, combined odds and strength summary.</p></div></div>
+        <div class="accumulator-metrics-grid">
+          <div class="guest-feature-card"><h3>Combined Probability</h3><p id="combinedProbability">0.00%</p></div>
+          <div class="guest-feature-card"><h3>Decimal Odds</h3><p id="decimalOdds">-</p></div>
+          <div class="guest-feature-card"><h3>Risk Level</h3><p id="riskLevel">-</p></div>
+        </div>
+        <div class="accumulator-action-row"><button id="clearAccumulatorBtn" class="btn-secondary">Clear Accumulator</button></div>
+        <div id="accumulatorSelections" class="panel-content-grid"></div>
+        <div id="accumulatorContainer" class="panel-content-grid hidden"></div>
+      </section>
+      
+      <!-- 🔥 PERFORMANCE SUMMARY (Free: basic, Pro: full) -->
+      <section class="content-section app-panel">
+        <div class="section-header"><div><h2>Performance Summary</h2><p>Track recorded picks, settled outcomes and overall return.</p></div></div>
+        <div class="performance-summary-grid">
+          <div class="guest-feature-card"><h3>Total Picks</h3><p id="perfTotal">0</p></div>
+          <div class="guest-feature-card"><h3>Settled</h3><p id="perfSettled">0</p></div>
+          <div class="guest-feature-card"><h3>Wins</h3><p id="perfWins">0</p></div>
+          <div class="guest-feature-card"><h3>Losses</h3><p id="perfLosses">0</p></div>
+          <div class="guest-feature-card"><h3>Win Rate</h3><p id="perfWinRate">0%</p></div>
+          <div class="guest-feature-card pro-only-stat" data-pro-only="true"><h3>ROI</h3><p id="perfROI">0%</p></div>
+        </div>
+        <div class="upgrade-banner hidden" id="perfUpgradeBanner">
+          <span class="upgrade-banner-text"><strong>👑 Upgrade to Pro</strong> to unlock ROI tracking and detailed analytics</span>
+          <button class="upgrade-banner-btn" onclick="document.getElementById('upgradeBtn')?.click()">Upgrade Now</button>
+        </div>
+      </section>
+      
+      <!-- 🔥 PERFORMANCE LOG (Pro Only) -->
+      <section class="content-section app-panel pro-locked-section" data-pro-only="true">
+        <div class="section-header"><div><h2>Performance Log</h2><p>Recorded picks and result updates will appear here.</p></div></div>
+        <div id="performanceLogContainer" class="panel-content-grid"></div>
+      </section>
+    </section>
+  </main>
+
+  <!-- AUTH MODAL - GOOGLE SIGN-IN REMOVED -->
+  <div id="authModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <button id="closeAuthModal" class="modal-close">✕</button>
+      <div class="auth-modal-badge">Secure Access</div>
+      <h2 id="authModalTitle">Login</h2>
+      <p class="auth-modal-subtitle">Access your protected ProPredict dashboard, picks, team analysis and accumulator intelligence.</p>
+      <form id="authForm" class="auth-form">
+        <div class="form-group"><label for="authEmail">Email</label><input type="email" id="authEmail" placeholder="Enter your email" required /></div>
+        <div class="form-group"><label for="authPassword">Password</label><div class="password-input-wrapper"><input type="password" id="authPassword" placeholder="Enter your password" required /><button type="button" class="password-toggle-btn" id="passwordToggleBtn" aria-label="Show password">👁️</button></div><div class="password-meta"><div id="passwordStrength" class="password-strength"></div><div id="passwordHints" class="password-hints"><span>Use at least 8 characters</span><span>Add one uppercase letter</span><span>Add one number</span><span>Add one special character</span></div></div></div>
+        <div class="remember-forgot-row"><div class="remember-me"><input type="checkbox" id="rememberMeCheckbox"><label for="rememberMeCheckbox">Remember me for 30 days</label></div><a href="/reset-password.html" class="forgot-password-link">Forgot password?</a></div>
+        <div class="auth-submit-row"><button type="submit" class="btn-primary">Submit</button></div>
+      </form>
+      <div class="auth-switch"><span id="switchAuthMode">Don't have an account? Register</span></div>
+      <div id="authMessage" class="auth-message"></div>
+    </div>
+  </div>
+
+  <!-- SUBSCRIPTION MODAL -->
+  <div id="subscriptionModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <button id="closeSubscriptionModal" class="modal-close">✕</button>
+      <div class="subscription-topbar"><div class="subscription-summary"><div class="subscription-modal-badge">Premium Access</div><h2>Choose Your Plan</h2><p class="subscription-modal-subtitle">Unlock elite picks, accumulator tools, team analysis and premium match intelligence.</p></div></div>
+      <div class="currency-selector-row"><label for="currencySelect">Currency:</label><select id="currencySelect" class="currency-select"><option value="NGN" selected>🇳🇬 NGN (Naira) - Paystack</option><option value="USD">🇺🇸 USD - Bank Transfer</option><option value="GBP">🇬🇧 GBP - Bank Transfer</option><option value="USDC">💎 USDC - Crypto</option><option value="USDT">💎 USDT - Crypto</option></select><span id="currencyBadge" class="currency-badge">Instant</span></div>
+      <div class="subscription-plans" id="subscriptionPlansContainer">
+        <div class="plan-card" data-plan="weekly"><span class="plan-tag">Weekly</span><h3>Weekly</h3><div class="plan-price"><strong id="weeklyPrice">₦4,500</strong><span>/ week</span></div><div id="weeklyConvertedPrice" class="plan-price-converted"></div><ul class="plan-features"><li>Full access for 7 days</li><li>All premium picks</li><li>Team analysis tools</li><li>Accumulator builder</li></ul><button class="btn-primary subscribe-btn" data-tier="weekly" data-interval="weekly" data-ngn-price="4500">Subscribe Weekly</button></div>
+        <div class="plan-card featured-plan" data-plan="monthly"><span class="plan-tag">Most Popular</span><h3>Monthly</h3><div class="plan-price"><strong id="monthlyPrice">₦12,500</strong><span>/ month</span></div><div id="monthlyConvertedPrice" class="plan-price-converted"></div><ul class="plan-features"><li>Full access for 30 days</li><li>All premium picks</li><li>Team analysis tools</li><li>Accumulator builder</li><li>Performance tracking</li></ul><button class="btn-primary subscribe-btn" data-tier="monthly" data-interval="monthly" data-ngn-price="12500">Subscribe Monthly</button></div>
+        <div class="plan-card" data-plan="quarterly"><span class="plan-tag">Save 20%</span><h3>Quarterly</h3><div class="plan-price"><strong id="quarterlyPrice">₦30,000</strong><span>/ 3 months</span></div><div id="quarterlyConvertedPrice" class="plan-price-converted"></div><ul class="plan-features"><li>Full access for 90 days</li><li>All premium picks</li><li>Team analysis tools</li><li>Accumulator builder</li><li>Performance tracking</li><li>Priority support</li></ul><button class="btn-primary subscribe-btn" data-tier="quarterly" data-interval="quarterly" data-ngn-price="30000">Subscribe Quarterly</button></div>
+        <div class="plan-card" data-plan="yearly"><span class="plan-tag">Best Value</span><h3>Yearly</h3><div class="plan-price"><strong id="yearlyPrice">₦120,000</strong><span>/ year</span></div><div id="yearlyConvertedPrice" class="plan-price-converted"></div><ul class="plan-features"><li>Full access for 365 days</li><li>All premium picks</li><li>Team analysis tools</li><li>Accumulator builder</li><li>Performance tracking</li><li>Priority support</li><li>Early access to new features</li></ul><button class="btn-primary subscribe-btn" data-tier="yearly" data-interval="yearly" data-ngn-price="120000">Subscribe Yearly</button></div>
+      </div>
+      <div class="subscription-footer-note" id="subscriptionFooterNote">Secure payments powered by Paystack. Cancel anytime from your dashboard.</div>
+      <div id="subscriptionMessage" class="auth-message"></div>
+    </div>
+  </div>
+
+  <!-- MANUAL PAYMENT MODAL -->
+  <div id="manualPaymentModal" class="modal-overlay hidden">
+    <div class="modal-box manual-payment-modal">
+      <button id="closeManualPaymentModal" class="modal-close">✕</button>
+      <div class="subscription-modal-badge" id="manualPaymentBadge">USD Payment</div>
+      <h2 id="manualPaymentTitle">Complete Your Payment</h2>
+      <p class="subscription-modal-subtitle" id="manualPaymentSubtitle">Send the exact amount using the details below.</p>
+      <div id="paymentDetailsContainer" class="payment-details-box"></div>
+      <div id="paymentInstructions" class="payment-instructions"></div>
+      <div class="proof-upload-area"><label for="paymentProof">Proof of Payment</label><input type="text" id="paymentProof" class="proof-input" placeholder="Transaction ID / Hash / Screenshot link"><small style="color: #8a9bb5; font-size: 11px; display: block; margin-top: 6px;">Enter transaction reference or upload link. Our team will verify within 24 hours.</small></div>
+      <div class="form-group hidden" id="cryptoNetworkGroup"><label for="cryptoNetworkSelect">Network</label><select id="cryptoNetworkSelect" class="currency-select"></select></div>
+      <div class="payment-action-buttons"><button id="confirmManualPaymentBtn" class="btn-primary">I've Sent Payment</button><button id="cancelManualPaymentBtn" class="btn-secondary">Cancel</button></div>
+      <div id="manualPaymentMessage" class="auth-message"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="main-footer">
+    <div class="footer-content">
+      <div class="footer-links"><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/disclaimer.html">Disclaimer</a><a href="/responsible-gambling.html">Responsible Gambling</a></div>
+      <div class="footer-disclaimer"><i class="fas fa-exclamation-triangle"></i><strong>Disclaimer:</strong> ProPredict provides AI-generated predictions for entertainment purposes only. No guarantees of winning. Please gamble responsibly. 18+ only. If you or someone you know has a gambling problem, seek help from local support services.</div>
+      <div class="footer-copyright">© 2026 ProPredict Analytics. All rights reserved. | <a href="mailto:propredict.support@gmail.com">propredict.support@gmail.com</a></div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="/js/app-state.js"></script><script src="/js/helpers.js"></script><script src="/js/dom.js"></script><script src="/js/auth.js"></script><script src="/js/fetch-interceptor.js"></script><script src="/js/competition.js"></script><script src="/js/smart-builder.js"></script><script src="/js/picks.js"></script><script src="/js/accumulator.js"></script><script src="/js/performance.js"></script><script src="/js/teams.js"></script><script src="/js/safety-wrappers.js"></script><script src="/js/events-and-init.js"></script>
+
+  <!-- Password Toggle -->
+  <script>(function(){const p=document.getElementById('authPassword'),b=document.getElementById('passwordToggleBtn');if(p&&b)b.addEventListener('click',()=>{const t=p.getAttribute('type')==='password'?'text':'password';p.setAttribute('type',t);b.textContent=t==='password'?'👁️':'🙈';});})();</script>
+
+  <!-- Password Strength -->
+  <script>(function(){const p=document.getElementById("authPassword"),s=document.getElementById("passwordStrength"),m=document.getElementById("switchAuthMode"),t=document.getElementById("authModalTitle");function e(v){let c=0;if(v.length>=8)c++;if(/[A-Z]/.test(v))c++;if(/[0-9]/.test(v))c++;if(/[^A-Za-z0-9]/.test(v))c++;if(c<=1)return{label:"Weak password",className:"password-strength strength-weak"};if(c<=3)return{label:"Medium password",className:"password-strength strength-medium"};return{label:"Strong password",className:"password-strength strength-strong"};}function u(){if(!p||!s)return;if(t&&!t.textContent.toLowerCase().includes("create")){s.textContent="";s.className="password-strength";return;}if(!p.value.trim()){s.textContent="Create a strong password for registration";s.className="password-strength strength-medium";return;}const r=e(p.value.trim());s.textContent=r.label;s.className=r.className;}p&&p.addEventListener("input",u);p&&p.addEventListener("focus",u);m&&m.addEventListener("click",()=>setTimeout(u,60));document.addEventListener("DOMContentLoaded",u);})();</script>
+
+  <!-- Referral -->
+  <script>document.addEventListener('DOMContentLoaded',()=>{const r=new URLSearchParams(window.location.search).get('ref');if(r)sessionStorage.setItem('referralCode',r);});async function loadReferralStats(){if(!window.ppIsLoggedIn||!window.ppIsLoggedIn())return;try{const s=await window.ppGetReferralStats();if(s){document.getElementById('referralCount').textContent=s.referralCount||0;document.getElementById('referralLinkInput').value=s.referralLink||'';const d=document.getElementById('referralDashboard');if(d)d.classList.remove('hidden');}}catch(e){console.error(e);}}function copyReferralLink(){const i=document.getElementById('referralLinkInput'),b=document.getElementById('copyReferralBtn');i.select();i.setSelectionRange(0,99999);try{navigator.clipboard.writeText(i.value);b.innerHTML='<i class="fas fa-check"></i> Copied!';b.classList.add('copied');setTimeout(()=>{b.innerHTML='<i class="fas fa-copy"></i> Copy Link';b.classList.remove('copied');},2000);if(typeof showToast==='function')showToast('Referral link copied!','success');}catch(e){alert('Copy manually: '+i.value);}}document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('copyReferralBtn');if(b)b.addEventListener('click',copyReferralLink);});const oIA=window.ppInitAuth;window.ppInitAuth=function(){oIA.call(this);if(window.ppIsLoggedIn&&window.ppIsLoggedIn())setTimeout(loadReferralStats,500);};const oSU=window.ppSyncProtectedUI;window.ppSyncProtectedUI=function(){oSU.call(this);if(window.ppIsLoggedIn&&window.ppIsLoggedIn())setTimeout(loadReferralStats,500);};</script>
+
+  <!-- Multi-Currency -->
+  <script>(function(){function i(){const R={USD:0.00063,GBP:0.00050,USDC:0.00063,USDT:0.00063};let C='NGN',P=null;const S=document.getElementById('currencySelect'),B=document.getElementById('currencyBadge'),F=document.getElementById('subscriptionFooterNote'),M=document.getElementById('manualPaymentModal'),CM=document.getElementById('closeManualPaymentModal'),CB=document.getElementById('cancelManualPaymentBtn'),CF=document.getElementById('confirmManualPaymentBtn');function G(){return{weekly:document.getElementById('weeklyPrice'),monthly:document.getElementById('monthlyPrice'),quarterly:document.getElementById('quarterlyPrice'),yearly:document.getElementById('yearlyPrice')};}function E(){return{weekly:document.getElementById('weeklyConvertedPrice'),monthly:document.getElementById('monthlyConvertedPrice'),quarterly:document.getElementById('quarterlyConvertedPrice'),yearly:document.getElementById('yearlyConvertedPrice')};}const N={weekly:4500,monthly:12500,quarterly:30000,yearly:120000};function f(a,c){if(c==='NGN')return '₦'+a.toLocaleString();if(c==='USD')return '$'+a.toFixed(2);if(c==='GBP')return '£'+a.toFixed(2);if(c==='USDC')return a.toFixed(2)+' USDC';if(c==='USDT')return a.toFixed(2)+' USDT';return a.toString();}function X(a,c){if(c==='NGN')return a;return a*(R[c]||0.00063);}function U(){const c=C,p=G(),e=E();if(B){if(C==='NGN'){B.textContent='Instant';B.style.background='rgba(127,240,197,0.12)';B.style.color='#7ff0c5';}else{B.textContent='Manual (24h)';B.style.background='rgba(255,179,71,0.12)';B.style.color='#ffb347';}}if(F)F.textContent=C==='NGN'?'Secure payments powered by Paystack. Cancel anytime.':'Payment verified manually within 24h. Check email for updates.';Object.keys(N).forEach(k=>{const n=N[k],x=X(n,C);if(p[k])p[k].textContent=f(C==='NGN'?n:x,C);if(e[k]){if(C!=='NGN'){e[k].textContent=`≈ ₦${n.toLocaleString()} NGN`;e[k].style.display='block';}else{e[k].textContent='';e[k].style.display='none';}}});document.querySelectorAll('.subscribe-btn').forEach(b=>{const t=b.getAttribute('data-tier');b.textContent=C==='NGN'?`Subscribe ${t.charAt(0).toUpperCase()+t.slice(1)}`:`Pay with ${C}`;});}if(S)S.addEventListener('change',e=>{C=e.target.value;U();});document.addEventListener('click',async e=>{const b=e.target.closest('.subscribe-btn');if(!b)return;e.preventDefault();const t=b.dataset.tier,i=b.dataset.interval,n=parseInt(b.dataset.ngnPrice);if(C==='NGN'){if(typeof window.ppInitializeSubscription==='function')window.ppInitializeSubscription(t,i,'NGN');else if(typeof window.ppStartSubscription==='function')window.ppStartSubscription(t,i);}else{const x=X(n,C);P={tier:t,interval:i,amount:x,currency:C,ngnAmount:n};await H(P);}});async function H(p){document.getElementById('manualPaymentBadge').textContent=`${p.currency} Payment`;document.getElementById('manualPaymentTitle').textContent=`Pay ${f(p.amount,p.currency)}`;try{const t=localStorage.getItem('propredict_token')||localStorage.getItem('token');const r=await fetch('/api/get-payment-details',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${t}`},body:JSON.stringify({currency:p.currency,plan:p.tier,amount:p.amount})});const d=await r.json();if(d.success)V(d.paymentDetails);else L('Failed to load payment details','error');}catch(err){L('Error loading payment details','error');}M.classList.remove('hidden');}function V(d){const c=document.getElementById('paymentDetailsContainer'),i=document.getElementById('paymentInstructions'),n=document.getElementById('cryptoNetworkGroup'),s=document.getElementById('cryptoNetworkSelect');let h='';if(d.currency==='USD'||d.currency==='GBP'){h=`<div class="payment-detail-row"><span class="payment-detail-label">Bank:</span><span class="payment-detail-value">${d.bankName}</span></div><div class="payment-detail-row"><span class="payment-detail-label">Account Name:</span><span class="payment-detail-value">${d.accountName}</span></div><div class="payment-detail-row"><span class="payment-detail-label">Account Number:</span><span class="payment-detail-value">${d.accountNumber}<button class="copy-payment-btn" onclick="navigator.clipboard.writeText('${d.accountNumber}')">Copy</button></span></div>${d.routing?`<div class="payment-detail-row"><span class="payment-detail-label">Routing:</span><span class="payment-detail-value">${d.routing}</span></div>`:''}${d.sortCode?`<div class="payment-detail-row"><span class="payment-detail-label">Sort Code:</span><span class="payment-detail-value">${d.sortCode}</span></div>`:''}${d.iban?`<div class="payment-detail-row"><span class="payment-detail-label">IBAN:</span><span class="payment-detail-value">${d.iban}</span></div>`:''}${d.swift?`<div class="payment-detail-row"><span class="payment-detail-label">SWIFT:</span><span class="payment-detail-value">${d.swift}</span></div>`:''}<div class="payment-detail-row"><span class="payment-detail-label">Amount:</span><span class="payment-detail-value">${f(d.amount,d.currency)}</span></div>`;n.classList.add('hidden');}else{h=`<div class="payment-detail-row"><span class="payment-detail-label">Address:</span><span class="payment-detail-value">${d.address?d.address.substring(0,10)+'...'+d.address.substring(d.address.length-8):''}<button class="copy-payment-btn" onclick="navigator.clipboard.writeText('${d.address}')">Copy</button></span></div><div class="payment-detail-row"><span class="payment-detail-label">Amount:</span><span class="payment-detail-value">${f(d.amount,d.currency)}</span></div>`;if(s&&d.networks){s.innerHTML='';d.networks.forEach(net=>{const o=document.createElement('option');o.value=net;o.textContent=net;s.appendChild(o);});}n.classList.remove('hidden');}c.innerHTML=h;i.innerHTML=`<strong>📌 Instructions:</strong><br>${d.instructions}<br><br><strong>📧 Support:</strong> ${d.supportEmail}`;}function L(m,t){const el=document.getElementById('manualPaymentMessage');if(el){el.textContent=m;el.style.color=t==='error'?'#ff6b6b':'#46e6a6';}}function K(){M.classList.add('hidden');document.getElementById('paymentProof').value='';L('','');}if(CF)CF.addEventListener('click',async()=>{const pr=document.getElementById('paymentProof').value,ns=document.getElementById('cryptoNetworkSelect'),sn=ns?ns.value:'N/A';if(!pr)return L('Please enter transaction proof','error');if(!P)return L('No pending plan found','error');const t=localStorage.getItem('propredict_token')||localStorage.getItem('token');try{const r=await fetch('/api/submit-manual-payment',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${t}`},body:JSON.stringify({currency:P.currency,plan:P.tier,amount:P.amount,proofType:(P.currency==='USDC'||P.currency==='USDT')?'crypto':'bank',proofData:pr,transactionRef:pr,notes:`Network: ${sn}`})});const d=await r.json();if(d.success){L('Payment proof submitted! We will verify within 24 hours.','success');setTimeout(()=>{M.classList.add('hidden');document.getElementById('subscriptionModal').classList.add('hidden');document.getElementById('paymentProof').value='';},2000);}else L(d.error||'Submission failed','error');}catch(err){L('Error submitting payment','error');}});if(CM)CM.addEventListener('click',K);if(CB)CB.addEventListener('click',K);setTimeout(U,100);}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',i);else i();})();</script>
+
+  <!-- 🔥 BEAST LOADER CONTROLLER - FIXED ROTATING MESSAGES -->
+  <script>
+    (function() {
+      const overlay = document.getElementById('beastLoadingOverlay');
+      const messageText = document.getElementById('beastMessageText');
+      const emojiSpan = document.getElementById('beastEmoji');
+      const progressBar = document.getElementById('beastProgressBar');
+      
+      const messages = [
+        { emoji: '🔮', text: 'Consulting the AI oracle...' },
+        { emoji: '📊', text: 'Crunching performance data...' },
+        { emoji: '⚽', text: 'Analyzing team form...' },
+        { emoji: '🧠', text: 'Our AI is thinking...' },
+        { emoji: '💎', text: 'Finding value picks...' },
+        { emoji: '🎯', text: 'Calculating win probability...' },
+        { emoji: '🏆', text: 'Preparing your edge...' },
+        { emoji: '⚡', text: 'Almost there...' }
+      ];
+      
+      let intervalId = null;
+      let currentIndex = 0;
+      
+      function clearMessageInterval() {
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      }
+      
+      function updateMessage() {
+        const msg = messages[currentIndex % messages.length];
+        if (emojiSpan) emojiSpan.textContent = msg.emoji;
+        if (messageText) messageText.textContent = msg.text;
+        currentIndex++;
+      }
+      
+      function resetMessage() {
+        currentIndex = 0;
+        const firstMsg = messages[0];
+        if (emojiSpan) emojiSpan.textContent = firstMsg.emoji;
+        if (messageText) messageText.textContent = firstMsg.text;
+      }
+      
+      window.showBeastLoader = function(customFirstMessage) {
+        if (!overlay) return;
+        clearMessageInterval();
+        if (progressBar) {
+          progressBar.style.animation = 'none';
+          progressBar.offsetHeight;
+          progressBar.style.animation = '';
+        }
+        if (customFirstMessage) {
+          currentIndex = 0;
+          if (emojiSpan) emojiSpan.textContent = '🔮';
+          if (messageText) messageText.textContent = customFirstMessage;
+        } else {
+          resetMessage();
+        }
+        overlay.classList.add('active');
+        intervalId = setInterval(updateMessage, 2000);
+      };
+      
+      window.hideBeastLoader = function() {
+        if (!overlay) return;
+        overlay.classList.remove('active');
+        clearMessageInterval();
+      };
+      
+      const authForm = document.getElementById('authForm');
+      if (authForm) {
+        authForm.addEventListener('submit', function(e) {
+          const title = document.getElementById('authModalTitle');
+          const isRegister = title && title.textContent.includes('Create');
+          window.showBeastLoader(isRegister ? 'Creating your account...' : 'Signing you in...');
+        });
+      }
+      
+      document.addEventListener('click', function(e) {
+        if (e.target.closest('.subscribe-btn')) {
+          const currencySelect = document.getElementById('currencySelect');
+          if (currencySelect && currencySelect.value === 'NGN') {
+            window.showBeastLoader('Initializing secure payment...');
+          }
+        }
+      });
+      
+      const closeAuthBtn = document.getElementById('closeAuthModal');
+      if (closeAuthBtn) {
+        closeAuthBtn.addEventListener('click', window.hideBeastLoader);
+      }
+      
+      window._beastLoader = {
+        show: window.showBeastLoader,
+        hide: window.hideBeastLoader,
+        reset: resetMessage
+      };
+    })();
+  </script>
+
+  <!-- 🔥 GLOBAL TICKER CONTROLLER - ENHANCED WITH 40+ MESSAGES -->
+  <script>
+    (function() {
+      const initTicker = () => {
+        const welcomeNameSpan = document.getElementById('welcomeName');
+        const welcomeEmoji = document.getElementById('welcomeEmoji');
+        const tickerEmoji = document.getElementById('tickerEmoji');
+        const tickerText = document.getElementById('tickerText');
+        const tickerBar = document.getElementById('globalTickerBar');
+        const protectedApp = document.getElementById('protectedApp');
+        
+        if (!tickerBar || !tickerText) return;
+        
+        function extractNameFromEmail(email) {
+          if (!email) return null;
+          const localPart = email.split('@')[0];
+          let namePart = localPart.split(/[._-]/)[0];
+          namePart = namePart.replace(/\d+$/, '');
+          if (namePart.length > 0) {
+            namePart = namePart.charAt(0).toUpperCase() + namePart.slice(1).toLowerCase();
+          }
+          if (namePart.length < 2) return null;
+          if (['Admin', 'Info', 'Support', 'Contact', 'Hello', 'Test'].includes(namePart)) return null;
+          return namePart;
+        }
+        
+        function getUserEmail() {
+          try {
+            const user = window.ppGetCurrentUser ? window.ppGetCurrentUser() : null;
+            if (user && user.email) return user.email;
+            const storedUser = localStorage.getItem('propredict_user');
+            if (storedUser) {
+              const parsed = JSON.parse(storedUser);
+              return parsed.email || null;
+            }
+            const token = localStorage.getItem('propredict_token') || localStorage.getItem('token');
+            if (token) {
+              try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return payload.email || null;
+              } catch (e) {}
+            }
+          } catch (e) {}
+          return null;
+        }
+        
+        function calculateRealStats() {
+          try {
+            const perfLog = window.ppGetPerformanceLog ? window.ppGetPerformanceLog() : [];
+            if (!perfLog || perfLog.length === 0) return null;
+            
+            const settled = perfLog.filter(p => p.result === 'win' || p.result === 'loss');
+            const wins = settled.filter(p => p.result === 'win').length;
+            const losses = settled.filter(p => p.result === 'loss').length;
+            const total = settled.length;
+            if (total === 0) return null;
+            
+            const winRate = Math.round((wins / total) * 100);
+            
+            // ROI
+            let totalStake = 0, totalReturn = 0;
+            settled.forEach(p => {
+              totalStake += p.stake || 1;
+              if (p.result === 'win') totalReturn += (p.stake || 1) * (p.odds || 2);
+            });
+            const roi = totalStake > 0 ? Math.round(((totalReturn - totalStake) / totalStake) * 100) : 0;
+            
+            // Best market
+            const marketStats = {};
+            settled.filter(p => p.result === 'win').forEach(p => {
+              const market = p.market || 'Match Result';
+              marketStats[market] = (marketStats[market] || 0) + 1;
+            });
+            let bestMarket = null, bestCount = 0;
+            Object.entries(marketStats).forEach(([market, count]) => {
+              if (count > bestCount) { bestMarket = market; bestCount = count; }
+            });
+            const marketTotal = settled.filter(p => p.result === 'win' && p.market === bestMarket).length;
+            const marketWinRate = marketTotal > 0 ? Math.round((bestCount / marketTotal) * 100) : 0;
+            
+            // Streak
+            let streak = 0, maxStreak = 0, currentStreak = 0;
+            settled.forEach(p => {
+              if (p.result === 'win') { currentStreak++; maxStreak = Math.max(maxStreak, currentStreak); }
+              else currentStreak = 0;
+            });
+            for (let i = settled.length - 1; i >= 0; i--) {
+              if (settled[i].result === 'win') streak++;
+              else break;
+            }
+            
+            // Monthly record
+            const now = new Date();
+            const thisMonth = settled.filter(p => {
+              const d = new Date(p.date || Date.now());
+              return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
+            const monthWins = thisMonth.filter(p => p.result === 'win').length;
+            const monthLosses = thisMonth.filter(p => p.result === 'loss').length;
+            
+            // Best day
+            const dayStats = {};
+            settled.forEach(p => {
+              const d = new Date(p.date || Date.now());
+              const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getDay()];
+              if (!dayStats[day]) dayStats[day] = { wins: 0, total: 0 };
+              dayStats[day].total++;
+              if (p.result === 'win') dayStats[day].wins++;
+            });
+            let bestDay = null, bestDayRate = 0;
+            Object.entries(dayStats).forEach(([day, stats]) => {
+              if (stats.total >= 3) {
+                const rate = Math.round((stats.wins / stats.total) * 100);
+                if (rate > bestDayRate) { bestDay = day; bestDayRate = rate; }
+              }
+            });
+            
+            // Home/Away
+            let homeWins = 0, homeTotal = 0, awayWins = 0, awayTotal = 0;
+            settled.forEach(p => {
+              if (p.selection === 'home') { homeTotal++; if (p.result === 'win') homeWins++; }
+              else if (p.selection === 'away') { awayTotal++; if (p.result === 'win') awayWins++; }
+            });
+            const homeRate = homeTotal > 0 ? Math.round((homeWins / homeTotal) * 100) : 0;
+            const awayRate = awayTotal > 0 ? Math.round((awayWins / awayTotal) * 100) : 0;
+            
+            // Avg odds
+            const avgOdds = settled.length > 0 ? (settled.reduce((sum, p) => sum + (p.odds || 2), 0) / settled.length).toFixed(2) : 0;
+            
+            // Biggest win
+            let biggestWin = 0;
+            settled.filter(p => p.result === 'win').forEach(p => {
+              const profit = ((p.stake || 1) * (p.odds || 2)) - (p.stake || 1);
+              if (profit > biggestWin) biggestWin = profit;
+            });
+            
+            // League stats
+            const leagueStats = {};
+            settled.forEach(p => {
+              const league = p.competition || p.league || 'Other';
+              if (!leagueStats[league]) leagueStats[league] = { wins: 0, total: 0 };
+              leagueStats[league].total++;
+              if (p.result === 'win') leagueStats[league].wins++;
+            });
+            let bestLeague = null, bestLeagueRate = 0;
+            let premierLeagueRate = 0, laLigaRate = 0, uclWins = 0, uclTotal = 0;
+            Object.entries(leagueStats).forEach(([league, stats]) => {
+              const rate = Math.round((stats.wins / stats.total) * 100);
+              if (stats.total >= 3 && rate > bestLeagueRate) { bestLeague = league; bestLeagueRate = rate; }
+              if (league.includes('Premier') || league === 'PL') premierLeagueRate = rate;
+              if (league.includes('Liga') || league === 'PD') laLigaRate = rate;
+              if (league.includes('Champions') || league === 'UCL') { uclWins = stats.wins; uclTotal = stats.total; }
+            });
+            
+            // Underdog/Favorite
+            let underdogWins = 0, underdogTotal = 0, favoriteWins = 0, favoriteTotal = 0;
+            settled.forEach(p => {
+              const odds = p.odds || 2;
+              if (odds >= 3.0) { underdogTotal++; if (p.result === 'win') underdogWins++; }
+              else if (odds <= 1.8) { favoriteTotal++; if (p.result === 'win') favoriteWins++; }
+            });
+            const underdogRate = underdogTotal > 0 ? Math.round((underdogWins / underdogTotal) * 100) : 0;
+            const favoriteRate = favoriteTotal > 0 ? Math.round((favoriteWins / favoriteTotal) * 100) : 0;
+            
+            // BTTS / Over 2.5
+            let bttsWins = 0, bttsTotal = 0, overWins = 0, overTotal = 0;
+            settled.forEach(p => {
+              const market = p.market || '';
+              if (market.includes('BTTS') || market.includes('Both')) { bttsTotal++; if (p.result === 'win') bttsWins++; }
+              if (market.includes('Over 2.5') || market.includes('O2.5')) { overTotal++; if (p.result === 'win') overWins++; }
+            });
+            const bttsRate = bttsTotal > 0 ? Math.round((bttsWins / bttsTotal) * 100) : 0;
+            const overRate = overTotal > 0 ? Math.round((overWins / overTotal) * 100) : 0;
+            
+            // Perfect day
+            const dayResults = {};
+            settled.forEach(p => {
+              const d = new Date(p.date || Date.now()).toDateString();
+              if (!dayResults[d]) dayResults[d] = { wins: 0, total: 0 };
+              dayResults[d].total++;
+              if (p.result === 'win') dayResults[d].wins++;
+            });
+            let perfectDays = 0, perfectDayPicks = 0;
+            Object.values(dayResults).forEach(d => {
+              if (d.total >= 3 && d.wins === d.total) { perfectDays++; perfectDayPicks = d.total; }
+            });
+            
+            // Monthly profit
+            const monthStake = thisMonth.reduce((sum, p) => sum + (p.stake || 1), 0);
+            const monthReturn = thisMonth.reduce((sum, p) => sum + (p.result === 'win' ? (p.stake || 1) * (p.odds || 2) : 0), 0);
+            const monthROI = monthStake > 0 ? Math.round(((monthReturn - monthStake) / monthStake) * 100) : 0;
+            
+            // Picks available
+            const topPicks = window.ppGetTopPicks ? window.ppGetTopPicks() : [];
+            const picksAvailable = topPicks.length || 23;
+            
+            // Top confidence
+            let topConfidence = 87;
+            if (topPicks.length > 0) {
+              topConfidence = Math.max(...topPicks.map(p => p.confidence || 70));
+            }
+            
+            return {
+              winRate, roi, bestMarket, marketWinRate, streak, maxStreak,
+              monthWins, monthLosses, bestDay, bestDayRate,
+              homeRate, awayRate, avgOdds, biggestWin: biggestWin.toFixed(2),
+              premierLeagueRate, laLigaRate, uclWins, uclTotal,
+              bestLeague, bestLeagueRate, underdogRate, favoriteRate,
+              bttsRate, overRate, perfectDays, perfectDayPicks,
+              monthROI, picksAvailable, topConfidence, totalPicks: total,
+              totalWins: wins, totalLosses: losses
+            };
+          } catch (e) {
+            console.error('Stats calc error:', e);
+            return null;
+          }
+        }
+        
+        const staticMessages = [
+          { emoji: '⚡', text: 'The algorithm is hungry today' },
+          { emoji: '🧠', text: 'Neural network primed and scanning' },
+          { emoji: '👁️', text: 'AI has its eyes on the fixtures' },
+          { emoji: '💭', text: 'Reading the market like a book' },
+          { emoji: '🎯', text: 'Precision mode: activated' },
+          { emoji: '💎', text: 'Value hiding in plain sight' },
+          { emoji: '🕵️', text: 'Bookmakers are sleeping on these picks' },
+          { emoji: '📈', text: 'Market inefficiencies detected' },
+          { emoji: '🔍', text: 'Edge detected across multiple leagues' },
+          { emoji: '🏆', text: 'Elite-tier selections locked in' },
+          { emoji: '🥇', text: 'Top pick confidence: solid' },
+          { emoji: '⚔️', text: 'Underdog alerts brewing' },
+          { emoji: '🎲', text: 'Smart money is moving. We see it.' },
+          { emoji: '📊', text: 'Data points analyzed this minute: 847' },
+          { emoji: '🧮', text: 'Probability models updated in real-time' },
+          { emoji: '📐', text: 'Form curves trending upward' },
+          { emoji: '🔬', text: 'xG analysis complete across 5 leagues' },
+          { emoji: '📡', text: 'Live odds tracking: 23 books monitored' },
+          { emoji: '🌙', text: 'The oracle has spoken' },
+          { emoji: '✨', text: 'Patterns emerge. We decode them.' },
+          { emoji: '🔮', text: 'Forecasting what others can\'t see' },
+          { emoji: '🧿', text: 'Your edge. Our obsession.' },
+          { emoji: '⚡', text: 'Trust the process. Trust the data.' }
+        ];
+        
+        let tickerInterval = null;
+        let messageQueue = [];
+        let currentTickerIndex = 0;
+        
+        function buildMessageQueue() {
+          const stats = calculateRealStats();
+          const queue = [...staticMessages];
+          
+          if (stats) {
+            if (stats.winRate) queue.push({ emoji: '🎯', text: `Your win rate: ${stats.winRate}%` });
+            if (stats.roi !== undefined) queue.push({ emoji: '📈', text: `Your ROI: ${stats.roi > 0 ? '+' : ''}${stats.roi}%` });
+            if (stats.bestMarket) queue.push({ emoji: '💪', text: `Best market: ${stats.bestMarket} (${stats.marketWinRate}%)` });
+            if (stats.streak > 1) queue.push({ emoji: '🔥', text: `Hot streak: ${stats.streak} wins running` });
+            if (stats.monthWins !== undefined) queue.push({ emoji: '📅', text: `This month: ${stats.monthWins}W - ${stats.monthLosses}L` });
+            if (stats.bestDay) queue.push({ emoji: '📆', text: `Best day: ${stats.bestDay} (${stats.bestDayRate}%)` });
+            if (stats.homeRate) queue.push({ emoji: '🏟️', text: `Home: ${stats.homeRate}% | Away: ${stats.awayRate}%` });
+            if (stats.avgOdds > 0) queue.push({ emoji: '💰', text: `Avg odds taken: ${stats.avgOdds}` });
+            if (stats.biggestWin > 0) queue.push({ emoji: '🎰', text: `Biggest win: +${stats.biggestWin} units` });
+            if (stats.premierLeagueRate) queue.push({ emoji: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', text: `Premier League: ${stats.premierLeagueRate}% hit rate` });
+            if (stats.laLigaRate) queue.push({ emoji: '🇪🇸', text: `La Liga: ${stats.laLigaRate}% hit rate` });
+            if (stats.uclTotal > 0) queue.push({ emoji: '🏆', text: `UCL: ${stats.uclWins}W from ${stats.uclTotal}` });
+            if (stats.bestLeague) queue.push({ emoji: '👑', text: `Best league: ${stats.bestLeague} (${stats.bestLeagueRate}%)` });
+            if (stats.underdogRate) queue.push({ emoji: '🎲', text: `Underdog picks: ${stats.underdogRate}% hit` });
+            if (stats.favoriteRate) queue.push({ emoji: '🔒', text: `Favorites: ${stats.favoriteRate}% hit` });
+            if (stats.bttsRate) queue.push({ emoji: '⚽', text: `BTTS specialist: ${stats.bttsRate}%` });
+            if (stats.overRate) queue.push({ emoji: '📊', text: `Over 2.5 goals: ${stats.overRate}%` });
+            if (stats.totalPicks >= 50) queue.push({ emoji: '🏅', text: `${stats.totalPicks} picks milestone!` });
+            if (stats.maxStreak >= 5) queue.push({ emoji: '🔥', text: `Personal best: ${stats.maxStreak} win streak` });
+            if (stats.perfectDays > 0) queue.push({ emoji: '💯', text: `Perfect day: ${stats.perfectDayPicks}/${stats.perfectDayPicks} picks hit` });
+            if (stats.monthROI !== undefined) queue.push({ emoji: '📈', text: `This month: ${stats.monthROI > 0 ? '+' : ''}${stats.monthROI}% ROI` });
+            if (stats.picksAvailable) queue.push({ emoji: '📊', text: `${stats.picksAvailable} picks ready for today` });
+            if (stats.topConfidence) queue.push({ emoji: '🏆', text: `Top pick confidence: ${stats.topConfidence}%` });
+          }
+          
+          const topPicks = window.ppGetTopPicks ? window.ppGetTopPicks() : [];
+          const picksCount = topPicks.length || 23;
+          queue.push({ emoji: '💎', text: `${picksCount} value opportunities detected` });
+          
+          messageQueue = queue;
+        }
+        
+        function rotateTicker() {
+          if (messageQueue.length === 0) buildMessageQueue();
+          const msg = messageQueue[currentTickerIndex % messageQueue.length];
+          if (tickerEmoji) tickerEmoji.textContent = msg.emoji;
+          if (tickerText) {
+            tickerText.style.opacity = '0';
+            setTimeout(() => {
+              tickerText.textContent = msg.text;
+              tickerText.style.opacity = '1';
+            }, 150);
+          }
+          currentTickerIndex++;
+        }
+        
+        function updateWelcomeMessage() {
+          const email = getUserEmail();
+          const name = extractNameFromEmail(email);
+          if (welcomeNameSpan) {
+            if (name) {
+              welcomeNameSpan.textContent = name;
+              if (welcomeEmoji) welcomeEmoji.textContent = '👋';
+            } else {
+              welcomeNameSpan.textContent = '';
+              document.querySelector('.welcome-greeting').textContent = 'Welcome back!';
+              if (welcomeEmoji) welcomeEmoji.textContent = '🎉';
+            }
+          }
+        }
+        
+        function startTicker() {
+          if (tickerInterval) clearInterval(tickerInterval);
+          buildMessageQueue();
+          rotateTicker();
+          tickerInterval = setInterval(rotateTicker, 5000);
+        }
+        
+        function stopTicker() {
+          if (tickerInterval) {
+            clearInterval(tickerInterval);
+            tickerInterval = null;
+          }
+        }
+        
+        const originalSyncUI = window.ppSyncProtectedUI;
+        window.ppSyncProtectedUI = function() {
+          if (originalSyncUI) originalSyncUI.call(this);
+          const isLoggedIn = window.ppIsLoggedIn ? window.ppIsLoggedIn() : false;
+          if (isLoggedIn && protectedApp && !protectedApp.classList.contains('hidden')) {
+            updateWelcomeMessage();
+            startTicker();
+          } else {
+            stopTicker();
+          }
+        };
+        
+        const originalInitAuth = window.ppInitAuth;
+        window.ppInitAuth = function() {
+          if (originalInitAuth) originalInitAuth.call(this);
+          setTimeout(() => {
+            updateWelcomeMessage();
+            startTicker();
+          }, 300);
+        };
+        
+        setTimeout(() => {
+          const isLoggedIn = window.ppIsLoggedIn ? window.ppIsLoggedIn() : false;
+          if (isLoggedIn) {
+            updateWelcomeMessage();
+            startTicker();
+          }
+        }, 500);
+        
+        const originalUpdatePerf = window.ppUpdatePerformanceDisplay;
+        if (originalUpdatePerf) {
+          window.ppUpdatePerformanceDisplay = function() {
+            originalUpdatePerf.call(this);
+            buildMessageQueue();
+          };
+        }
+        
+        window.refreshTicker = function() {
+          buildMessageQueue();
+          rotateTicker();
+        };
+      };
+      
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTicker);
+      } else {
+        initTicker();
+      }
+    })();
+  </script>
+
+  <!-- 🔥 SKELETON LOADER CONTROLLER -->
+  <script>
+    (function() {
+      // Hide skeleton when real picks load
+      function hideSkeletonShowPicks() {
+        const skeleton = document.getElementById('picksSkeleton');
+        const container = document.getElementById('topPicksContainer');
+        
+        if (skeleton && container) {
+          // Check if container has children (real picks loaded)
+          const checkInterval = setInterval(() => {
+            if (container.children.length > 0) {
+              skeleton.style.display = 'none';
+              container.style.display = 'grid';
+              clearInterval(checkInterval);
+            }
+          }, 100);
+          
+          // Timeout after 10 seconds
+          setTimeout(() => {
+            clearInterval(checkInterval);
+          }, 10000);
+        }
+      }
+      
+      // Hook into existing pick rendering
+      const originalRender = window.renderTopPicks;
+      if (originalRender) {
+        window.renderTopPicks = function() {
+          originalRender.apply(this, arguments);
+          setTimeout(hideSkeletonShowPicks, 50);
+        };
+      }
+      
+      // Also watch for DOM changes
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            const container = document.getElementById('topPicksContainer');
+            if (container && container.children.length > 0) {
+              const skeleton = document.getElementById('picksSkeleton');
+              if (skeleton) skeleton.style.display = 'none';
+              container.style.display = 'grid';
+            }
+          }
+        });
+      });
+      
+      const container = document.getElementById('topPicksContainer');
+      if (container) {
+        observer.observe(container, { childList: true, subtree: true });
+      }
+      
+      // Start watching
+      hideSkeletonShowPicks();
+    })();
+  </script>
+
+  <!-- 🔥 PRO LOCK CONTROLLER -->
+  <script>
+    (function() {
+      // Check if user is Pro
+      function isProUser() {
+        try {
+          const token = localStorage.getItem('propredict_token') || localStorage.getItem('token');
+          if (!token) return false;
+          
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          return payload.role === 'pro' || payload.role === 'vvip' || payload.role === 'admin';
+        } catch (e) {
+          return false;
+        }
+      }
+      
+      // Apply Pro locks to sections
+      function applyProLocks() {
+        const isPro = isProUser();
+        
+        // Update role badge
+        const badge = document.getElementById('userRoleBadge');
+        if (badge && isPro) {
+          badge.textContent = 'PRO';
+          badge.className = 'role-badge role-pro';
+        }
+        
+        // If Pro user, remove all locks
+        if (isPro) {
+          document.querySelectorAll('[data-pro-only="true"]').forEach(el => {
+            el.classList.remove('pro-locked-section');
+            const overlay = el.querySelector('.pro-locked-overlay');
+            if (overlay) overlay.remove();
+          });
+          
+          // Hide upgrade banners
+          document.querySelectorAll('.upgrade-banner').forEach(b => b.classList.add('hidden'));
+          return;
+        }
+        
+        // Free user: Add lock overlays
+        document.querySelectorAll('[data-pro-only="true"]').forEach(section => {
+          section.classList.add('pro-locked-section');
+          section.style.position = 'relative';
+          
+          // Check if overlay already exists
+          if (section.querySelector('.pro-locked-overlay')) return;
+          
+          const overlay = document.createElement('div');
+          overlay.className = 'pro-locked-overlay';
+          overlay.innerHTML = `
+            <div class="pro-locked-content">
+              <div class="pro-locked-icon">👑</div>
+              <div class="pro-locked-title">Pro Feature</div>
+              <div class="pro-locked-text">Upgrade to Pro to unlock</div>
+              <button class="pro-locked-btn" onclick="document.getElementById('upgradeBtn')?.click()">Upgrade Now</button>
+            </div>
+          `;
+          section.appendChild(overlay);
+        });
+        
+        // Show upgrade banners for partial locks
+        document.getElementById('perfUpgradeBanner')?.classList.remove('hidden');
+      }
+      
+      // Run on page load
+      setTimeout(applyProLocks, 300);
+      
+      // Re-run when auth state changes
+      const originalSync = window.ppSyncProtectedUI;
+      window.ppSyncProtectedUI = function() {
+        if (originalSync) originalSync.call(this);
+        setTimeout(applyProLocks, 100);
+      };
+      
+      // Expose for manual refresh
+      window.refreshProLocks = applyProLocks;
+    })();
+  </script>
+
+  <!-- Theme Toggle -->
+  <script>(function(){const b=document.getElementById('themeToggleBtn'),i=document.getElementById('themeIcon'),t=document.getElementById('themeText');if(!b)return;let c=localStorage.getItem('propredict_theme')||'dark';function a(th){const r=document.documentElement;if(th==='light'){r.style.setProperty('--bg-primary','#f5f7fa');r.style.setProperty('--text-primary','#1a1a2e');i.textContent='☀️';t.textContent='Light';}else{r.style.setProperty('--bg-primary','#0b1220');r.style.setProperty('--text-primary','#ffffff');i.textContent='🌙';t.textContent='Dark';}localStorage.setItem('propredict_theme',th);c=th;}b.addEventListener('click',()=>{a(c==='dark'?'light':'dark');});a(c);})();</script>
+
+  <!-- TAWK.TO CHAT WIDGET - FIXED -->
+  <div id='tawk_69dff5770092d61c3637ee24'></div>
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+  (function(){
+  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+  s1.async=true;
+  s1.src='https://embed.tawk.to/69dff5770092d61c3637ee24/1jmb0dl5h';
+  s1.charset='UTF-8';
+  s1.setAttribute('crossorigin','*');
+  s0.parentNode.insertBefore(s1,s0);
+  })();
+  </script>
+  <!--End of Tawk.to Script-->
+
+<script src="ui-enhancements.js"></script><script src="upgrade-ui.js"></script><script src="app-shell.js"></script>
+</body>
+</html>
