@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessibility Statement — ProPredict</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300f5ff'/%3E%3Cstop offset='100%25' stop-color='%239c27b0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='%230a0e1a'/%3E%3Ctext x='50' y='70' font-size='54' font-weight='bold' font-family='Arial' text-anchor='middle' fill='url(%23g)'%3EPP%3C/text%3E%3C/svg%3E">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-v2.css">
+  <link rel="stylesheet" href="styles-ui.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 20% 30%, #1a1040, #0a0e1a 50%, #050810 90%);
+      color: #ffffff;
+      min-height: 100vh;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .page-header {
+      text-align: center;
+      padding: 60px 24px 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .page-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 8vw, 56px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff, #00f5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      animation: fadeInDown 0.7s ease-out forwards;
+    }
+    .page-header .subtitle {
+      color: #a0b3d9;
+      font-size: 18px;
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out 0.2s forwards;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    
+    .commitment-card {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(156, 39, 176, 0.08));
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 28px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .commitment-card i {
+      font-size: 48px;
+      color: #00f5ff;
+      margin-bottom: 20px;
+    }
+    .commitment-card h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    .commitment-card p {
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 650px;
+      margin: 0 auto;
+    }
+    
+    .section-card {
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 32px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .section-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(156, 39, 176, 0.15));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .section-icon i {
+      font-size: 28px;
+      color: #00f5ff;
+    }
+    .section-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: #00f5ff;
+    }
+    
+    .feature-list {
+      list-style: none;
+    }
+    .feature-list li {
+      padding: 16px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      color: rgba(255, 255, 255, 0.85);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+    .feature-list li i {
+      color: #46e6a6;
+      font-size: 20px;
+      margin-top: 3px;
+    }
+    .feature-list li strong {
+      color: #ffffff;
+      display: block;
+      margin-bottom: 4px;
+    }
+    
+    .standards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 24px 0;
+    }
+    .standard-card {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .standard-card i {
+      font-size: 32px;
+      color: #00f5ff;
+      margin-bottom: 16px;
+    }
+    .standard-card h4 {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .standard-card p {
+      color: #8a9bb5;
+      font-size: 13px;
+    }
+    
+    .contact-box {
+      background: rgba(15, 25, 45, 0.5);
+      border-radius: 20px;
+      padding: 32px;
+      text-align: center;
+      margin-top: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .contact-box i {
+      font-size: 36px;
+      color: #00f5ff;
+      margin-bottom: 20px;
+    }
+    .contact-box h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    .contact-box a {
+      color: #00f5ff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      color: #a0b3d9;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .back-home:hover {
+      background: rgba(0, 245, 255, 0.08);
+      border-color: rgba(0, 245, 255, 0.25);
+      color: #00f5ff;
+      transform: translateY(-2px);
+    }
+    .footer-note {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+      color: #6b7da3;
+      font-size: 13px;
+    }
+    
+    @media (max-width: 768px) {
+      .section-card { padding: 28px 20px; }
+      .page-header { padding: 40px 20px 30px; }
+      .commitment-card { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>Accessibility Statement</h1>
+    <div class="subtitle">Our commitment to making ProPredict accessible to everyone</div>
+  </header>
+
+  <main class="container">
+    
+    <div class="commitment-card scroll-reveal">
+      <i class="fas fa-universal-access"></i>
+      <h2>Our Commitment</h2>
+      <p>ProPredict is committed to ensuring digital accessibility for people of all abilities. We are continually improving the user experience and applying relevant accessibility standards.</p>
+    </div>
+
+    <div class="section-card scroll-reveal">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-check-circle"></i></div>
+        <h2>Measures We've Taken</h2>
+      </div>
+      <ul class="feature-list">
+        <li><i class="fas fa-check"></i><div><strong>Keyboard Navigation</strong> — All interactive elements are accessible via keyboard (Tab, Enter, Escape).</div></li>
+        <li><i class="fas fa-check"></i><div><strong>Screen Reader Support</strong> — Semantic HTML, ARIA labels, and alt text for images.</div></li>
+        <li><i class="fas fa-check"></i><div><strong>Color Contrast</strong> — Text meets WCAG 2.1 AA contrast ratio requirements (4.5:1 minimum).</div></li>
+        <li><i class="fas fa-check"></i><div><strong>Focus Indicators</strong> — Visible focus rings around interactive elements for keyboard users.</div></li>
+        <li><i class="fas fa-check"></i><div><strong>Responsive Design</strong> — Works on all screen sizes, including zoom up to 200%.</div></li>
+        <li><i class="fas fa-check"></i><div><strong>Clear Typography</strong> — Readable font sizes with sufficient line height and spacing.</div></li>
+        <li><i class="fas fa-check"></i><div><strong>Skip Navigation</strong> — Hidden "Skip to content" link for screen reader users.</div></li>
+        <li><i class="fas fa-check"></i><div><strong>Form Labels</strong> — All form inputs have associated labels and error messages.</div></li>
+      </ul>
+    </div>
+
+    <div class="section-card scroll-reveal">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-clipboard-check"></i></div>
+        <h2>Conformance Standards</h2>
+      </div>
+      <p style="margin-bottom: 24px; color: rgba(255, 255, 255, 0.85);">We aim to conform to the following accessibility standards:</p>
+      <div class="standards-grid">
+        <div class="standard-card">
+          <i class="fas fa-check-circle"></i>
+          <h4>WCAG 2.1 Level AA</h4>
+          <p>Web Content Accessibility Guidelines</p>
+        </div>
+        <div class="standard-card">
+          <i class="fas fa-universal-access"></i>
+          <h4>ADA Compliance</h4>
+          <p>Americans with Disabilities Act</p>
+        </div>
+        <div class="standard-card">
+          <i class="fas fa-globe"></i>
+          <h4>EN 301 549</h4>
+          <p>European Accessibility Standard</p>
+        </div>
+        <div class="standard-card">
+          <i class="fas fa-mobile-alt"></i>
+          <h4>Mobile Accessibility</h4>
+          <p>iOS & Android guidelines</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card scroll-reveal">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-clock"></i></div>
+        <h2>Ongoing Efforts</h2>
+      </div>
+      <p style="color: rgba(255, 255, 255, 0.85);">Accessibility is an ongoing commitment. We regularly:</p>
+      <ul class="feature-list" style="margin-top: 20px;">
+        <li><i class="fas fa-search"></i><div>Conduct automated and manual accessibility audits</div></li>
+        <li><i class="fas fa-users"></i><div>Test with real users who rely on assistive technologies</div></li>
+        <li><i class="fas fa-code"></i><div>Train our development team on accessibility best practices</div></li>
+        <li><i class="fas fa-sync-alt"></i><div>Update this statement as improvements are made</div></li>
+      </ul>
+    </div>
+
+    <div class="section-card scroll-reveal">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-comment"></i></div>
+        <h2>Feedback & Assistance</h2>
+      </div>
+      <p style="color: rgba(255, 255, 255, 0.85); margin-bottom: 20px;">We welcome your feedback on the accessibility of ProPredict. If you encounter any barriers or have suggestions for improvement, please let us know.</p>
+      <div class="contact-box">
+        <i class="fas fa-envelope"></i>
+        <h3>Accessibility Support</h3>
+        <a href="mailto:accessibility@propredict.app">accessibility@propredict.app</a>
+        <p style="margin-top: 16px; font-size: 13px; color: #8a9bb5;">We respond to accessibility inquiries within 2 business days.</p>
+      </div>
+    </div>
+
+    <div class="section-card scroll-reveal">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-calendar-alt"></i></div>
+        <h2>Statement Information</h2>
+      </div>
+      <ul class="feature-list">
+        <li><i class="fas fa-calendar"></i><div><strong>Last Updated:</strong> April 15, 2026</div></li>
+        <li><i class="fas fa-building"></i><div><strong>This statement applies to:</strong> propredict-app.onrender.com and all ProPredict services</div></li>
+        <li><i class="fas fa-check-circle"></i><div><strong>Review Cycle:</strong> This statement is reviewed and updated quarterly</div></li>
+      </ul>
+    </div>
+
+    <a href="/" class="back-home">
+      <i class="fas fa-arrow-left"></i>
+      Back to ProPredict
+    </a>
+
+    <div class="footer-note">
+      © 2026 ProPredict Analytics. All rights reserved. | Accessibility is a priority.
+    </div>
+  </main>
+
+  <script>
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -30px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, observerOptions);
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+          </html>
