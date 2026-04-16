@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Access — ProPredict</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:,">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 20% 30%, #1a1040, #0a0e1a 50%, #050810 90%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+    }
+    
+    .login-card {
+      background: rgba(15, 25, 45, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
+      padding: 40px 32px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(127, 240, 197, 0.1) inset;
+    }
+    
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 107, 107, 0.12);
+      border: 1px solid rgba(255, 107, 107, 0.25);
+      border-radius: 40px;
+      color: #ff6b6b;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+    
+    .login-header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff6b6b, #ffd166);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    
+    .login-header p {
+      color: #8a9bb5;
+      font-size: 14px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      color: #c5d1eb;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    
+    .input-wrapper {
+      position: relative;
+    }
+    
+    .input-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7da3;
+      font-size: 16px;
+    }
+    
+    .input-wrapper input {
+      width: 100%;
+      padding: 16px 16px 16px 48px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      color: #ffffff;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    
+    .input-wrapper input:focus {
+      border-color: rgba(255, 107, 107, 0.5);
+      box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+    }
+    
+    .input-wrapper input::placeholder {
+      color: #4a5a7a;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #6b7da3;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .password-toggle:hover {
+      color: #a0b3d9;
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #ff6b6b, #ffd166);
+      border: none;
+      border-radius: 16px;
+      color: #0a0e1a;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 12px;
+    }
+    
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(255, 107, 107, 0.3);
+    }
+    
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .message-box {
+      min-height: 48px;
+      margin-top: 20px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    
+    .message-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+    
+    .message-success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+    }
+    
+    .message-info {
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      color: #00f5ff;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .back-link a {
+      color: #6b7da3;
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    
+    .back-link a:hover {
+      color: #a0b3d9;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="admin-badge">
+        <i class="fas fa-shield-alt"></i>
+        <span>Secure Admin Access</span>
+      </div>
+      <h1>ProPredict Admin</h1>
+      <p>Enter your credentials to access the dashboard</p>
+    </div>
+    
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="adminEmail">Admin Email</label>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope"></i>
+          <input 
+            type="email" 
+            id="adminEmail" 
+            placeholder="Enter admin email" 
+            value="propredict.support@gmail.com"
+            required
+            autocomplete="email"
+          >
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="adminPassword">Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          <input 
+            type="password" 
+            id="adminPassword" 
+            placeholder="Enter admin password" 
+            required
+            autocomplete="current-password"
+          >
+          <button type="button" class="password-toggle" onclick="togglePassword()">
+            <i class="fas fa-eye" id="toggleIcon"></i>
+          </button>
+        </div>
+      </div>
+      
+      <button type="submit" class="login-btn" id="loginBtn">
+        <span id="btnText">Authenticate</span>
+        <span id="btnSpinner" class="spinner hidden"></span>
+      </button>
+    </form>
+    
+    <div id="messageBox" class="message-box hidden"></div>
+    
+    <div class="back-link">
+      <a href="/"><i class="fas fa-arrow-left"></i> Back to ProPredict</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // =====================================================
+  // HARDCODED MASTER CREDENTIALS
+  // =====================================================
+  const MASTER_EMAIL = 'propredict.support@gmail.com';
+  // MASTER PASSWORD is intentionally NOT hardcoded here.
+  // You will set it manually in the code or via environment variable.
+  // For local testing, you can set it below:
+  // const MASTER_PASSWORD = 'your_secure_password_here';
+  
+  // =====================================================
+  // LOGIN HANDLER
+  // =====================================================
+  
+  let MASTER_PASSWORD = null; // Will be set by you manually
+  
+  async function handleLogin(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('adminEmail').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    const messageBox = document.getElementById('messageBox');
+    const loginBtn = document.getElementById('loginBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    
+    // Reset message
+    messageBox.classList.add('hidden');
+    messageBox.className = 'message-box hidden';
+    
+    // Validate email matches master
+    if (email !== MASTER_EMAIL) {
+      showMessage('⛔ Access Denied — Admin Only', 'error');
+      return;
+    }
+    
+    // Show loading state
+    btnText.textContent = 'Authenticating...';
+    btnSpinner.classList.remove('hidden');
+    loginBtn.disabled = true;
+    
+    try {
+      // Attempt login via API
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await res.json();
+      
+      if (data.token) {
+        // Success - save token
+        localStorage.setItem('propredict_token', data.token);
+        localStorage.setItem('pp_token', data.token);
+        localStorage.setItem('token', data.token);
+        sessionStorage.setItem('admin_authenticated', 'true');
+        sessionStorage.setItem('admin_email', email);
+        
+        showMessage('👑 Admin on board — Welcome back', 'success');
+        
+        // Redirect to admin dashboard after short delay
+        setTimeout(() => {
+          window.location.href = '/admin.html?token=' + encodeURIComponent(data.token);
+        }, 1000);
+      } else {
+        showMessage('⛔ Access Denied — Invalid credentials', 'error');
+        resetButton();
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      showMessage('⚠️ Connection error — Try again', 'error');
+      resetButton();
+    }
+  }
+  
+  function resetButton() {
+    const loginBtn = document.getElementById('loginBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    btnText.textContent = 'Authenticate';
+    btnSpinner.classList.add('hidden');
+    loginBtn.disabled = false;
+  }
+  
+  function showMessage(text, type) {
+    const messageBox = document.getElementById('messageBox');
+    messageBox.textContent = text;
+    messageBox.classList.remove('hidden', 'message-error', 'message-success', 'message-info');
+    
+    if (type === 'error') {
+      messageBox.classList.add('message-error');
+    } else if (type === 'success') {
+      messageBox.classList.add('message-success');
+    } else {
+      messageBox.classList.add('message-info');
+    }
+  }
+  
+  function togglePassword() {
+    const passwordInput = document.getElementById('adminPassword');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      toggleIcon.classList.remove('fa-eye');
+      toggleIcon.classList.add('fa-eye-slash');
+    } else {
+      passwordInput.type = 'password';
+      toggleIcon.classList.remove('fa-eye-slash');
+      toggleIcon.classList.add('fa-eye');
+    }
+  }
+  
+  // Check if already authenticated via session
+  (function checkExistingAuth() {
+    const isAuth = sessionStorage.getItem('admin_authenticated');
+    if (isAuth === 'true') {
+      const token = localStorage.getItem('propredict_token');
+      if (token) {
+        window.location.href = '/admin.html';
+      } else {
+        sessionStorage.removeItem('admin_authenticated');
+      }
+    }
+  })();
+</script>
+
+</body>
+</html>
