@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProPredict Blog</title>
+    <meta name="description" content="Data-driven football analysis and predictive insights from ProPredict.">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .blog-post-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+        
+        .blog-post-header {
+            margin-bottom: 40px;
+        }
+        
+        .blog-post-category {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(0, 245, 255, 0.1);
+            border-radius: 20px;
+            color: #00f5ff;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        
+        .blog-post-title {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        .blog-post-meta {
+            display: flex;
+            gap: 20px;
+            color: #6b7da3;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .blog-post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .blog-post-views {
+            color: #00f5ff;
+            font-weight: 600;
+        }
+        
+        .blog-post-content {
+            color: #a0b3d9;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        .blog-post-content h2 {
+            color: white;
+            font-size: 1.8rem;
+            margin: 40px 0 20px;
+        }
+        
+        .blog-post-content h3 {
+            color: white;
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+        }
+        
+        .blog-post-content p {
+            margin-bottom: 20px;
+        }
+        
+        .blog-post-content strong {
+            color: #00f5ff;
+        }
+        
+        .blog-post-content ul, .blog-post-content ol {
+            margin: 20px 0;
+            padding-left: 25px;
+        }
+        
+        .blog-post-content li {
+            margin-bottom: 10px;
+        }
+        
+        .blog-post-content em {
+            color: #9c27b0;
+            font-style: italic;
+        }
+        
+        .blog-loading {
+            text-align: center;
+            padding: 100px 20px;
+            color: #a0b3d9;
+        }
+        
+        .blog-error {
+            text-align: center;
+            padding: 100px 20px;
+            color: #ef4444;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin: 20px 5%;
+            color: #00f5ff;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .blog-post-title {
+                font-size: 1.8rem;
+            }
+            
+            .blog-post-meta {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Your existing navigation/header would go here -->
+    
+    <a href="/blog.html" class="back-link">← Back to Blog</a>
+    
+    <div id="blog-post-container" class="blog-post-container">
+        <div class="blog-loading">Loading article...</div>
+    </div>
+    
+    <!-- Your existing footer would go here -->
+    
+    <script>
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        
+        async function loadBlogPost() {
+            const container = document.getElementById('blog-post-container');
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+            
+            if (!slug) {
+                container.innerHTML = '<div class="blog-error">No article specified.</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/blog/${slug}`);
+                const article = await response.json();
+                
+                if (article.error) {
+                    container.innerHTML = `<div class="blog-error">${article.error}</div>`;
+                    return;
+                }
+                
+                // Update page title
+                document.title = `${article.title} | ProPredict Blog`;
+                
+                // Render article
+                container.innerHTML = `
+                    <article>
+                        <header class="blog-post-header">
+                            <span class="blog-post-category">${article.category}</span>
+                            <h1 class="blog-post-title">${article.title}</h1>
+                            <div class="blog-post-meta">
+                                <span>📅 ${article.date}</span>
+                                <span>⏱️ ${article.readTime}</span>
+                                <span class="blog-post-views" id="views-counter">👁️ ${formatNumber(article.displayViews)} readers</span>
+                            </div>
+                        </header>
+                        
+                        <div class="blog-post-content">
+                            ${article.content}
+                        </div>
+                    </article>
+                `;
+                
+                // Start view counter animation if not frozen
+                if (!article.isFrozen) {
+                    startViewCounter(article.displayViews, article.targetViews, slug);
+                }
+                
+            } catch (error) {
+                console.error('Failed to load blog post:', error);
+                container.innerHTML = '<div class="blog-error">Failed to load article. Please try again later.</div>';
+            }
+        }
+        
+        function startViewCounter(startViews, targetViews, slug) {
+            const viewsElement = document.getElementById('views-counter');
+            if (!viewsElement) return;
+            
+            let currentViews = startViews;
+            
+            const counter = setInterval(() => {
+                // Random increment between 50-300 views
+                const increment = Math.floor(Math.random() * 250) + 50;
+                currentViews = Math.min(currentViews + increment, targetViews);
+                
+                viewsElement.textContent = `👁️ ${formatNumber(currentViews)} readers`;
+                
+                if (currentViews >= targetViews) {
+                    clearInterval(counter);
+                    
+                    // Notify server that views are frozen
+                    fetch(`/blog/${slug}/freeze`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ views: targetViews })
+                    }).catch(() => {});
+                }
+            }, 3000); // Update every 3 seconds
+        }
+        
+        loadBlogPost();
+    </script>
+</body>
+</html>
