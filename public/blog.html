@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProPredict Blog | Football Analytics & Betting Insights</title>
+    <meta name="description" content="Data-driven football analysis, betting psychology, and predictive modeling insights from the ProPredict team.">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Blog-specific styles */
+        .blog-header {
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 245, 255, 0.2);
+        }
+        
+        .blog-header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #00f5ff, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .blog-header p {
+            color: #a0b3d9;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 50px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .blog-card {
+            background: #1a1f35;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s, border-color 0.3s;
+            cursor: pointer;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-5px);
+            border-color: #00f5ff;
+        }
+        
+        .blog-card-content {
+            padding: 30px;
+        }
+        
+        .blog-card-category {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(0, 245, 255, 0.1);
+            border-radius: 20px;
+            color: #00f5ff;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+        
+        .blog-card h2 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .blog-card-meta {
+            color: #6b7da3;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .blog-card-meta span {
+            margin-right: 15px;
+        }
+        
+        .blog-card-summary {
+            color: #a0b3d9;
+            line-height: 1.6;
+        }
+        
+        .blog-loading {
+            text-align: center;
+            padding: 100px 20px;
+            color: #a0b3d9;
+        }
+        
+        .blog-error {
+            text-align: center;
+            padding: 100px 20px;
+            color: #ef4444;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin: 20px 5%;
+            color: #00f5ff;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .blog-header h1 {
+                font-size: 2rem;
+            }
+            
+            .blog-grid {
+                grid-template-columns: 1fr;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Your existing navigation/header would go here -->
+    
+    <div class="blog-header">
+        <h1>ProPredict Blog</h1>
+        <p>Data-driven football analysis, betting psychology, and predictive modeling insights.</p>
+    </div>
+    
+    <a href="/" class="back-link">← Back to ProPredict</a>
+    
+    <div id="blog-container" class="blog-grid">
+        <div class="blog-loading">Loading articles...</div>
+    </div>
+    
+    <!-- Your existing footer would go here -->
+    
+    <script>
+        async function loadBlogPosts() {
+            const container = document.getElementById('blog-container');
+            
+            try {
+                const response = await fetch('/blog');
+                const data = await response.json();
+                
+                if (!data.articles || data.articles.length === 0) {
+                    container.innerHTML = '<div class="blog-error">No articles found.</div>';
+                    return;
+                }
+                
+                container.innerHTML = data.articles.map(article => `
+                    <div class="blog-card" onclick="window.location.href='/blog-post.html?slug=${article.slug}'">
+                        <div class="blog-card-content">
+                            <span class="blog-card-category">${article.category}</span>
+                            <h2>${article.title}</h2>
+                            <div class="blog-card-meta">
+                                <span>📅 ${article.date}</span>
+                                <span>⏱️ ${article.readTime}</span>
+                            </div>
+                            <p class="blog-card-summary">${article.summary}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Failed to load blog posts:', error);
+                container.innerHTML = '<div class="blog-error">Failed to load articles. Please try again later.</div>';
+            }
+        }
+        
+        loadBlogPosts();
+    </script>
+</body>
+  </html>
