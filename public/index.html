@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ProPredict — Multi-Sport Probability Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b1220">
+  <!-- Favicon fix - removes 404 error -->
+  <link rel="icon" href="data:,">
+  
+  <!-- 🔥 GOOGLE ADSENSE CODE -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9039462722214500"
+       crossorigin="anonymous"></script>
+  
+  <!-- Google Font for Premium Feel -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- ✅ ORIGINAL BASE STYLES -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- ✅ V2 PREMIUM REDESIGN LAYER (SAFE OVERRIDE) -->
+  <link rel="stylesheet" href="styles-v2.css">
+<link rel="stylesheet" href="styles-ui.css">
+  
+  <!-- 🔥 BETA COUNTDOWN BANNER STYLES -->
+  <style>
+    /* Beta Countdown Banner - Sticky Top */
+    .beta-countdown-banner {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10001;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      border-bottom: 1px solid rgba(127, 240, 197, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .beta-countdown-banner.dismissed {
+      display: none;
+    }
+    
+    .banner-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      position: relative;
+    }
+    
+    .banner-segment {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    
+    .banner-segment .emoji {
+      font-size: 18px;
+    }
+    
+    .banner-segment.highlight {
+      background: rgba(127, 240, 197, 0.15);
+      padding: 6px 16px;
+      border-radius: 40px;
+      border: 1px solid rgba(127, 240, 197, 0.3);
+    }
+    
+    .banner-segment.countdown {
+      background: linear-gradient(135deg, #7ff0c5, #00f5ff);
+      padding: 6px 18px;
+      border-radius: 40px;
+      color: #0a0e1a;
+      font-weight: 800;
+      animation: countdownPulse 2s ease-in-out infinite;
+    }
+    
+    .banner-segment.countdown .days-number {
+      font-size: 20px;
+      font-weight: 900;
+      margin-right: 4px;
+    }
+    
+    .banner-separator {
+      color: rgba(127, 240, 197, 0.5);
+      font-size: 18px;
+      font-weight: 300;
+    }
+    
+    .banner-close {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #8a9bb5;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+    
+    .banner-close:hover {
+      background: rgba(255, 107, 107, 0.2);
+      border-color: #ff6b6b;
+      color: #ff6b6b;
+    }
+    
+    .banner-inquiry {
+      margin-left: 8px;
+      color: #a0b3d9;
+      font-size: 13px;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    
+    .banner-inquiry a {
+      color: #7ff0c5;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    
+    .banner-inquiry a:hover {
+      color: #00f5ff;
+      text-decoration: underline;
+    }
+    
+    @keyframes countdownPulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(127, 240, 197, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(127, 240, 197, 0.6); }
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .beta-countdown-banner {
+        padding: 12px 16px;
+      }
+      
+      .banner-content {
+        justify-content: flex-start;
+        gap: 8px 12px;
+        padding-right: 40px;
+      }
+      
+      .banner-segment {
+        font-size: 12px;
+        white-space: normal;
+        word-break: keep-all;
+      }
+      
+      .banner-segment .emoji {
+        font-size: 16px;
+      }
+      
+      .banner-segment.countdown .days-number {
+        font-size: 18px;
+      }
+      
+      .banner-separator {
+        display: none;
+      }
+      
+      .banner-close {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+      }
+      
+      .banner-inquiry {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 4px;
+        text-align: center;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .banner-segment.highlight,
+      .banner-segment.countdown {
+        padding: 4px 12px;
+      }
+    }
+  </style>
+
+  <!-- ✅ SAFE ADDITIVE UI PATCHES -->
+  <style>
+    .hidden {
+      display: none !important;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 10, 18, 0.78);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-overlay:not(.hidden) {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(100%, 680px);
+      background: linear-gradient(180deg, rgba(15, 23, 39, 0.98), rgba(7, 13, 24, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+      border-radius: 22px;
+      padding: 24px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .auth-modal-badge,
+    .subscription-modal-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(79, 255, 186, 0.08);
+      border: 1px solid rgba(79, 255, 186, 0.18);
+      color: #7ff0c5;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .auth-modal-subtitle,
+    .subscription-modal-subtitle {
+      color: rgba(232, 237, 245, 0.72);
+      margin-top: 8px;
+      margin-bottom: 18px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #dce5f2;
+    }
+
+    .form-group input,
+    .team-analysis-toolbar select {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      padding: 12px 14px;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .team-analysis-toolbar select:focus {
+      border-color: rgba(85, 255, 190, 0.5);
+      box-shadow: 0 0 0 3px rgba(85, 255, 190, 0.1);
+    }
+
+    /* ✅ Password Input Wrapper (ADDED for eye icon) */
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-input-wrapper input {
+      width: 100%;
+      padding-right: 48px !important;
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: #8a9bb5;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+
+    .password-toggle-btn:hover {
+      color: #7ff0c5;
+    }
+
+    .password-meta {
+      display: grid;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .password-strength {
+      min-height: 18px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .strength-weak {
+      color: #ff6b6b;
+    }
+
+    .strength-medium {
+      color: #ffd166;
+    }
+
+    .strength-strong {
+      color: #46e6a6;
+    }
+
+    .password-hints {
+      display: grid;
+      gap: 4px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: rgba(232, 237, 245, 0.7);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .auth-submit-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .auth-switch {
+      margin-top: 16px;
+      color: rgba(232, 237, 245, 0.78);
+      font-size: 14px;
+    }
+
+    .auth-switch span {
+      color: #7ff0c5;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .auth-message {
+      margin-top: 14px;
+      min-height: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* Remember Me & Forgot Password Styles */
+    .remember-forgot-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .remember-me input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #00f5ff;
+    }
+
+    .remember-me label {
+      cursor: pointer;
+      font-size: 14px;
+      color: #a0b3d9;
+      margin: 0;
+    }
+
+    .forgot-password-link {
+      color: #00f5ff;
+      font-size: 14px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .forgot-password-link:hover {
+      color: #9c27b0;
+      text-decoration: underline;
+    }
+
+    /* Referral Dashboard Styles */
+    .referral-dashboard-card {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(156, 39, 176, 0.08));
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 20px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+
+    .referral-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .referral-header i {
+      font-size: 28px;
+      color: #00f5ff;
+    }
+
+    .referral-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+
+    .referral-stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    .referral-stat {
+      text-align: center;
+    }
+
+    .referral-stat .number {
+      font-size: 32px;
+      font-weight: 800;
+      color: #00f5ff;
+    }
+
+    .referral-stat .label {
+      font-size: 12px;
+      color: #a0b3d9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .referral-link-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 4px 4px 4px 16px;
+    }
+
+    .referral-link-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-family: monospace;
+      outline: none;
+      padding: 12px 0;
+    }
+
+    .copy-btn {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      border-radius: 12px;
+      color: #0a0e1a;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 245, 255, 0.3);
+    }
+
+    .copy-btn.copied {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    .referral-reward-info {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: rgba(0, 245, 255, 0.05);
+      border-radius: 12px;
+      color: #a0b3d9;
+      font-size: 13px;
+    }
+
+    .referral-reward-info i {
+      color: #00f5ff;
+      margin-right: 8px;
+    }
+
+    .guest-hero-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .guest-hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(62, 255, 190, 0.08), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(59, 120, 255, 0.08), transparent 28%);
+      pointer-events: none;
+    }
+
+    .guest-badge,
+    .guest-title,
+    .guest-description,
+    .guest-cta-row,
+    .guest-feature-grid {
+      position: relative;
+      z-index: 1;
+    }
+
+    .guest-badge {
+      display: inline-flex;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(79, 255, 186, 0.08);
+      border: 1px solid rgba(79, 255, 186, 0.18);
+      color: #7ff0c5;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .guest-cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      margin-bottom: 22px;
+    }
+
+    .guest-feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .guest-feature-card {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .guest-feature-card h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    .guest-feature-card p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(232, 237, 245, 0.72);
+    }
+
+    .locked-notice-card {
+      margin-top: 18px;
+      border-radius: 18px;
+      padding: 18px;
+      background: rgba(255, 179, 71, 0.08);
+      border: 1px solid rgba(255, 179, 71, 0.18);
+    }
+
+    .locked-notice-content h3 {
+      margin: 0 0 8px 0;
+    }
+
+    .locked-notice-content p {
+      margin: 0;
+      color: rgba(232, 237, 245, 0.76);
+    }
+
+    .dashboard-hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .dashboard-label {
+      color: #7ff0c5;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .dashboard-access-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ===================================================== */
+    /* 🔥 NEW DASHBOARD LAYOUT - OPTION B REDESIGN */
+    /* ===================================================== */
+    
+    .dashboard-premium-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr 300px;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .dashboard-left-col,
+    .dashboard-right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .dashboard-center-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    /* Glassmorphism Stat Cards */
+    .stat-card-premium {
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 245, 255, 0.15);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card-premium::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.6), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .stat-card-premium:hover::before {
+      opacity: 1;
+    }
+    
+    .stat-card-premium:hover {
+      border-color: rgba(0, 245, 255, 0.4);
+      box-shadow: 0 8px 25px rgba(0, 245, 255, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .stat-card-premium .stat-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    .stat-card-premium .stat-value {
+      font-size: 32px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f5ff, #7ff0c5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .stat-card-premium .stat-label {
+      font-size: 12px;
+      color: #8a9bb5;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+    
+    .stat-card-premium .stat-change {
+      font-size: 12px;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+    
+    .stat-change.positive {
+      color: #46e6a6;
+    }
+    
+    .stat-change.negative {
+      color: #ff6b6b;
+    }
+    
+    /* Featured Match Hero Card */
+    .featured-match-hero {
+      background: rgba(15, 25, 45, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 20px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .featured-match-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(0, 245, 255, 0.08), transparent 50%),
+                  radial-gradient(circle at bottom left, rgba(156, 39, 176, 0.06), transparent 50%);
+      pointer-events: none;
+    }
+    
+    .featured-match-hero > * {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .featured-match-hero .match-badge {
+      display: inline-flex;
+      padding: 6px 14px;
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.25);
+      border-radius: 30px;
+      color: #00f5ff;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+    
+    .featured-match-hero .match-teams-display {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    
+    .featured-match-hero .team-name {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+    }
+    
+    .featured-match-hero .vs-badge {
+      font-size: 14px;
+      color: #8a9bb5;
+      font-weight: 600;
+    }
+    
+    .featured-match-hero .match-meta {
+      display: flex;
+      gap: 20px;
+      color: #8a9bb5;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    
+    .featured-match-hero .prediction-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    
+    .featured-match-hero .prediction-pick {
+      font-weight: 700;
+      color: #00f5ff;
+      font-size: 16px;
+    }
+    
+    .featured-match-hero .confidence-badge {
+      padding: 6px 14px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border-radius: 20px;
+      color: #0a0e1a;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    
+    /* Predictions Table */
+    .predictions-table-card {
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    
+    .predictions-table-card .table-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .predictions-table-card .table-header h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+    
+    .predictions-table-card table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .predictions-table-card th {
+      text-align: left;
+      padding: 12px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #8a9bb5;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    
+    .predictions-table-card td {
+      padding: 14px 20px;
+      font-size: 13px;
+      color: #c5d1eb;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    
+    .predictions-table-card tr:hover td {
+      background: rgba(0, 245, 255, 0.03);
+    }
+    
+    .confidence-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    
+    .confidence-pill.high {
+      background: rgba(70, 230, 166, 0.15);
+      color: #46e6a6;
+    }
+    
+    .confidence-pill.medium {
+      background: rgba(255, 179, 71, 0.15);
+      color: #ffb347;
+    }
+    
+    .confidence-pill.low {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+    
+    /* Accumulator Builder Card */
+    .accumulator-premium-card {
+      background: rgba(15, 25, 45, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 245, 255, 0.15);
+      border-radius: 16px;
+      padding: 20px;
+      position: sticky;
+      top: 20px;
+    }
+    
+    .accumulator-premium-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 16px 0;
+    }
+    
+    .accumulator-premium-card .acca-selection {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    
+    .accumulator-premium-card .acca-selection .selection-name {
+      color: #c5d1eb;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .accumulator-premium-card .acca-selection .selection-odds {
+      color: #00f5ff;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    
+    .accumulator-premium-card .acca-total {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(0, 245, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .accumulator-premium-card .acca-total .total-label {
+      color: #8a9bb5;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    
+    .accumulator-premium-card .acca-total .total-odds {
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .accumulator-premium-card .acca-return {
+      color: #46e6a6;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 8px;
+      text-align: right;
+    }
+    
+    .btn-accumulator {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0);
+      border: none;
+      border-radius: 12px;
+      color: #0a0e1a;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-accumulator:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 245, 255, 0.3);
+    }
+    
+    /* Team Form Section */
+    .team-form-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .team-form-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 40px;
+      transition: all 0.3s ease;
+    }
+    
+    .team-form-pill:hover {
+      border-color: rgba(0, 245, 255, 0.3);
+    }
+    
+    .team-form-pill .team-name-pill {
+      font-weight: 700;
+      color: #fff;
+      font-size: 12px;
+      min-width: 60px;
+    }
+    
+    .team-form-pill .form-dots {
+      display: flex;
+      gap: 3px;
+    }
+    
+    .team-form-pill .form-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .form-dot.win { background: #46e6a6; }
+    .form-dot.draw { background: #ffd166; }
+    .form-dot.loss { background: #ff6b6b; }
+    
+    .team-form-pill .win-rate-pill {
+      font-weight: 700;
+      font-size: 11px;
+      color: #00f5ff;
+    }
+    
+    /* Prediction Probability */
+    .probability-breakdown {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .probability-segment {
+      height: 6px;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+    
+    .probability-segment.high { background: #46e6a6; }
+    .probability-segment.medium { background: #ffd166; }
+    .probability-segment.low { background: #ff6b6b; }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .dashboard-premium-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .dashboard-right-col {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .dashboard-right-col > * {
+        flex: 1;
+        min-width: 280px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-premium-grid {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 12px;
+      }
+      .featured-match-hero .match-teams-display {
+        flex-direction: column;
+        text-align: center;
+      }
+      .featured-match-hero .team-name {
+        font-size: 18px;
+      }
+      .predictions-table-card table {
+        font-size: 11px;
+      }
+      .predictions-table-card th,
+      .predictions-table-card td {
+        padding: 10px 12px;
+      }
+    }
+  </style>
+</head>
+
+<body class="sportsbook-layout">
+
+  <!-- 🔥 BETA COUNTDOWN BANNER -->
+  <div class="beta-countdown-banner" id="betaCountdownBanner">
+    <div class="banner-content">
+      <div class="banner-segment">
+        <span class="emoji">🧪</span>
+        <span>BETA ACTIVE NOW</span>
+      </div>
+      <span class="banner-separator">•</span>
+      <div class="banner-segment highlight">
+        <span class="emoji">📱</span>
+        <span>APK Coming Soon</span>
+      </div>
+      <span class="banner-separator">•</span>
+      <div class="banner-segment">
+        <span class="emoji">🚀</span>
+        <span>Full Launch Oct 20, 2026</span>
+      </div>
+      <span class="banner-separator">•</span>
+      <div class="banner-segment countdown" id="countdownSegment">
+        <span class="emoji">⏳</span>
+        <span><span class="days-number" id="daysRemaining">187</span> DAYS REMAINING</span>
+      </div>
+      <span class="banner-inquiry">
+        📧 Inquiries: <a href="mailto:propredict.support@gmail.com">propredict.support@gmail.com</a>
+      </span>
+      <div class="banner-close" id="closeBannerBtn">✕</div>
+    </div>
+  </div>
+
+  <!-- 🔥 BEAST LOADING OVERLAY -->
+  <div class="beast-loading-overlay" id="beastLoadingOverlay">
+    <div class="beast-loader-container">
+      <div class="beast-logo-pulse">
+        <span>P</span><span>R</span><span>O</span><span>P</span><span>R</span><span>E</span><span>D</span><span>I</span><span>C</span><span>T</span>
+      </div>
+      <div class="beast-progress-wrapper">
+        <div class="beast-progress-bar" id="beastProgressBar"></div>
+      </div>
+      <div class="beast-message" id="beastLoadingMessage">
+        <span class="emoji" id="beastEmoji">🔮</span>
+        <span id="beastMessageText">Consulting the AI oracle...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STICKY HEADER -->
+  <header class="header sportsbook-header">
+    <div class="header-left">
+      <div class="logo">
+        <h1>ProPredict</h1>
+        <span class="subtitle">Multi-Sport Probability Intelligence Platform</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="controls">
+        <div class="control-group">
+          <label for="sportSelect" data-i18n="header.sport">Sport</label>
+          <select id="sportSelect">
+            <option value="football">Football</option>
+            <option value="basketball">Basketball</option>
+            <option value="nfl">NFL</option>
+            <option value="nhl">NHL</option>
+            <option value="rugbyleague">Rugby League</option>
+            <option value="rugbyunion">Rugby Union</option>
+            <option value="mlb">MLB</option>
+            <option value="tennis">Tennis</option>
+            <option value="darts">Darts</option>
+            <option value="tabletennis">Table Tennis</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="competitionSelect" data-i18n="header.competition">Competition</label>
+          <select id="competitionSelect">
+            <optgroup label="Top 5 Leagues">
+              <option value="PL">Premier League</option>
+              <option value="PD">La Liga</option>
+              <option value="SA">Serie A</option>
+              <option value="BL1">Bundesliga</option>
+              <option value="FL1">Ligue 1</option>
+            </optgroup>
+            <optgroup label="Europe">
+              <option value="UCL">UEFA Champions League</option>
+              <option value="UEL">UEFA Europa League</option>
+              <option value="UECL">UEFA Europa Conference League</option>
+            </optgroup>
+            <optgroup label="International">
+              <option value="WC">FIFA World Cup</option>
+              <option value="EURO">UEFA European Championship</option>
+            </optgroup>
+            <optgroup label="Asia">
+              <option value="J1">Japan J1 League</option>
+              <option value="SPL">Saudi Pro League</option>
+              <option value="CSL">Chinese Super League</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="control-group toggle-group">
+          <label for="eliteToggle" data-i18n="header.elite_picks">Elite Picks</label>
+          <input type="checkbox" id="eliteToggle">
+        </div>
+        <div class="control-group theme-toggle-group">
+          <label for="themeToggleBtn" data-i18n="header.theme">Theme</label>
+          <button id="themeToggleBtn" class="theme-toggle-btn">
+            <span id="themeIcon">🌙</span>
+            <span id="themeText" data-i18n="header.dark">Dark</span>
+          </button>
+        </div>
+      </div>
+      <div class="auth-controls">
+        <div id="userStatus" class="user-status">
+          <span id="userRoleBadge" class="role-badge role-free" data-i18n="header.free">FREE</span>
+        </div>
+        <button id="loginBtn" class="btn-primary" data-i18n="header.login">Login</button>
+        <button id="registerBtn" class="btn-secondary" data-i18n="header.register">Create Account</button>
+        <button id="upgradeBtn" class="btn-secondary hidden" style="display:none;" data-i18n="header.upgrade">Upgrade</button>
+        <button id="logoutBtn" class="btn-secondary hidden" style="display:none;" data-i18n="header.logout">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main id="appRoot">
+    <section id="guestLanding" class="guest-landing">
+      <div class="guest-hero-card">
+        <div class="guest-badge">Multi-Sport AI Betting Intelligence</div>
+        <h2 class="guest-title">Unlock ProPredict</h2>
+        <p class="guest-description">Get access to smart match selections, advanced betting market options, accumulator tools, confidence breakdowns and team analysis after successful registration or login.</p>
+        <div class="guest-cta-row">
+          <button id="heroLoginBtn" class="btn-primary" data-i18n="header.login">Login</button>
+          <button id="heroRegisterBtn" class="btn-secondary" data-i18n="header.register">Create Account</button>
+        </div>
+        <div class="guest-feature-grid">
+          <div class="guest-feature-card"><h3>Top Picks</h3><p>AI ranked selections with confidence scoring.</p></div>
+          <div class="guest-feature-card"><h3>Accumulator Builder</h3><p>Build smarter slips with combined odds and probability view.</p></div>
+          <div class="guest-feature-card"><h3>Market Options</h3><p>See betting market choices for supported matches and sports.</p></div>
+          <div class="guest-feature-card"><h3>Team Analysis</h3><p>Form, edge, strength and matchup intelligence in one place.</p></div>
+        </div>
+      </div>
+    </section>
+    <section id="lockedNotice" class="locked-notice-card">
+      <div class="locked-notice-content">
+        <h3>Sign in to view picks, analysis and accumulators</h3>
+        <p>Matches, betting markets, team analysis and accumulator tools stay hidden until you successfully log in or register.</p>
+      </div>
+    </section>
+    <section id="protectedApp" class="protected-app-shell hidden">
+      <!-- 🔥 NEW OPTION B DASHBOARD LAYOUT -->
+      <div class="dashboard-welcome-section">
+        <div class="welcome-header">
+          <span class="welcome-greeting" id="welcomeGreeting" data-i18n="dashboard.welcome_back">Welcome back,</span>
+          <span class="welcome-name" id="welcomeName">User</span>
+          <span class="welcome-emoji" id="welcomeEmoji">👋</span>
+        </div>
+      </div>
+      
+      <div class="dashboard-premium-grid">
+        
+        <!-- LEFT COLUMN: Stat Cards -->
+        <div class="dashboard-left-col">
+          <div class="stat-card-premium">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-value">67.4%</div>
+            <div class="stat-label">Overall Accuracy</div>
+            <div class="stat-change positive">↑ 8.7% vs last 30 days</div>
+          </div>
+          
+          <div class="stat-card-premium">
+            <div class="stat-icon">📊</div>
+            <div class="stat-value" id="perfTotal">0</div>
+            <div class="stat-label">Total Predictions</div>
+            <div class="stat-change positive">↑ 1,429 vs last 7 days</div>
+          </div>
+          
+          <div class="stat-card-premium">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value" id="perfROI">0%</div>
+            <div class="stat-label">ROI (30 Days)</div>
+            <div class="stat-change positive">↑ 4.3% vs last 30 days</div>
+          </div>
+          
+          <div class="stat-card-premium">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-value" id="perfWinRate">0%</div>
+            <div class="stat-label">Win Rate</div>
+            <div class="stat-change">Active Streaks: W9</div>
+          </div>
+          
+          <!-- Team Form Section -->
+          <div class="stat-card-premium">
+            <div class="stat-label" style="margin-bottom:12px;">Team Form (Last 5)</div>
+            <div class="team-form-row" id="teamFormContainer">
+              <div class="team-form-pill">
+                <span class="team-name-pill">Man City</span>
+                <span class="form-dots">
+                  <span class="form-dot win"></span><span class="form-dot draw"></span><span class="form-dot win"></span><span class="form-dot win"></span><span class="form-dot win"></span>
+                </span>
+                <span class="win-rate-pill">68.7%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- CENTER COLUMN: Featured Match + Predictions Table -->
+        <div class="dashboard-center-col">
+          
+          <!-- Featured Match Hero -->
+          <div class="featured-match-hero" id="featuredMatchHero">
+            <span class="match-badge">🔥 Featured Match</span>
+            <div class="match-teams-display">
+              <span class="team-name" id="featuredHomeTeam">Man City</span>
+              <span class="vs-badge">VS</span>
+              <span class="team-name" id="featuredAwayTeam">West Ham</span>
+            </div>
+            <div class="match-meta">
+              <span id="featuredVenue">🏟 Etihad Stadium</span>
+              <span id="featuredTime">📅 May 24, 19:00</span>
+              <span id="featuredLeague">🏆 Premier League</span>
+            </div>
+            <div class="prediction-row">
+              <span class="prediction-pick" id="featuredPick">Man City to Win</span>
+              <span class="confidence-badge" id="featuredConfidence">78%</span>
+              <span style="color:#00f5ff;font-weight:700;" id="featuredOdds">Odds: 1.32</span>
+            </div>
+          </div>
+          
+          <!-- Predictions Table -->
+          <div class="predictions-table-card">
+            <div class="table-header">
+              <h3>📋 Match Predictions</h3>
+              <span style="font-size:12px;color:#8a9bb5;">All Leagues · Next 7 Days</span>
+            </div>
+            <div style="overflow-x:auto;">
+              <table id="predictionsTable">
+                <thead>
+                  <tr>
+                    <th>Match</th>
+                    <th>Market</th>
+                    <th>Prediction</th>
+                    <th>Confidence</th>
+                    <th>Odds</th>
+                  </tr>
+                </thead>
+                <tbody id="predictionsTableBody">
+                  <tr>
+                    <td>Arsenal vs Everton</td>
+                    <td>1X2</td>
+                    <td style="color:#00f5ff;font-weight:600;">Arsenal</td>
+                    <td><span class="confidence-pill high">74%</span></td>
+                    <td style="font-weight:600;">1.48</td>
+                  </tr>
+                  <tr>
+                    <td>Bayern vs Wolfsburg</td>
+                    <td>Over/Under 2.5</td>
+                    <td style="color:#00f5ff;font-weight:600;">Over 2.5</td>
+                    <td><span class="confidence-pill medium">69%</span></td>
+                    <td style="font-weight:600;">1.63</td>
+                  </tr>
+                  <tr>
+                    <td>PSG vs Lyon</td>
+                    <td>BTTS</td>
+                    <td style="color:#00f5ff;font-weight:600;">Yes</td>
+                    <td><span class="confidence-pill medium">66%</span></td>
+                    <td style="font-weight:600;">1.72</td>
+                  </tr>
+                  <tr>
+                    <td>Real Madrid vs Betis</td>
+                    <td>1X2</td>
+                    <td style="color:#00f5ff;font-weight:600;">Real Madrid</td>
+                    <td><span class="confidence-pill medium">63%</span></td>
+                    <td style="font-weight:600;">1.40</td>
+                  </tr>
+                  <tr>
+                    <td>Juventus vs Napoli</td>
+                    <td>1X2</td>
+                    <td style="color:#00f5ff;font-weight:600;">Napoli</td>
+                    <td><span class="confidence-pill low">61%</span></td>
+                    <td style="font-weight:600;">2.15</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Probability Breakdown -->
+          <div class="stat-card-premium">
+            <div class="stat-label" style="margin-bottom:8px;">Prediction Probability Distribution</div>
+            <div class="probability-breakdown">
+              <div class="probability-segment high" style="width:78%;"></div>
+              <div class="probability-segment medium" style="width:15%;"></div>
+              <div class="probability-segment low" style="width:7%;"></div>
+            </div>
+            <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:#8a9bb5;">
+              <span>🟢 High 78%</span>
+              <span>🟡 Medium 15%</span>
+              <span>🔴 Low 7%</span>
+            </div>
+          </div>
+          
+        </div>
+        
+        <!-- RIGHT COLUMN: Accumulator Builder -->
+        <div class="dashboard-right-col">
+          <div class="accumulator-premium-card" id="accumulatorPremiumCard">
+            <h3>🧮 Accumulator Builder</h3>
+            <div id="accumulatorSelectionsPremium">
+              <div class="acca-selection">
+                <span class="selection-name">Man City (1X2)</span>
+                <span class="selection-odds">1.32</span>
+              </div>
+              <div class="acca-selection">
+                <span class="selection-name">Arsenal (1X2)</span>
+                <span class="selection-odds">1.48</span>
+              </div>
+              <div class="acca-selection">
+                <span class="selection-name">Over 2.5 Goals</span>
+                <span class="selection-odds">1.63</span>
+              </div>
+              <div class="acca-selection">
+                <span class="selection-name">Yes (BTTS)</span>
+                <span class="selection-odds">1.72</span>
+              </div>
+            </div>
+            <div class="acca-total">
+              <span class="total-label">Total Odds</span>
+              <span class="total-odds">5.21</span>
+            </div>
+            <div class="acca-return">Potential Return: $521.00</div>
+            <button class="btn-accumulator" id="addToBetslipBtn">Add to Betslip</button>
+          </div>
+          
+          <!-- Value Bets -->
+          <div class="stat-card-premium">
+            <div class="stat-label" style="margin-bottom:12px;">💎 Value Bets</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:#c5d1eb;">
+                <span>Aston Villa vs Brighton</span>
+                <span style="color:#00f5ff;font-weight:700;">AVL @ 2.30</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:#c5d1eb;">
+                <span>AC Milan vs Fiorentina</span>
+                <span style="color:#00f5ff;font-weight:700;">MIL @ 2.10</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:#c5d1eb;">
+                <span>Newcastle vs Chelsea</span>
+                <span style="color:#00f5ff;font-weight:700;">O2.5 @ 1.85</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- 🔥 REFERRAL DASHBOARD -->
+      <section id="referralDashboard" class="referral-dashboard-card hidden" style="max-width:1400px;margin:20px auto;"><div class="referral-header"><i class="fas fa-gift"></i><h3 data-i18n="dashboard.referral_title">Invite Friends & Earn Free Pro Access</h3></div><div class="referral-stats"><div class="referral-stat"><div class="number" id="referralCount">0</div><div class="label" data-i18n="dashboard.friends_invited">FRIENDS INVITED</div></div><div class="referral-stat"><div class="number" id="referralRewardDays">7</div><div class="label" data-i18n="dashboard.days_per_friend">DAYS PER FRIEND</div></div><div class="referral-stat"><div class="number" id="referralEarned">0</div><div class="label" data-i18n="dashboard.days_earned">DAYS EARNED</div></div></div><div class="referral-link-box"><input type="text" id="referralLinkInput" readonly value="Loading..."><button class="copy-btn" id="copyReferralBtn" data-i18n="dashboard.copy_link"><i class="fas fa-copy"></i> Copy Link</button></div><div class="referral-reward-info"><i class="fas fa-info-circle"></i> <span data-i18n="dashboard.referral_info">Share your link. When friends sign up and verify their email, you both get 7 days of Pro access FREE!</span></div></section>
+      
+    </section>
+  </main>
+
+  <!-- AUTH MODAL -->
+  <div id="authModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <button id="closeAuthModal" class="modal-close">✕</button>
+      <div class="auth-modal-badge" data-i18n="auth.secure_access">Secure Access</div>
+      <h2 id="authModalTitle" data-i18n="auth.login_title">Login</h2>
+      <p class="auth-modal-subtitle">Access your protected ProPredict dashboard, picks, team analysis and accumulator intelligence.</p>
+      <form id="authForm" class="auth-form">
+        <div class="form-group"><label for="authEmail" data-i18n="auth.email">Email</label><input type="email" id="authEmail" placeholder="Enter your email" required /></div>
+        <div class="form-group"><label for="authPassword" data-i18n="auth.password">Password</label><div class="password-input-wrapper"><input type="password" id="authPassword" placeholder="Enter your password" required /><button type="button" class="password-toggle-btn" id="passwordToggleBtn" aria-label="Show password">👁️</button></div><div class="password-meta"><div id="passwordStrength" class="password-strength"></div><div id="passwordHints" class="password-hints"><span>Use at least 8 characters</span><span>Add one uppercase letter</span><span>Add one number</span><span>Add one special character</span></div></div></div>
+        <div class="remember-forgot-row"><div class="remember-me"><input type="checkbox" id="rememberMeCheckbox"><label for="rememberMeCheckbox" data-i18n="auth.remember_me">Remember me for 30 days</label></div><a href="/reset-password.html" class="forgot-password-link" data-i18n="auth.forgot_password">Forgot password?</a></div>
+        <div class="auth-submit-row"><button type="submit" class="btn-primary" data-i18n="auth.submit">Submit</button></div>
+      </form>
+      <div class="auth-switch"><span id="switchAuthMode" data-i18n="auth.dont_have_account">Don't have an account? Register</span></div>
+      <div id="authMessage" class="auth-message"></div>
+    </div>
+  </div>
+<!-- SUBSCRIPTION MODAL -->
+<div id="subscriptionModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <button id="closeSubscriptionModal" class="modal-close">✕</button>
+    <div class="subscription-topbar"><div class="subscription-summary"><div class="subscription-modal-badge" data-i18n="subscription.premium_access">Premium Access</div><h2 data-i18n="subscription.choose_plan">Choose Your Plan</h2><p class="subscription-modal-subtitle" data-i18n="subscription.unlock_desc">Unlock elite picks, accumulator tools, team analysis and premium match intelligence.</p></div></div>
+    <div class="currency-selector-row"><label for="currencySelect" data-i18n="subscription.currency">Currency:</label><select id="currencySelect" class="currency-select"><option value="NGN" selected>🇳🇬 NGN (Naira) - Paystack</option><option value="USD">🇺🇸 USD - Bank Transfer</option><option value="GBP">🇬🇧 GBP - Bank Transfer</option><option value="USDC">💎 USDC - Crypto</option><option value="USDT">💎 USDT - Crypto</option></select><span id="currencyBadge" class="currency-badge" data-i18n="subscription.instant">Instant</span></div>
+    <div class="subscription-plans" id="subscriptionPlansContainer">
+      <div class="plan-card" data-plan="weekly"><span class="plan-tag" data-i18n="subscription.weekly">Weekly</span><h3 data-i18n="subscription.weekly">Weekly</h3><div class="plan-price"><strong id="weeklyPrice">₦4,500</strong><span>/ week</span></div><div id="weeklyConvertedPrice" class="plan-price-converted"></div><ul class="plan-features"><li data-i18n="subscription.full_access_7">Full access for 7 days</li><li data-i18n="subscription.all_premium_picks">All premium picks</li><li data-i18n="subscription.team_analysis_tools">Team analysis tools</li><li data-i18n="subscription.accumulator_builder">Accumulator builder</li></ul><button class="btn-primary subscribe-btn" data-tier="weekly" data-interval="weekly" data-ngn-price="4500" data-i18n="subscription.subscribe_weekly">Subscribe Weekly</button></div>
+      <div class="plan-card featured-plan" data-plan="monthly"><span class="plan-tag" data-i18n="subscription.most_popular">Most Popular</span><h3 data-i18n="subscription.monthly">Monthly</h3><div class="plan-price"><strong id="monthlyPrice">₦12,500</strong><span>/ month</span></div><div id="monthlyConvertedPrice" class="plan-price-converted"></div><ul class="plan-features"><li data-i18n="subscription.full_access_30">Full access for 30 days</li><li data-i18n="subscription.all_premium_picks">All premium picks</li><li data-i18n="subscription.team_analysis_tools">Team analysis tools</li><li data-i18n="subscription.accumulator_builder">Accumulator builder</li><li data-i18n="subscription.performance_tracking">Performance tracking</li></ul><button class="btn-primary subscribe-btn" data-tier="monthly" data-interval="monthly" data-ngn-price="12500" data-i18n="subscription.subscribe_monthly">Subscribe Monthly</button></div>
+      <div class="plan-card" data-plan="quarterly"><span class="plan-tag" data-i18n="subscription.save_20">Save 20%</span><h3 data-i18n="subscription.quarterly">Quarterly</h3><div class="plan-price"><strong id="quarterlyPrice">₦30,000</strong><span>/ 3 months</span></div><div id="quarterlyConvertedPrice" class="plan-price-converted"></div><ul class="plan-features"><li data-i18n="subscription.full_access_90">Full access for 90 days</li><li data-i18n="subscription.all_premium_picks">All premium picks</li><li data-i18n="subscription.team_analysis_tools">Team analysis tools</li><li data-i18n="subscription.accumulator_builder">Accumulator builder</li><li data-i18n="subscription.performance_tracking">Performance tracking</li><li data-i18n="subscription.priority_support">Priority support</li></ul><button class="btn-primary subscribe-btn" data-tier="quarterly" data-interval="quarterly" data-ngn-price="30000" data-i18n="subscription.subscribe_quarterly">Subscribe Quarterly</button></div>
+      <div class="plan-card" data-plan="yearly"><span class="plan-tag" data-i18n="subscription.best_value">Best Value</span><h3 data-i18n="subscription.yearly">Yearly</h3><div class="plan-price"><strong id="yearlyPrice">₦120,000</strong><span>/ year</span></div><div id="yearlyConvertedPrice" class="plan-price-converted"></div><ul class="plan-features"><li data-i18n="subscription.full_access_365">Full access for 365 days</li><li data-i18n="subscription.all_premium_picks">All premium picks</li><li data-i18n="subscription.team_analysis_tools">Team analysis tools</li><li data-i18n="subscription.accumulator_builder">Accumulator builder</li><li data-i18n="subscription.performance_tracking">Performance tracking</li><li data-i18n="subscription.priority_support">Priority support</li><li data-i18n="subscription.early_access">Early access to new features</li></ul><button class="btn-primary subscribe-btn" data-tier="yearly" data-interval="yearly" data-ngn-price="120000" data-i18n="subscription.subscribe_yearly">Subscribe Yearly</button></div>
+    </div>
+    <div class="subscription-footer-note" id="subscriptionFooterNote" data-i18n="subscription.secure_payments">Secure payments powered by Paystack. Cancel anytime from your dashboard.</div>
+    <div id="subscriptionMessage" class="auth-message"></div>
+  </div>
+</div>
+
+<!-- MANUAL PAYMENT MODAL -->
+<div id="manualPaymentModal" class="modal-overlay hidden">
+  <div class="modal-box manual-payment-modal">
+    <button id="closeManualPaymentModal" class="modal-close">✕</button>
+    <div class="subscription-modal-badge" id="manualPaymentBadge">USD Payment</div>
+    <h2 id="manualPaymentTitle">Complete Your Payment</h2>
+    <p class="subscription-modal-subtitle" id="manualPaymentSubtitle">Send the exact amount using the details below.</p>
+    <div id="paymentDetailsContainer" class="payment-details-box"></div>
+    <div id="paymentInstructions" class="payment-instructions"></div>
+    <div class="proof-upload-area"><label for="paymentProof">Proof of Payment</label><input type="text" id="paymentProof" class="proof-input" placeholder="Transaction ID / Hash / Screenshot link"><small style="color: #8a9bb5; font-size: 11px; display: block; margin-top: 6px;">Enter transaction reference or upload link. Our team will verify within 24 hours.</small></div>
+    <div class="form-group hidden" id="cryptoNetworkGroup"><label for="cryptoNetworkSelect">Network</label><select id="cryptoNetworkSelect" class="currency-select"></select></div>
+    <div class="payment-action-buttons"><button id="confirmManualPaymentBtn" class="btn-primary">I've Sent Payment</button><button id="cancelManualPaymentBtn" class="btn-secondary">Cancel</button></div>
+    <div id="manualPaymentMessage" class="auth-message"></div>
+  </div>
+</div>
+
+<!-- FOOTER - UPDATED WITH BLOG LINK -->
+<footer class="main-footer">
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="/about.html" data-i18n="footer.about">About</a>
+      <a href="/blog.html" data-i18n="footer.blog">Blog</a>
+      <a href="/pricing.html" data-i18n="footer.pricing">Pricing</a>
+      <a href="/contact.html" data-i18n="footer.contact">Contact</a>
+      <a href="/faq.html" data-i18n="footer.faq">FAQ</a>
+      <a href="/status.html" data-i18n="footer.status">Status</a>
+      <a href="/roadmap.html" data-i18n="footer.roadmap">Roadmap</a>
+      <a href="/security.html" data-i18n="footer.security">Security</a>
+      <a href="/careers.html" data-i18n="footer.careers">Careers</a>
+      <a href="/press.html" data-i18n="footer.press">Press</a>
+      <a href="/affiliates.html" data-i18n="footer.affiliates">Affiliates</a>
+      <a href="/terms.html" data-i18n="footer.terms">Terms</a>
+      <a href="/privacy.html" data-i18n="footer.privacy">Privacy</a>
+      <a href="/disclaimer.html" data-i18n="footer.disclaimer">Disclaimer</a>
+      <a href="/refund-policy.html" data-i18n="footer.refunds">Refunds</a>
+      <a href="/no-guarantee.html" data-i18n="footer.no_guarantee">No Guarantee</a>
+      <a href="/accessibility.html" data-i18n="footer.accessibility">Accessibility</a>
+      <a href="/responsible-gambling.html" data-i18n="footer.responsible_gambling">Responsible Gambling</a>
+    </div>
+    <div class="footer-disclaimer"><i class="fas fa-exclamation-triangle"></i><strong>Disclaimer:</strong> ProPredict provides AI-generated predictions for entertainment purposes only. No guarantees of winning. Please gamble responsibly. 18+ only. If you or someone you know has a gambling problem, seek help from local support services.</div>
+    <div class="footer-copyright">© 2026 ProPredict Analytics. All rights reserved. | <a href="mailto:propredict.support@gmail.com">propredict.support@gmail.com</a></div>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/js/i18n.js"></script>
+<script src="/js/app-state.js"></script><script src="/js/helpers.js"></script><script src="/js/dom.js"></script><script src="/js/auth.js"></script><script src="/js/fetch-interceptor.js"></script><script src="/js/competition.js"></script><script src="/js/smart-builder.js"></script><script src="/js/picks.js"></script><script src="/js/accumulator.js"></script><script src="/js/performance.js"></script><script src="/js/teams.js"></script><script src="/js/safety-wrappers.js"></script><script src="/js/events-and-init.js"></script>
+
+<!-- Password Toggle -->
+<script>(function(){const p=document.getElementById('authPassword'),b=document.getElementById('passwordToggleBtn');if(p&&b)b.addEventListener('click',()=>{const t=p.getAttribute('type')==='password'?'text':'password';p.setAttribute('type',t);b.textContent=t==='password'?'👁️':'🙈';});})();</script>
+
+<!-- Password Strength -->
+<script>(function(){const p=document.getElementById("authPassword"),s=document.getElementById("passwordStrength"),m=document.getElementById("switchAuthMode"),t=document.getElementById("authModalTitle");function e(v){let c=0;if(v.length>=8)c++;if(/[A-Z]/.test(v))c++;if(/[0-9]/.test(v))c++;if(/[^A-Za-z0-9]/.test(v))c++;if(c<=1)return{label:"Weak password",className:"password-strength strength-weak"};if(c<=3)return{label:"Medium password",className:"password-strength strength-medium"};return{label:"Strong password",className:"password-strength strength-strong"};}function u(){if(!p||!s)return;if(t&&!t.textContent.toLowerCase().includes("create")){s.textContent="";s.className="password-strength";return;}if(!p.value.trim()){s.textContent="Create a strong password for registration";s.className="password-strength strength-medium";return;}const r=e(p.value.trim());s.textContent=r.label;s.className=r.className;}p&&p.addEventListener("input",u);p&&p.addEventListener("focus",u);m&&m.addEventListener("click",()=>setTimeout(u,60));document.addEventListener("DOMContentLoaded",u);})();</script>
+
+<!-- Referral -->
+<script>document.addEventListener('DOMContentLoaded',()=>{const r=new URLSearchParams(window.location.search).get('ref');if(r)sessionStorage.setItem('referralCode',r);});async function loadReferralStats(){if(!window.ppIsLoggedIn||!window.ppIsLoggedIn())return;try{const s=await window.ppGetReferralStats();if(s){document.getElementById('referralCount').textContent=s.referralCount||0;document.getElementById('referralLinkInput').value=s.referralLink||'';const d=document.getElementById('referralDashboard');if(d)d.classList.remove('hidden');}}catch(e){console.error(e);}}function copyReferralLink(){const i=document.getElementById('referralLinkInput'),b=document.getElementById('copyReferralBtn');i.select();i.setSelectionRange(0,99999);try{navigator.clipboard.writeText(i.value);b.innerHTML='<i class="fas fa-check"></i> Copied!';b.classList.add('copied');setTimeout(()=>{b.innerHTML='<i class="fas fa-copy"></i> Copy Link';b.classList.remove('copied');},2000);if(typeof showToast==='function')showToast('Referral link copied!','success');}catch(e){alert('Copy manually: '+i.value);}}document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('copyReferralBtn');if(b)b.addEventListener('click',copyReferralLink);});const oIA=window.ppInitAuth;window.ppInitAuth=function(){oIA.call(this);if(window.ppIsLoggedIn&&window.ppIsLoggedIn())setTimeout(loadReferralStats,500);};const oSU=window.ppSyncProtectedUI;window.ppSyncProtectedUI=function(){oSU.call(this);if(window.ppIsLoggedIn&&window.ppIsLoggedIn())setTimeout(loadReferralStats,500);};</script>
+
+<!-- Multi-Currency -->
+<script>(function(){function i(){const R={USD:0.00063,GBP:0.00050,USDC:0.00063,USDT:0.00063};let C='NGN',P=null;const S=document.getElementById('currencySelect'),B=document.getElementById('currencyBadge'),F=document.getElementById('subscriptionFooterNote'),M=document.getElementById('manualPaymentModal'),CM=document.getElementById('closeManualPaymentModal'),CB=document.getElementById('cancelManualPaymentBtn'),CF=document.getElementById('confirmManualPaymentBtn');function G(){return{weekly:document.getElementById('weeklyPrice'),monthly:document.getElementById('monthlyPrice'),quarterly:document.getElementById('quarterlyPrice'),yearly:document.getElementById('yearlyPrice')};}function E(){return{weekly:document.getElementById('weeklyConvertedPrice'),monthly:document.getElementById('monthlyConvertedPrice'),quarterly:document.getElementById('quarterlyConvertedPrice'),yearly:document.getElementById('yearlyConvertedPrice')};}const N={weekly:4500,monthly:12500,quarterly:30000,yearly:120000};function f(a,c){if(c==='NGN')return '₦'+a.toLocaleString();if(c==='USD')return '$'+a.toFixed(2);if(c==='GBP')return '£'+a.toFixed(2);if(c==='USDC')return a.toFixed(2)+' USDC';if(c==='USDT')return a.toFixed(2)+' USDT';return a.toString();}function X(a,c){if(c==='NGN')return a;return a*(R[c]||0.00063);}function U(){const c=C,p=G(),e=E();if(B){if(C==='NGN'){B.textContent='Instant';B.style.background='rgba(127,240,197,0.12)';B.style.color='#7ff0c5';}else{B.textContent='Manual (24h)';B.style.background='rgba(255,179,71,0.12)';B.style.color='#ffb347';}}if(F)F.textContent=C==='NGN'?'Secure payments powered by Paystack. Cancel anytime.':'Payment verified manually within 24h. Check email for updates.';Object.keys(N).forEach(k=>{const n=N[k],x=X(n,C);if(p[k])p[k].textContent=f(C==='NGN'?n:x,C);if(e[k]){if(C!=='NGN'){e[k].textContent=`≈ ₦${n.toLocaleString()} NGN`;e[k].style.display='block';}else{e[k].textContent='';e[k].style.display='none';}}});document.querySelectorAll('.subscribe-btn').forEach(b=>{const t=b.getAttribute('data-tier');b.textContent=C==='NGN'?`Subscribe ${t.charAt(0).toUpperCase()+t.slice(1)}`:`Pay with ${C}`;});}if(S)S.addEventListener('change',e=>{C=e.target.value;U();});document.addEventListener('click',async e=>{const b=e.target.closest('.subscribe-btn');if(!b)return;e.preventDefault();const t=b.dataset.tier,i=b.dataset.interval,n=parseInt(b.dataset.ngnPrice);if(C==='NGN'){if(typeof window.ppInitializeSubscription==='function')window.ppInitializeSubscription(t,i,'NGN');else if(typeof window.ppStartSubscription==='function')window.ppStartSubscription(t,i);}else{const x=X(n,C);P={tier:t,interval:i,amount:x,currency:C,ngnAmount:n};await H(P);}});async function H(p){document.getElementById('manualPaymentBadge').textContent=`${p.currency} Payment`;document.getElementById('manualPaymentTitle').textContent=`Pay ${f(p.amount,p.currency)}`;try{const t=localStorage.getItem('propredict_token')||localStorage.getItem('token');const r=await fetch('/api/get-payment-details',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${t}`},body:JSON.stringify({currency:p.currency,plan:p.tier,amount:p.amount})});const d=await r.json();if(d.success)V(d.paymentDetails);else L('Failed to load payment details','error');}catch(err){L('Error loading payment details','error');}M.classList.remove('hidden');}function V(d){const c=document.getElementById('paymentDetailsContainer'),i=document.getElementById('paymentInstructions'),n=document.getElementById('cryptoNetworkGroup'),s=document.getElementById('cryptoNetworkSelect');let h='';if(d.currency==='USD'||d.currency==='GBP'){h=`<div class="payment-detail-row"><span class="payment-detail-label">Bank:</span><span class="payment-detail-value">${d.bankName}</span></div><div class="payment-detail-row"><span class="payment-detail-label">Account Name:</span><span class="payment-detail-value">${d.accountName}</span></div><div class="payment-detail-row"><span class="payment-detail-label">Account Number:</span><span class="payment-detail-value">${d.accountNumber}<button class="copy-payment-btn" onclick="navigator.clipboard.writeText('${d.accountNumber}')">Copy</button></span></div>${d.routing?`<div class="payment-detail-row"><span class="payment-detail-label">Routing:</span><span class="payment-detail-value">${d.routing}</span></div>`:''}${d.sortCode?`<div class="payment-detail-row"><span class="payment-detail-label">Sort Code:</span><span class="payment-detail-value">${d.sortCode}</span></div>`:''}${d.iban?`<div class="payment-detail-row"><span class="payment-detail-label">IBAN:</span><span class="payment-detail-value">${d.iban}</span></div>`:''}${d.swift?`<div class="payment-detail-row"><span class="payment-detail-label">SWIFT:</span><span class="payment-detail-value">${d.swift}</span></div>`:''}<div class="payment-detail-row"><span class="payment-detail-label">Amount:</span><span class="payment-detail-value">${f(d.amount,d.currency)}</span></div>`;n.classList.add('hidden');}else{h=`<div class="payment-detail-row"><span class="payment-detail-label">Address:</span><span class="payment-detail-value">${d.address?d.address.substring(0,10)+'...'+d.address.substring(d.address.length-8):''}<button class="copy-payment-btn" onclick="navigator.clipboard.writeText('${d.address}')">Copy</button></span></div><div class="payment-detail-row"><span class="payment-detail-label">Amount:</span><span class="payment-detail-value">${f(d.amount,d.currency)}</span></div>`;if(s&&d.networks){s.innerHTML='';d.networks.forEach(net=>{const o=document.createElement('option');o.value=net;o.textContent=net;s.appendChild(o);});}n.classList.remove('hidden');}c.innerHTML=h;i.innerHTML=`<strong>📌 Instructions:</strong><br>${d.instructions}<br><br><strong>📧 Support:</strong> ${d.supportEmail}`;}function L(m,t){const el=document.getElementById('manualPaymentMessage');if(el){el.textContent=m;el.style.color=t==='error'?'#ff6b6b':'#46e6a6';}}function K(){M.classList.add('hidden');document.getElementById('paymentProof').value='';L('','');}if(CF)CF.addEventListener('click',async()=>{const pr=document.getElementById('paymentProof').value,ns=document.getElementById('cryptoNetworkSelect'),sn=ns?ns.value:'N/A';if(!pr)return L('Please enter transaction proof','error');if(!P)return L('No pending plan found','error');const t=localStorage.getItem('propredict_token')||localStorage.getItem('token');try{const r=await fetch('/api/submit-manual-payment',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${t}`},body:JSON.stringify({currency:P.currency,plan:P.tier,amount:P.amount,proofType:(P.currency==='USDC'||P.currency==='USDT')?'crypto':'bank',proofData:pr,transactionRef:pr,notes:`Network: ${sn}`})});const d=await r.json();if(d.success){L('Payment proof submitted! We will verify within 24 hours.','success');setTimeout(()=>{M.classList.add('hidden');document.getElementById('subscriptionModal').classList.add('hidden');document.getElementById('paymentProof').value='';},2000);}else L(d.error||'Submission failed','error');}catch(err){L('Error submitting payment','error');}});if(CM)CM.addEventListener('click',K);if(CB)CB.addEventListener('click',K);setTimeout(U,100);}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',i);else i();})();</script>
+<!-- 🔥 BEAST LOADER CONTROLLER -->
+<script>
+  (function() {
+    const overlay = document.getElementById('beastLoadingOverlay');
+    const messageText = document.getElementById('beastMessageText');
+    const emojiSpan = document.getElementById('beastEmoji');
+    const progressBar = document.getElementById('beastProgressBar');
+    
+    const messages = [
+      { emoji: '🔮', text: 'Consulting the AI oracle...' },
+      { emoji: '📊', text: 'Crunching performance data...' },
+      { emoji: '⚽', text: 'Analyzing team form...' },
+      { emoji: '🧠', text: 'Our AI is thinking...' },
+      { emoji: '💎', text: 'Finding value picks...' },
+      { emoji: '🎯', text: 'Calculating win probability...' },
+      { emoji: '🏆', text: 'Preparing your edge...' },
+      { emoji: '⚡', text: 'Almost there...' }
+    ];
+    
+    let intervalId = null;
+    let currentIndex = 0;
+    
+    function clearMessageInterval() {
+      if (intervalId) { clearInterval(intervalId); intervalId = null; }
+    }
+    
+    function updateMessage() {
+      const msg = messages[currentIndex % messages.length];
+      if (emojiSpan) emojiSpan.textContent = msg.emoji;
+      if (messageText) messageText.textContent = msg.text;
+      currentIndex++;
+    }
+    
+    function resetMessage() {
+      currentIndex = 0;
+      const firstMsg = messages[0];
+      if (emojiSpan) emojiSpan.textContent = firstMsg.emoji;
+      if (messageText) messageText.textContent = firstMsg.text;
+    }
+    
+    window.showBeastLoader = function(customFirstMessage) {
+      if (!overlay) return;
+      clearMessageInterval();
+      if (progressBar) { progressBar.style.animation = 'none'; progressBar.offsetHeight; progressBar.style.animation = ''; }
+      if (customFirstMessage) { currentIndex = 0; if (emojiSpan) emojiSpan.textContent = '🔮'; if (messageText) messageText.textContent = customFirstMessage; }
+      else { resetMessage(); }
+      overlay.classList.add('active');
+      intervalId = setInterval(updateMessage, 2000);
+    };
+    
+    window.hideBeastLoader = function() { if (!overlay) return; overlay.classList.remove('active'); clearMessageInterval(); };
+    
+    const authForm = document.getElementById('authForm');
+    if (authForm) authForm.addEventListener('submit', function(e) { const title = document.getElementById('authModalTitle'); const isRegister = title && title.textContent.includes('Create'); window.showBeastLoader(isRegister ? 'Creating your account...' : 'Signing you in...'); });
+    
+    document.addEventListener('click', function(e) { if (e.target.closest('.subscribe-btn')) { const currencySelect = document.getElementById('currencySelect'); if (currencySelect && currencySelect.value === 'NGN') window.showBeastLoader('Initializing secure payment...'); } });
+    
+    const closeAuthBtn = document.getElementById('closeAuthModal');
+    if (closeAuthBtn) closeAuthBtn.addEventListener('click', window.hideBeastLoader);
+    
+    window._beastLoader = { show: window.showBeastLoader, hide: window.hideBeastLoader, reset: resetMessage };
+  })();
+</script>
+
+<!-- 🔥 GLOBAL TICKER CONTROLLER -->
+<script>
+  (function() {
+    const initTicker = () => {
+      const welcomeNameSpan = document.getElementById('welcomeName'), welcomeEmoji = document.getElementById('welcomeEmoji'), tickerEmoji = document.getElementById('tickerEmoji'), tickerText = document.getElementById('tickerText'), tickerBar = document.getElementById('globalTickerBar'), protectedApp = document.getElementById('protectedApp');
+      if (!tickerBar || !tickerText) return;
+      
+      function extractNameFromEmail(email) {
+        if (!email) return null;
+        const localPart = email.split('@')[0]; let namePart = localPart.split(/[._-]/)[0]; namePart = namePart.replace(/\d+$/, '');
+        if (namePart.length > 0) namePart = namePart.charAt(0).toUpperCase() + namePart.slice(1).toLowerCase();
+        if (namePart.length < 2) return null;
+        if (['Admin', 'Info', 'Support', 'Contact', 'Hello', 'Test'].includes(namePart)) return null;
+        return namePart;
+      }
+      
+      function getUserEmail() {
+        try {
+          const user = window.ppGetCurrentUser ? window.ppGetCurrentUser() : null; if (user && user.email) return user.email;
+          const storedUser = localStorage.getItem('propredict_user'); if (storedUser) { const parsed = JSON.parse(storedUser); return parsed.email || null; }
+          const token = localStorage.getItem('propredict_token') || localStorage.getItem('token'); if (token) { try { const payload = JSON.parse(atob(token.split('.')[1])); return payload.email || null; } catch (e) {} }
+        } catch (e) {}
+        return null;
+      }
+      
+      function calculateRealStats() {
+        try {
+          const perfLog = window.ppGetPerformanceLog ? window.ppGetPerformanceLog() : []; if (!perfLog || perfLog.length === 0) return null;
+          const settled = perfLog.filter(p => p.result === 'win' || p.result === 'loss'); const wins = settled.filter(p => p.result === 'win').length; const total = settled.length; if (total === 0) return null;
+          const winRate = Math.round((wins / total) * 100);
+          let totalStake = 0, totalReturn = 0; settled.forEach(p => { totalStake += p.stake || 1; if (p.result === 'win') totalReturn += (p.stake || 1) * (p.odds || 2); });
+          const roi = totalStake > 0 ? Math.round(((totalReturn - totalStake) / totalStake) * 100) : 0;
+          const topPicks = window.ppGetTopPicks ? window.ppGetTopPicks() : []; const picksAvailable = topPicks.length || 23;
+          let topConfidence = 87; if (topPicks.length > 0) topConfidence = Math.max(...topPicks.map(p => p.confidence || 70));
+          return { winRate, roi, picksAvailable, topConfidence };
+        } catch (e) { return null; }
+      }
+      
+      const staticMessages = [
+        { emoji: '⚡', text: 'The algorithm is hungry today' }, { emoji: '🧠', text: 'Neural network primed and scanning' }, { emoji: '👁️', text: 'AI has its eyes on the fixtures' }, { emoji: '💭', text: 'Reading the market like a book' }, { emoji: '🎯', text: 'Precision mode: activated' }, { emoji: '💎', text: 'Value hiding in plain sight' }, { emoji: '🕵️', text: 'Bookmakers are sleeping on these picks' }, { emoji: '📈', text: 'Market inefficiencies detected' }, { emoji: '🔍', text: 'Edge detected across multiple leagues' }, { emoji: '🏆', text: 'Elite-tier selections locked in' }, { emoji: '🥇', text: 'Top pick confidence: solid' }, { emoji: '⚔️', text: 'Underdog alerts brewing' }, { emoji: '🎲', text: 'Smart money is moving. We see it.' }, { emoji: '📊', text: 'Data points analyzed this minute: 847' }, { emoji: '🧮', text: 'Probability models updated in real-time' }, { emoji: '📐', text: 'Form curves trending upward' }, { emoji: '🔬', text: 'xG analysis complete across 5 leagues' }, { emoji: '📡', text: 'Live odds tracking: 23 books monitored' }, { emoji: '🌙', text: 'The oracle has spoken' }, { emoji: '✨', text: 'Patterns emerge. We decode them.' }, { emoji: '🔮', text: 'Forecasting what others can\'t see' }, { emoji: '🧿', text: 'Your edge. Our obsession.' }, { emoji: '⚡', text: 'Trust the process. Trust the data.' }
+      ];
+      
+      let tickerInterval = null, messageQueue = [], currentTickerIndex = 0;
+      
+      function buildMessageQueue() {
+        const stats = calculateRealStats(); const queue = [...staticMessages];
+        if (stats) { if (stats.winRate) queue.push({ emoji: '🎯', text: `Your win rate: ${stats.winRate}%` }); if (stats.roi !== undefined) queue.push({ emoji: '📈', text: `Your ROI: ${stats.roi > 0 ? '+' : ''}${stats.roi}%` }); if (stats.picksAvailable) queue.push({ emoji: '📊', text: `${stats.picksAvailable} picks ready for today` }); if (stats.topConfidence) queue.push({ emoji: '🏆', text: `Top pick confidence: ${stats.topConfidence}%` }); }
+        const topPicks = window.ppGetTopPicks ? window.ppGetTopPicks() : []; const picksCount = topPicks.length || 23; queue.push({ emoji: '💎', text: `${picksCount} value opportunities detected` });
+        messageQueue = queue;
+      }
+      
+      function rotateTicker() { if (messageQueue.length === 0) buildMessageQueue(); const msg = messageQueue[currentTickerIndex % messageQueue.length]; if (tickerEmoji) tickerEmoji.textContent = msg.emoji; if (tickerText) { tickerText.style.opacity = '0'; setTimeout(() => { tickerText.textContent = msg.text; tickerText.style.opacity = '1'; }, 150); } currentTickerIndex++; }
+      
+      function updateWelcomeMessage() { const email = getUserEmail(); const name = extractNameFromEmail(email); if (welcomeNameSpan) { if (name) { welcomeNameSpan.textContent = name; if (welcomeEmoji) welcomeEmoji.textContent = '👋'; } else { welcomeNameSpan.textContent = ''; document.querySelector('.welcome-greeting').textContent = 'Welcome back!'; if (welcomeEmoji) welcomeEmoji.textContent = '🎉'; } } }
+      
+      function startTicker() { if (tickerInterval) clearInterval(tickerInterval); buildMessageQueue(); rotateTicker(); tickerInterval = setInterval(rotateTicker, 5000); }
+      function stopTicker() { if (tickerInterval) { clearInterval(tickerInterval); tickerInterval = null; } }
+      
+      const originalSyncUI = window.ppSyncProtectedUI; window.ppSyncProtectedUI = function() { if (originalSyncUI) originalSyncUI.call(this); const isLoggedIn = window.ppIsLoggedIn ? window.ppIsLoggedIn() : false; if (isLoggedIn && protectedApp && !protectedApp.classList.contains('hidden')) { updateWelcomeMessage(); startTicker(); } else { stopTicker(); } };
+      const originalInitAuth = window.ppInitAuth; window.ppInitAuth = function() { if (originalInitAuth) originalInitAuth.call(this); setTimeout(() => { updateWelcomeMessage(); startTicker(); }, 300); };
+      setTimeout(() => { if (window.ppIsLoggedIn && window.ppIsLoggedIn()) { updateWelcomeMessage(); startTicker(); } }, 500);
+      window.refreshTicker = function() { buildMessageQueue(); rotateTicker(); };
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initTicker); else initTicker();
+  })();
+</script>
+
+<!-- 🔥 SKELETON LOADER CONTROLLER -->
+<script>
+  (function() {
+    function hideSkeletonShowPicks() { const skeleton = document.getElementById('picksSkeleton'), container = document.getElementById('topPicksContainer'); if (skeleton && container) { const checkInterval = setInterval(() => { if (container.children.length > 0) { skeleton.style.display = 'none'; container.style.display = 'grid'; clearInterval(checkInterval); } }, 100); setTimeout(() => clearInterval(checkInterval), 10000); } }
+    const originalRender = window.renderTopPicks; if (originalRender) { window.renderTopPicks = function() { originalRender.apply(this, arguments); setTimeout(hideSkeletonShowPicks, 50); }; }
+    const observer = new MutationObserver((mutations) => { mutations.forEach((mutation) => { if (mutation.type === 'childList' && mutation.addedNodes.length > 0) { const container = document.getElementById('topPicksContainer'); if (container && container.children.length > 0) { const skeleton = document.getElementById('picksSkeleton'); if (skeleton) skeleton.style.display = 'none'; container.style.display = 'grid'; } } }); });
+    const container = document.getElementById('topPicksContainer'); if (container) observer.observe(container, { childList: true, subtree: true });
+    hideSkeletonShowPicks();
+  })();
+</script>
+
+<!-- 🔥 PRO LOCK CONTROLLER -->
+<script>
+  (function() {
+    function isProUser() { try { const token = localStorage.getItem('propredict_token') || localStorage.getItem('token'); if (!token) return false; const payload = JSON.parse(atob(token.split('.')[1])); return payload.role === 'pro' || payload.role === 'vvip' || payload.role === 'admin'; } catch (e) { return false; } }
+    function applyProLocks() {
+      const isPro = isProUser(); const badge = document.getElementById('userRoleBadge'); if (badge && isPro) { badge.textContent = window.t ? window.t('header.pro') : 'PRO'; badge.className = 'role-badge role-pro'; }
+      if (isPro) { document.querySelectorAll('[data-pro-only="true"]').forEach(el => { el.classList.remove('pro-locked-section'); const overlay = el.querySelector('.pro-locked-overlay'); if (overlay) overlay.remove(); }); document.querySelectorAll('.upgrade-banner').forEach(b => b.classList.add('hidden')); return; }
+      document.querySelectorAll('[data-pro-only="true"]').forEach(section => { section.classList.add('pro-locked-section'); section.style.position = 'relative'; if (section.querySelector('.pro-locked-overlay')) return;
+        const overlay = document.createElement('div'); overlay.className = 'pro-locked-overlay';
+        overlay.innerHTML = `<div class="pro-locked-content"><div class="pro-locked-icon">👑</div><div class="pro-locked-title" data-i18n="pro_lock.pro_feature">Pro Feature</div><div class="pro-locked-text" data-i18n="pro_lock.upgrade_to_unlock">Upgrade to Pro to unlock</div><button class="pro-locked-btn" onclick="document.getElementById('upgradeBtn')?.click()" data-i18n="pro_lock.upgrade_now">Upgrade Now</button></div>`;
+        section.appendChild(overlay);
+        if (window.I18N) window.I18N.translatePage();
+      });
+      document.getElementById('perfUpgradeBanner')?.classList.remove('hidden');
+    }
+    setTimeout(applyProLocks, 300);
+    const originalSync = window.ppSyncProtectedUI; window.ppSyncProtectedUI = function() { if (originalSync) originalSync.call(this); setTimeout(applyProLocks, 100); };
+    window.refreshProLocks = applyProLocks;
+    window.addEventListener('languageChanged', () => setTimeout(applyProLocks, 50));
+  })();
+</script>
+
+<!-- Theme Toggle -->
+<script>(function(){const b=document.getElementById('themeToggleBtn'),i=document.getElementById('themeIcon'),t=document.getElementById('themeText');if(!b)return;let c=localStorage.getItem('propredict_theme')||'dark';function a(th){const r=document.documentElement;if(th==='light'){r.style.setProperty('--bg-primary','#f5f7fa');r.style.setProperty('--text-primary','#1a1a2e');i.textContent='☀️';t.textContent=window.I18N?window.I18N.t('header.light'):'Light';}else{r.style.setProperty('--bg-primary','#0b1220');r.style.setProperty('--text-primary','#ffffff');i.textContent='🌙';t.textContent=window.I18N?window.I18N.t('header.dark'):'Dark';}localStorage.setItem('propredict_theme',th);c=th;}b.addEventListener('click',()=>{a(c==='dark'?'light':'dark');});a(c);})();</script>
+  <!-- 🔥 BETA COUNTDOWN BANNER CONTROLLER -->
+  <script>
+    (function() {
+      // Calculate days remaining until October 20, 2026
+      function calculateDaysRemaining() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const launchDate = new Date(2026, 9, 20); // Month is 0-indexed, so 9 = October
+        launchDate.setHours(0, 0, 0, 0);
+        
+        const diffTime = launchDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        return diffDays > 0 ? diffDays : 0;
+      }
+      
+      // Update the countdown display
+      function updateCountdown() {
+        const daysElement = document.getElementById('daysRemaining');
+        if (daysElement) {
+          const days = calculateDaysRemaining();
+          daysElement.textContent = days;
+          
+          // If launch day, change message
+          if (days === 0) {
+            const countdownSegment = document.getElementById('countdownSegment');
+            if (countdownSegment) {
+              countdownSegment.innerHTML = '<span class="emoji">🎉</span><span>LAUNCH DAY!</span>';
+              countdownSegment.classList.add('launch-day');
+            }
+          }
+        }
+      }
+      
+      // Handle banner close with 7-day dismissal
+      function initBannerDismiss() {
+        const banner = document.getElementById('betaCountdownBanner');
+        const closeBtn = document.getElementById('closeBannerBtn');
+        
+        if (!banner || !closeBtn) return;
+        
+        // Check if banner was dismissed
+        const dismissed = localStorage.getItem('beta_banner_dismissed');
+        const dismissTime = localStorage.getItem('beta_banner_dismiss_time');
+        
+        if (dismissed === 'true' && dismissTime) {
+          const dismissedDate = new Date(parseInt(dismissTime));
+          const now = new Date();
+          const daysSinceDismiss = Math.floor((now - dismissedDate) / (1000 * 60 * 60 * 24));
+          
+          if (daysSinceDismiss < 7) {
+            banner.classList.add('dismissed');
+          } else {
+            localStorage.removeItem('beta_banner_dismissed');
+            localStorage.removeItem('beta_banner_dismiss_time');
+          }
+        }
+        
+        closeBtn.addEventListener('click', () => {
+          banner.classList.add('dismissed');
+          localStorage.setItem('beta_banner_dismissed', 'true');
+          localStorage.setItem('beta_banner_dismiss_time', Date.now().toString());
+        });
+      }
+      
+      // Initialize everything
+      updateCountdown();
+      initBannerDismiss();
+      
+      // Update countdown daily (check every hour)
+      setInterval(updateCountdown, 60 * 60 * 1000);
+    })();
+  </script>
+
+  <!-- TAWK.TO CHAT WIDGET -->
+  <div id='tawk_69dff5770092d61c3637ee24'></div>
+  <script type="text/javascript">var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date(); (function(){ var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0]; s1.async=true; s1.src='https://embed.tawk.to/69dff5770092d61c3637ee24/1jmb0dl5h'; s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0); })(); </script>
+
+<script src="ui-enhancements.js"></script><script src="upgrade-ui.js"></script><script src="app-shell.js"></script>
+</body>
+</html>
