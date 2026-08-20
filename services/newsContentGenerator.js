@@ -12,11 +12,11 @@ const { formatDatePretty } = require('./newsDataService');
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
-// Models to try (fallback chain)
+// Models to try (fallback chain) — ordered by cost/quality
 const MODELS = [
-  'google/gemini-2.0-flash-001',
-  'meta-llama/llama-3.1-8b-instruct:free',
-  'anthropic/claude-3-haiku:beta'
+  'deepseek/deepseek-chat-v3-0324',
+  'google/gemini-2.5-flash-preview-05-20',
+  'meta-llama/llama-3.3-70b-instruct'
 ];
 
 async function callAI(prompt, retries = 2) {

@@ -87,18 +87,18 @@ async function generateNews() {
     // Step 4: Get league context for each league we're covering
     console.log('\n\u2699\ufe0f Step 4: Fetching league standings & top scorers...');
     const leagueContexts = new Map();
-    const leaguesToCover = new Set(enrichedMatches.map(m => m.league.id));
+    const leaguesToCover = new Set(enrichedMatches.map(m => m.league.code || m.league.id));
     
-    for (const leagueId of leaguesToCover) {
-      const league = LEAGUES.find(l => l.id === leagueId);
+    for (const leagueCode of leaguesToCover) {
+      const league = LEAGUES.find(l => l.code === leagueCode);
       if (league) {
         try {
-          const context = await getLeagueContext(league.id, league.season);
-          leagueContexts.set(leagueId, context);
+          const context = await getLeagueContext(league.code);
+          leagueContexts.set(leagueCode, context);
           runReport.apiCallsUsed += 2; // standings + scorers
         } catch (err) {
           console.error(`  Failed to get context for ${league.name}: ${err.message}`);
-          leagueContexts.set(leagueId, { standings: [], topScorers: [] });
+          leagueContexts.set(leagueCode, { standings: [], topScorers: [] });
         }
       }
     }
@@ -120,7 +120,7 @@ async function generateNews() {
           .map(r => ({
             league: r.league,
             fixtures: r.fixtures,
-            standings: leagueContexts.get(r.league.id)?.standings || []
+            standings: leagueContexts.get(r.league.code)?.standings || []
           }));
 
         const digestContent = await generateMultiLeagueDigest(leagueSummaries);
@@ -161,7 +161,7 @@ async function generateNews() {
       for (const match of previewMatches) {
         console.log(`  \U0001f3ae Generating preview: ${match.homeTeam.name} vs ${match.awayTeam.name}`);
         try {
-          const standings = leagueContexts.get(match.league.id)?.standings || [];
+          const standings = leagueContexts.get(match.league.code)?.standings || [];
           const h2h = match.headToHead || [];
           const content = await generateMatchPreview(match, standings, h2h);
           const slug = generateSlug(`${match.homeTeam.name} vs ${match.awayTeam.name} Preview`);
@@ -211,7 +211,7 @@ async function generateNews() {
       for (const leagueData of leaguesWithMatches) {
         console.log(`  \U0001f4c8 Generating roundup for ${leagueData.league.name}...`);
         try {
-          const context = leagueContexts.get(leagueData.league.id) || { standings: [], topScorers: [] };
+          const context = leagueContexts.get(leagueData.league.code) || { standings: [], topScorers: [] };
           const content = await generateWeeklyRoundup(
             leagueData.league,
             leagueData.fixtures,
@@ -285,8 +285,8 @@ async function generateNews() {
  *   - Sunday 18:00 UTC — Weekend results roundup
  */
 function startScheduler() {
-  if (!process.env.API_FOOTBALL_KEY) {
-    console.log('\u26a0\ufe0f API_FOOTBALL_KEY not set — news scheduler DISABLED');
+  if (!process.env.FOOTBALL_DATA_KEY) {
+    console.log('\u26a0\ufe0f FOOTBALL_DATA_KEY not set — news scheduler DISABLED');
     return null;
   }
   if (!process.env.OPENROUTER_API_KEY) {

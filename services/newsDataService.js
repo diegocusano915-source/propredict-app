@@ -1,44 +1,38 @@
 /**
  * ProPredict News Data Service
- * Fetches REAL match data from API-Football (api-sports.io)
- * Covers 20+ leagues across Europe and beyond
+ * Fetches REAL match data from football-data.org (FREE tier: 10 req/min)
+ * Covers 12 major leagues across Europe + more
  * 
  * Required env vars:
- *   API_FOOTBALL_KEY  - API-Football key from api-sports.io (free tier: 100 requests/day)
+ *   FOOTBALL_DATA_KEY - Free API key from football-data.org (no credit card needed)
  *   OPENROUTER_API_KEY - OpenRouter key for AI content generation
  */
 
 const axios = require('axios');
 
-const API_FOOTBALL_BASE = 'https://v3.football.api-sports.io';
+const BASE = 'https://api.football-data.org/v4';
 
-// 20 leagues with real IDs from API-Football
+// 12 leagues — football-data.org competition codes
+// Free tier covers: PL, CL, EL, BL, SA, LL, L1, EC, WC, PPL, EFL
 const LEAGUES = [
-  // Top 5 (higher priority, picked more often)
-  { id: 39,  name: 'Premier League', country: 'England', flag: '🏴🇨🇦', priority: 1, season: '2025-2026' },
-  { id: 140, name: 'La Liga', country: 'Spain', flag: '🇪🇸', priority: 1, season: '2025-2026' },
-  { id: 135, name: 'Serie A', country: 'Italy', flag: '🇮🇹', priority: 1, season: '2025-2026' },
-  { id: 78,  name: 'Bundesliga', country: 'Germany', flag: '🇩🇪', priority: 1, season: '2025-2026' },
-  { id: 61,  name: 'Ligue 1', country: 'France', flag: '🇫🇷', priority: 1, season: '2025-2026' },
+  // Top 5 European leagues
+  { code: 'PL',  name: 'Premier League',    country: 'England', flag: '\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc77\udb40\udc7c', priority: 1 },
+  { code: 'PD',  name: 'La Liga',            country: 'Spain',   flag: '\ud83c\uddea\ud83c\udddf8', priority: 1 },
+  { code: 'SA',  name: 'Serie A',            country: 'Italy',   flag: '\ud83c\uddee\ud83c\uddf9', priority: 1 },
+  { code: 'BL1', name: 'Bundesliga',         country: 'Germany', flag: '\ud83c\udde9\ud83c\uddea', priority: 1 },
+  { code: 'FL1', name: 'Ligue 1',            country: 'France',  flag: '\ud83c\uddeb\ud83c\uddf7', priority: 1 },
+  // European competitions
+  { code: 'CL',  name: 'Champions League',   country: 'Europe',  flag: '\u26bd',            priority: 1 },
+  { code: 'EC',  name: 'European Championship', country: 'Europe', flag: '\ud83c\uddea\ud83c\uddfa', priority: 2 },
   // Secondary leagues
-  { id: 88,  name: 'Eredivisie', country: 'Netherlands', flag: '🇳🇱', priority: 2, season: '2025-2026' },
-  { id: 94,  name: 'Primeira Liga', country: 'Portugal', flag: '🇵🇹', priority: 2, season: '2025-2026' },
-  { id: 203, name: 'Super Lig', country: 'Turkey', flag: '🇹🇷', priority: 2, season: '2025-2026' },
-  { id: 144, name: 'Jupiler Pro League', country: 'Belgium', flag: '🇧🇪', priority: 2, season: '2025-2026' },
-  { id: 340, name: 'Brasileirao', country: 'Brazil', flag: '🇧🇷', priority: 2, season: '2025' },
-  { id: 128, name: 'Liga MX', country: 'Mexico', flag: '🇲🇽', priority: 2, season: '2025-2026' },
-  { id: 2,  name: 'Champions League', country: 'Europe', flag: '🇦🇪', priority: 1, season: '2025-2026' },
-  { id: 3,  name: 'Europa League', country: 'Europe', flag: '🇪🇺', priority: 2, season: '2025-2026' },
-  { id: 848, name: 'Conference League', country: 'Europe', flag: '🇪🇺', priority: 3, season: '2025-2026' },
-  { id: 169, name: 'Serie B', country: 'Italy', flag: '🇮🇹', priority: 3, season: '2025-2026' },
-  { id: 325, name: 'FA Cup', country: 'England', flag: '🏴🇨🇦', priority: 2, season: '2025-2026' },
-  { id: 326, name: 'League Cup', country: 'England', flag: '🏴🇨🇦', priority: 3, season: '2025-2026' },
-  { id: 421, name: 'Copa del Rey', country: 'Spain', flag: '🇪🇸', priority: 3, season: '2025-2026' },
-  { id: 433, name: 'DFB Pokal', country: 'Germany', flag: '🇩🇪', priority: 3, season: '2025-2026' },
-  { id: 338, name: 'MLS', country: 'USA', flag: '🇺🇸', priority: 3, season: '2025' },
+  { code: 'ELC', name: 'Championship',       country: 'England', flag: '\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc77\udb40\udc7c', priority: 2 },
+  { code: 'DED', name: 'Eredivisie',         country: 'Netherlands', flag: '\ud83c\uddf3\ud83c\uddf1', priority: 2 },
+  { code: 'PPL', name: 'Primeira Liga',      country: 'Portugal', flag: '\ud83c\uddf5\ud83c\uddf9', priority: 2 },
+  { code: 'BSA', name: 'Serie A (Brazil)',   country: 'Brazil',  flag: '\ud83c\udde7\ud83c\uddf7', priority: 3 },
+  { code: 'EL',  name: 'Europa League',      country: 'Europe',  flag: '\ud83c\uddea\ud83c\uddfa', priority: 2 },
 ];
 
-// Request cache to minimize API calls (100/day limit on free tier)
+// Cache to stay under 10 req/min
 const cache = new Map();
 const CACHE_TTL = 4 * 60 * 60 * 1000; // 4 hours
 
@@ -46,21 +40,40 @@ function cacheKey(type, ...args) {
   return `${type}:${args.join(':')}`;
 }
 
-async function apiGet(endpoint, params = {}) {
-  const key = cacheKey('api', endpoint, JSON.stringify(params));
+// Rate limiter: max 8 requests per 60 seconds (under 10/min limit)
+const requestTimes = [];
+async function rateLimit() {
+  const now = Date.now();
+  const windowStart = now - 60000;
+  // Clean old entries
+  while (requestTimes.length > 0 && requestTimes[0] < windowStart) {
+    requestTimes.shift();
+  }
+  if (requestTimes.length >= 8) {
+    const waitMs = 60000 - (now - requestTimes[0]) + 500;
+    console.log(`  \u23f3 Rate limit: waiting ${Math.ceil(waitMs / 1000)}s...`);
+    await new Promise(resolve => setTimeout(resolve, waitMs));
+  }
+  requestTimes.push(Date.now());
+}
+
+async function apiGet(endpoint) {
+  const key = cacheKey('fd', endpoint);
   const cached = cache.get(key);
   if (cached && (Date.now() - cached.ts) < CACHE_TTL) {
     return cached.data;
   }
 
-  const response = await axios.get(`${API_FOOTBALL_BASE}${endpoint}`, {
-    headers: { 'x-apisports-key': process.env.API_FOOTBALL_KEY },
-    params
+  await rateLimit();
+
+  const response = await axios.get(`${BASE}${endpoint}`, {
+    headers: { 'X-Auth-Token': process.env.FOOTBALL_DATA_KEY }
   });
 
-  if (response.data && response.data.errors && Object.keys(response.data.errors).length > 0) {
-    console.error('API-Football error:', response.data.errors);
-    return null;
+  if (response.status === 429) {
+    console.error('  \u26a0\ufe0f Rate limited by football-data.org, waiting 60s...');
+    await new Promise(resolve => setTimeout(resolve, 61000));
+    return apiGet(endpoint); // Retry once
   }
 
   const result = response.data;
@@ -69,135 +82,175 @@ async function apiGet(endpoint, params = {}) {
 }
 
 /**
- * Get fixtures for a league in a date range
+ * Get fixtures for a competition in a date range
  */
-async function getFixtures(leagueId, season, dateFrom, dateTo) {
-  const data = await apiGet('/fixtures', {
-    league: leagueId,
-    season,
-    from: dateFrom,
-    to: dateTo
-  });
-  return data?.response || [];
+async function getFixtures(competitionCode, dateFrom, dateTo) {
+  const data = await apiGet(`/competitions/${competitionCode}/matches?dateFrom=${dateFrom}&dateTo=${dateTo}`);
+  return (data.matches || []).map(m => normalizeMatch(m));
+}
+
+/**
+ * Get all upcoming fixtures for a competition (next 7 days)
+ */
+async function getUpcomingFixtures(competitionCode) {
+  const today = formatDate(new Date());
+  const nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7);
+  const to = formatDate(nextWeek);
+  return getFixtures(competitionCode, today, to);
+}
+
+/**
+ * Get recent finished fixtures for a competition (last 7 days)
+ */
+async function getRecentFixtures(competitionCode) {
+  const today = formatDate(new Date());
+  const lastWeek = new Date();
+  lastWeek.setDate(lastWeek.getDate() - 7);
+  const from = formatDate(lastWeek);
+  const data = await apiGet(`/competitions/${competitionCode}/matches?dateFrom=${from}&dateTo=${today}&status=FINISHED`);
+  return (data.matches || []).map(m => normalizeMatch(m));
 }
 
 /**
  * Get league standings
  */
-async function getStandings(leagueId, season) {
-  const data = await apiGet('/standings', { league: leagueId, season });
-  return data?.response?.[0]?.league?.standings?.[0] || [];
+async function getStandings(competitionCode) {
+  const data = await apiGet(`/competitions/${competitionCode}/standings`);
+  return (data.standings?.[0]?.table || []).map(s => ({
+    rank: s.position,
+    team: s.team.name,
+    logo: s.team.crest,
+    teamId: s.team.id,
+    played: s.playedGames,
+    wins: s.won,
+    draws: s.draw,
+    losses: s.lost,
+    goalsFor: s.goalsFor,
+    goalsAgainst: s.goalsAgainst,
+    goalDiff: s.goalDifference,
+    points: s.points,
+    form: s.form || ''
+  }));
 }
 
 /**
  * Get head-to-head between two teams
  */
 async function getHeadToHead(team1Id, team2Id) {
-  const data = await apiGet('/fixtures/headtohead', {
-    h2h: `${team1Id}-${team2Id}`,
-    last: 5
-  });
-  return data?.response || [];
+  const data = await apiGet(`/teams/${team1Id}/matches?opponent=${team2Id}&limit=5`);
+  return (data.matches || []).map(m => ({
+    date: m.utcDate,
+    homeTeam: m.homeTeam.name,
+    awayTeam: m.awayTeam.name,
+    homeGoals: m.score?.fullTime?.home,
+    awayGoals: m.score?.fullTime?.away,
+    winner: m.score?.winner || 'draw',
+    competition: m.competition?.name || ''
+  }));
 }
 
 /**
- * Get top scorers for a league
+ * Get top scorers for a competition
  */
-async function getTopScorers(leagueId, season) {
-  const data = await apiGet('/players/topscorers', { league: leagueId, season });
-  return data?.response || [];
+async function getTopScorers(competitionCode) {
+  const data = await apiGet(`/competitions/${competitionCode}/scorers`);
+  return (data.scorers || []).slice(0, 10).map(s => ({
+    name: s.player.name,
+    team: s.team.name,
+    goals: s.goals || 0,
+    assists: s.assists || 0,
+    playedMinutes: s.playedMinutes || 0,
+    rating: s.rating || '0'
+  }));
 }
 
 /**
- * Get team statistics for a league/season
+ * Normalize a football-data.org match to our internal format
  */
-async function getTeamStats(teamId, leagueId, season) {
-  const data = await apiGet('/teams/statistics', {
-    team: teamId,
-    league: leagueId,
-    season
-  });
-  return data?.response || null;
+function normalizeMatch(m) {
+  const ftHome = m.score?.fullTime?.home;
+  const ftAway = m.score?.fullTime?.away;
+  const isFinished = m.status === 'FINISHED';
+  const isScheduled = m.status === 'SCHEDULED' || m.status === 'TIMED';
+  const isInPlay = ['IN_PLAY', 'PAUSED', 'HALFTIME'].includes(m.status);
+
+  return {
+    id: m.id,
+    date: m.utcDate,
+    status: isFinished ? 'FT' : isInPlay ? 'LIVE' : isScheduled ? 'NS' : m.status,
+    homeTeam: {
+      id: m.homeTeam.id,
+      name: m.homeTeam.name,
+      logo: m.homeTeam.crest || '',
+      winner: isFinished ? (ftHome > ftAway) : null
+    },
+    awayTeam: {
+      id: m.awayTeam.id,
+      name: m.awayTeam.name,
+      logo: m.awayTeam.crest || '',
+      winner: isFinished ? (ftAway > ftHome) : null
+    },
+    goals: {
+      home: isFinished ? ftHome : null,
+      away: isFinished ? ftAway : null
+    },
+    league: {
+      code: m.competition?.code || '',
+      name: m.competition?.name || '',
+      country: '',
+      flag: '',
+      logo: m.competition?.emblem || '',
+      round: m.matchday ? `Matchday ${m.matchday}` : ''
+    },
+    matchday: m.matchday || null
+  };
 }
 
 /**
  * Scan this week's matches across all leagues
- * Returns fixtures grouped by league with rich data
+ * Returns fixtures grouped by league
  */
 async function scanWeeklyMatches() {
   const today = new Date();
-  const dayOfWeek = today.getDay(); // 0=Sun
-  
-  // Define the "week window": from upcoming Friday to next Thursday
-  const fridayOffset = (5 - dayOfWeek + 7) % 7 || 7;
-  const friday = new Date(today);
-  friday.setDate(today.getDate() + fridayOffset);
-  
-  const thursday = new Date(friday);
-  thursday.setDate(friday.getDate() + 6);
+  const lastWeek = new Date(today);
+  lastWeek.setDate(today.getDate() - 7);
+  const nextWeek = new Date(today);
+  nextWeek.setDate(today.getDate() + 7);
 
-  const dateFrom = formatDate(friday);
-  const dateTo = formatDate(thursday);
+  const dateFrom = formatDate(lastWeek);
+  const dateTo = formatDate(nextWeek);
 
   console.log(`\ud83d\udccd Scanning fixtures from ${dateFrom} to ${dateTo}...`);
 
   const results = [];
   let apiCalls = 0;
-  const MAX_DAILY_CALLS = 80; // Leave room under 100/day limit
 
-  // Prioritize: fetch top leagues first
   const sortedLeagues = [...LEAGUES].sort((a, b) => a.priority - b.priority);
 
   for (const league of sortedLeagues) {
-    if (apiCalls >= MAX_DAILY_CALLS) {
-      console.log(`\u26a0\ufe0f API call limit reached (${apiCalls}/${MAX_DAILY_CALLS}), stopping scan`);
-      break;
-    }
-
     try {
-      const fixtures = await getFixtures(league.id, league.season, dateFrom, dateTo);
+      const fixtures = await getFixtures(league.code, dateFrom, dateTo);
       apiCalls++;
 
       if (!fixtures || fixtures.length === 0) continue;
 
-      // Enrich with match data
-      const enrichedFixtures = fixtures.map(f => ({
-        id: f.fixture.id,
-        date: f.fixture.date,
-        status: f.fixture.status.short,
-        homeTeam: {
-          id: f.teams.home.id,
-          name: f.teams.home.name,
-          logo: f.teams.home.logo,
-          winner: f.teams.home.winner
-        },
-        awayTeam: {
-          id: f.teams.away.id,
-          name: f.teams.away.name,
-          logo: f.teams.away.logo,
-          winner: f.teams.away.winner
-        },
-        goals: f.goals,
-        league: {
-          id: league.id,
-          name: league.name,
-          country: league.country,
-          flag: league.flag,
-          logo: f.league.logo,
-          round: f.league.round
-        },
-        score: f.score
+      // Tag with our league metadata
+      const tagged = fixtures.map(f => ({
+        ...f,
+        league: { ...f.league, id: league.code, country: league.country, flag: league.flag, name: league.name }
       }));
 
       results.push({
         league,
-        fixtures: enrichedFixtures,
-        matchCount: enrichedFixtures.length
+        fixtures: tagged,
+        matchCount: tagged.length
       });
 
-      console.log(`  \u2705 ${league.name}: ${enrichedFixtures.length} matches`);
+      console.log(`  \u2705 ${league.name}: ${tagged.length} matches`);
     } catch (err) {
-      console.error(`  \u274c ${league.name}: ${err.message}`);
+      const msg = err.response?.data?.message || err.message;
+      console.error(`  \u274c ${league.name}: ${msg}`);
     }
   }
 
@@ -212,34 +265,28 @@ function selectNewsMatches(weeklyData) {
   const selected = [];
   const usedLeagues = new Set();
 
-  // Group by league
-  const byLeague = {};
-  for (const item of weeklyData.results) {
-    byLeague[item.league.name] = item;
-  }
-
   // Pick 2-3 Premier League matches
-  const pl = byLeague['Premier League'];
+  const pl = weeklyData.results.find(r => r.league.code === 'PL');
   if (pl && pl.fixtures.length > 0) {
     const plMatches = pickBestMatches(pl.fixtures, 3);
     selected.push(...plMatches.map(m => ({ ...m, selectionReason: 'Premier League spotlight' })));
-    usedLeagues.add('Premier League');
+    usedLeagues.add('PL');
   }
 
-  // Pick 2-3 from other priority-1 leagues (La Liga, Serie A, Bundesliga, Ligue 1, UCL)
+  // Pick 2-3 from other priority-1 leagues
   const otherTopLeagues = weeklyData.results
-    .filter(r => r.league.priority === 1 && !usedLeagues.has(r.league.name))
+    .filter(r => r.league.priority === 1 && !usedLeagues.has(r.league.code))
     .sort((a, b) => b.matchCount - a.matchCount);
 
   for (const item of otherTopLeagues.slice(0, 2)) {
     const matches = pickBestMatches(item.fixtures, 2);
     selected.push(...matches.map(m => ({ ...m, selectionReason: `${item.league.name} spotlight` })));
-    usedLeagues.add(item.league.name);
+    usedLeagues.add(item.league.code);
   }
 
   // Pick 1-2 from priority-2 leagues for variety
   const otherLeagues = weeklyData.results
-    .filter(r => !usedLeagues.has(r.league.name))
+    .filter(r => !usedLeagues.has(r.league.code))
     .sort((a, b) => b.matchCount - a.matchCount);
 
   for (const item of otherLeagues.slice(0, 2)) {
@@ -251,53 +298,33 @@ function selectNewsMatches(weeklyData) {
 }
 
 /**
- * Pick the most interesting matches (prefer upcoming/big teams)
+ * Pick the most interesting matches
  */
 function pickBestMatches(fixtures, count) {
-  // Prefer: not started > in progress > finished; then earlier dates first
   const scored = fixtures.map(f => {
     let score = 0;
-    if (f.status === 'NS' || f.status === '1H' || f.status === 'HT' || f.status === '2H') score += 10;
-    if (f.status === 'FT' || f.status === 'AET' || f.status === 'PEN') score += 3;
-    // Prefer weekend matches (Saturday/Sunday)
+    if (f.status === 'NS' || f.status === 'LIVE') score += 10;
+    if (f.status === 'FT') score += 3;
     const day = new Date(f.date).getDay();
     if (day === 0 || day === 6) score += 5;
     return { ...f, _score: score };
   });
-
   scored.sort((a, b) => b._score - a._score);
   return scored.slice(0, count);
 }
 
 /**
- * Get enrichment data for selected matches (H2H, standings, team stats)
+ * Get enrichment data for selected matches (H2H)
  */
 async function enrichMatchData(matches) {
   const enriched = [];
-  let apiCalls = 0;
-  const MAX_ENRICHMENT_CALLS = 30;
 
   for (const match of matches) {
-    if (apiCalls >= MAX_ENRICHMENT_CALLS) break;
-
     try {
-      // Get head-to-head (1 call per match pair)
       const h2h = await getHeadToHead(match.homeTeam.id, match.awayTeam.id);
-      apiCalls++;
-
-      enriched.push({
-        ...match,
-        headToHead: h2h.map(m => ({
-          date: m.fixture.date,
-          homeTeam: m.teams.home.name,
-          awayTeam: m.teams.away.name,
-          homeGoals: m.goals.home,
-          awayGoals: m.goals.away,
-          winner: m.teams.home.winner === true ? 'home' : m.teams.away.winner === true ? 'away' : 'draw'
-        }))
-      });
+      enriched.push({ ...match, headToHead: h2h });
     } catch (err) {
-      console.error(`H2H fetch failed for ${match.homeTeam.name} vs ${match.awayTeam.name}: ${err.message}`);
+      console.error(`H2H failed for ${match.homeTeam.name} vs ${match.awayTeam.name}: ${err.message}`);
       enriched.push({ ...match, headToHead: [] });
     }
   }
@@ -308,38 +335,15 @@ async function enrichMatchData(matches) {
 /**
  * Get league standings for article context
  */
-async function getLeagueContext(leagueId, season) {
+async function getLeagueContext(leagueCode) {
   try {
     const [standings, scorers] = await Promise.all([
-      getStandings(leagueId, season),
-      getTopScorers(leagueId, season)
+      getStandings(leagueCode),
+      getTopScorers(leagueCode)
     ]);
-
-    return {
-      standings: standings.slice(0, 10).map(s => ({
-        rank: s.rank,
-        team: s.team.name,
-        logo: s.team.logo,
-        played: s.all.played,
-        wins: s.all.win,
-        draws: s.all.draw,
-        losses: s.all.lose,
-        goalsFor: s.all.goals.for,
-        goalsAgainst: s.all.goals.against,
-        goalDiff: s.goalsDiff,
-        points: s.points,
-        form: s.form
-      })),
-      topScorers: scorers.slice(0, 5).map(s => ({
-        name: s.player.name,
-        team: s.statistics[0]?.team?.name || '',
-        goals: s.statistics[0]?.goals?.total || 0,
-        assists: s.statistics[0]?.goals?.assists || 0,
-        rating: s.statistics[0]?.games?.rating || '0'
-      }))
-    };
+    return { standings, topScorers };
   } catch (err) {
-    console.error(`League context fetch failed: ${err.message}`);
+    console.error(`League context failed for ${leagueCode}: ${err.message}`);
     return { standings: [], topScorers: [] };
   }
 }
@@ -365,10 +369,11 @@ module.exports = {
   enrichMatchData,
   getLeagueContext,
   getFixtures,
+  getUpcomingFixtures,
+  getRecentFixtures,
   getStandings,
   getHeadToHead,
   getTopScorers,
-  getTeamStats,
   formatDate,
   formatDatePretty
 };

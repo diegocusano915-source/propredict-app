@@ -150,8 +150,7 @@ app.use(helmet({
         "https://v1.hockey.api-sports.io",
         "https://v1.rugby.api-sports.io",
         "https://openrouter.ai",
-        "https://v3.football.api-sports.io",
-        "https://api-sports.io",
+        "https://api.football-data.org",
         "https://www.thesportsdb.com"
       ],
       frameSrc: [
@@ -796,8 +795,8 @@ app.get("/news/:slug", async (req, res) => {
 // POST /news/generate — Manual trigger for news generation
 app.post("/news/generate", async (req, res) => {
   try {
-    if (!process.env.API_FOOTBALL_KEY || !process.env.OPENROUTER_API_KEY) {
-      return res.status(503).json({ error: "News API keys not configured. Set API_FOOTBALL_KEY and OPENROUTER_API_KEY in .env" });
+    if (!process.env.FOOTBALL_DATA_KEY || !process.env.OPENROUTER_API_KEY) {
+      return res.status(503).json({ error: "News API keys not configured. Set FOOTBALL_DATA_KEY and OPENROUTER_API_KEY in .env" });
     }
     const result = await generateNews();
     res.json(result);
@@ -813,7 +812,7 @@ app.get("/news/meta", async (req, res) => {
     const meta = loadMeta();
     res.json({
       ...meta,
-      schedulerActive: !!(process.env.API_FOOTBALL_KEY && process.env.OPENROUTER_API_KEY),
+      schedulerActive: !!(process.env.FOOTBALL_DATA_KEY && process.env.OPENROUTER_API_KEY),
       supportedLeagues: LEAGUES.length
     });
   } catch (err) {
