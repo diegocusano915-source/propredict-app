@@ -150,6 +150,8 @@ app.use(helmet({
         "https://v1.hockey.api-sports.io",
         "https://v1.rugby.api-sports.io",
         "https://openrouter.ai",
+        "https://v3.football.api-sports.io",
+        "https://api-sports.io",
         "https://www.thesportsdb.com"
       ],
       frameSrc: [
@@ -719,25 +721,133 @@ app.post("/api/admin/manual-payments/:paymentId/status", authenticateToken, asyn
 });
 
 /* ==================================================
-   ================= BLOG SYSTEM =====================
+   ================= NEWS SYSTEM =====================
+   Real match data from API-Football + AI-generated articles
+   Cron scheduler: 3-4x/week (Mon/Wed/Fri/Sun)
 ================================================== */
-const BLOG_ARTICLES = {
-  "10000-matches-analyzed": { title: "I Analyzed 10,000 Matches: The 3 Stats That Actually Predict Wins", category: "📊 Data Science", date: "March 5, 2026", readTime: "18 min read", summary: "After feeding a decade of football data into ProPredict's AI, three metrics emerged as the holy grail of prediction.", content: "<p>Full article content...</p>" },
-  "accumulator-failure-psychology": { title: "Why 85% of Accumulator Bets Fail by the 75th Minute", category: "🧠 Psychology", date: "March 12, 2026", readTime: "16 min read", summary: "The math says accumulators are terrible value. So why do we keep building them?", content: "<p>Full article content...</p>" },
-  "leicester-2016-data-truth": { title: "The Leicester City 2016 Miracle: What the Data Actually Said", category: "📜 Historical Analysis", date: "March 20, 2026", readTime: "19 min read", summary: "Everyone calls it a 5000/1 fairytale. But the data saw Leicester coming.", content: "<p>Full article content...</p>" },
-  "xg-explained-metric-bookmakers-hate": { title: "xG Explained: The One Metric Bookmakers Don't Want You to Understand", category: "📈 Advanced Metrics", date: "March 28, 2026", readTime: "17 min read", summary: "Expected Goals changed football analytics forever.", content: "<p>Full article content...</p>" },
-  "321-betting-system": { title: "The 3-2-1 System: How I Turned £50 Into £780 Without Watching a Single Match", category: "💰 Strategy", date: "April 10, 2026", readTime: "15 min read", summary: "I stopped watching football entirely and built a mechanical betting system.", content: "<p>Full article content...</p>" }
-};
+const {
+  getArticles,
+  getArticle,
+  incrementViews,
+  deleteArticle,
+  getRecentArticles,
+  getActiveLeagues,
+  loadMeta
+} = require("./services/newsStorage");
+const { generateNews, startScheduler } = require("./services/newsScheduler");
+const { LEAGUES } = require("./services/newsDataService");
 
+// GET /news — List articles with pagination & filtering
+app.get("/news", async (req, res) => {
+  try {
+    const { page, limit, league, category, search } = req.query;
+    const result = getArticles({
+      page: parseInt(page) || 1,
+      limit: Math.min(parseInt(limit) || 20, 50),
+      league,
+      category,
+      search
+    });
+    res.json(result);
+  } catch (err) {
+    console.error("News list error:", err);
+    res.status(500).json({ error: "Failed to load articles" });
+  }
+});
+
+// GET /news/recent — Latest articles for homepage feed
+app.get("/news/recent", async (req, res) => {
+  try {
+    const count = Math.min(parseInt(req.query.count) || 6, 20);
+    const articles = getRecentArticles(count);
+    res.json({ articles });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load recent articles" });
+  }
+});
+
+// GET /news/leagues — Active leagues that have articles
+app.get("/news/leagues", async (req, res) => {
+  try {
+    const leagues = getActiveLeagues();
+    res.json({ leagues });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load leagues" });
+  }
+});
+
+// GET /news/available-leagues — All supported leagues
+app.get("/news/available-leagues", async (req, res) => {
+  res.json({ leagues: LEAGUES.map(l => ({ id: l.id, name: l.name, country: l.country, flag: l.flag, priority: l.priority })) });
+});
+
+// GET /news/:slug — Single article
+app.get("/news/:slug", async (req, res) => {
+  try {
+    const article = getArticle(req.params.slug);
+    if (!article) return res.status(404).json({ error: "Article not found" });
+    const views = incrementViews(req.params.slug);
+    res.json({ ...article, views });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load article" });
+  }
+});
+
+// POST /news/generate — Manual trigger for news generation
+app.post("/news/generate", async (req, res) => {
+  try {
+    if (!process.env.API_FOOTBALL_KEY || !process.env.OPENROUTER_API_KEY) {
+      return res.status(503).json({ error: "News API keys not configured. Set API_FOOTBALL_KEY and OPENROUTER_API_KEY in .env" });
+    }
+    const result = await generateNews();
+    res.json(result);
+  } catch (err) {
+    console.error("Manual news gen error:", err);
+    res.status(500).json({ error: "News generation failed", details: err.message });
+  }
+});
+
+// GET /news/meta — Scheduler status & stats
+app.get("/news/meta", async (req, res) => {
+  try {
+    const meta = loadMeta();
+    res.json({
+      ...meta,
+      schedulerActive: !!(process.env.API_FOOTBALL_KEY && process.env.OPENROUTER_API_KEY),
+      supportedLeagues: LEAGUES.length
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load news metadata" });
+  }
+});
+
+// Legacy blog endpoint — serves from news system
 app.get("/blog", async (req, res) => {
-  const articles = Object.entries(BLOG_ARTICLES).map(([slug, data]) => ({ slug, title: data.title, category: data.category, date: data.date, readTime: data.readTime, summary: data.summary })).sort((a, b) => new Date(b.date) - new Date(a.date));
-  res.json({ articles });
+  const result = getArticles({ limit: 20 });
+  const legacyArticles = result.articles.map(a => ({
+    slug: a.slug,
+    title: a.title,
+    category: a.category,
+    date: a.date,
+    readTime: a.readTime,
+    summary: a.summary
+  }));
+  res.json({ articles: legacyArticles });
 });
 
 app.get("/blog/:slug", async (req, res) => {
-  const article = BLOG_ARTICLES[req.params.slug];
-  if (!article) return res.status(404).json({ error: "Not found" });
-  res.json({ ...article, displayViews: Math.floor(Math.random() * 500000) + 100000 });
+  const article = getArticle(req.params.slug);
+  if (!article) {
+    return res.status(404).json({ error: "Not found" });
+  }
+  res.json({
+    title: article.title,
+    category: article.category,
+    date: article.date,
+    readTime: article.readTime,
+    summary: article.summary,
+    content: article.content
+  });
 });
 
 /* ==================================================
@@ -746,6 +856,8 @@ app.get("/blog/:slug", async (req, res) => {
 initializeAuthTables().then(() => {
   app.listen(PORT, () => {
     console.log(`ProPredict Server running on port ${PORT}`);
+    // Start news scheduler if API keys are configured
+    startScheduler();
   });
 });
   

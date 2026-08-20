@@ -3,228 +3,441 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProPredict Blog</title>
-    <meta name="description" content="Data-driven football analysis and predictive insights from ProPredict.">
+    <title>ProPredict News</title>
+    <meta name="description" content="Football news and analysis from ProPredict.">
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        .blog-post-container {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0b1220; color: #e2e8f0; font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+        /* Nav */
+        .news-nav {
+            background: rgba(11, 18, 32, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 245, 255, 0.1);
+            padding: 12px 5%;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .news-nav-brand {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; color: #00f5ff; font-weight: 800; font-size: 1.2rem;
+        }
+        .news-nav-links { display: flex; gap: 24px; align-items: center; }
+        .news-nav-links a { color: #7f90b0; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: color 0.2s; }
+        .news-nav-links a:hover { color: #00f5ff; }
+
+        /* Back link */
+        .back-nav {
+            max-width: 800px; margin: 0 auto; padding: 24px 20px 0;
+        }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            color: #5a6b8a; text-decoration: none; font-size: 0.9rem; font-weight: 600;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #00f5ff; }
+
+        /* Article Container */
+        .article-container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 50px 20px;
+            padding: 20px 20px 60px;
         }
-        
-        .blog-post-header {
+
+        /* Article Header */
+        .article-header {
             margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
-        
-        .blog-post-category {
-            display: inline-block;
-            padding: 5px 15px;
+        .article-league-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px;
+            border-radius: 8px;
             background: rgba(0, 245, 255, 0.1);
-            border-radius: 20px;
             color: #00f5ff;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 700;
             margin-bottom: 20px;
         }
-        
-        .blog-post-title {
+        .article-category-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 10px;
+        }
+        .cat-digest { background: rgba(156, 39, 176, 0.2); color: #ce93d8; }
+        .cat-match-preview { background: rgba(0, 245, 255, 0.15); color: #00f5ff; }
+        .cat-league-roundup { background: rgba(127, 240, 197, 0.15); color: #7ff0c5; }
+        .cat-default { background: rgba(255,255,255,0.08); color: #7f90b0; }
+
+        .article-title {
             color: white;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
+            font-weight: 900;
             margin-bottom: 20px;
             line-height: 1.3;
         }
-        
-        .blog-post-meta {
-            display: flex;
-            gap: 20px;
-            color: #6b7da3;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .blog-post-meta span {
-            display: flex;
+        .article-meta {
+            display: flex; gap: 20px; flex-wrap: wrap;
+            color: #5a6b8a; font-size: 0.9rem;
             align-items: center;
-            gap: 5px;
         }
-        
-        .blog-post-views {
-            color: #00f5ff;
-            font-weight: 600;
+        .article-meta-item { display: flex; align-items: center; gap: 5px; }
+        .article-views { color: #00f5ff; font-weight: 700; }
+        .article-tags {
+            display: flex; gap: 6px; flex-wrap: wrap; margin-top: 16px;
         }
-        
-        .blog-post-content {
-            color: #a0b3d9;
-            line-height: 1.8;
-            font-size: 1.1rem;
+        .article-tag {
+            font-size: 0.75rem; padding: 3px 10px; border-radius: 5px;
+            background: rgba(255,255,255,0.05); color: #5a6b8a; font-weight: 600;
         }
-        
-        .blog-post-content h2 {
+
+        /* Match Data Sidebar (for previews) */
+        .match-info-card {
+            background: linear-gradient(145deg, #131b2e 0%, #1a2235 100%);
+            border: 1px solid rgba(0, 245, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        .match-info-card h3 {
+            color: #00f5ff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+        }
+        .match-teams {
+            display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px;
+        }
+        .match-team {
+            text-align: center; flex: 1;
+        }
+        .match-team-name { color: white; font-weight: 800; font-size: 1.1rem; }
+        .match-vs { color: #00f5ff; font-weight: 900; font-size: 1.2rem; }
+        .match-detail { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); color: #8899b5; font-size: 0.9rem; }
+        .match-detail-label { color: #5a6b8a; }
+
+        /* Article Content */
+        .article-content {
+            line-height: 1.85;
+            font-size: 1.05rem;
+            color: #b0c4de;
+        }
+        .article-content h2 {
             color: white;
-            font-size: 1.8rem;
-            margin: 40px 0 20px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin: 40px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(0, 245, 255, 0.15);
         }
-        
-        .blog-post-content h3 {
-            color: white;
-            font-size: 1.4rem;
-            margin: 30px 0 15px;
+        .article-content h3 {
+            color: #e2e8f0;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 28px 0 12px;
         }
-        
-        .blog-post-content p {
+        .article-content p {
             margin-bottom: 20px;
         }
-        
-        .blog-post-content strong {
+        .article-content strong {
             color: #00f5ff;
         }
-        
-        .blog-post-content ul, .blog-post-content ol {
-            margin: 20px 0;
-            padding-left: 25px;
-        }
-        
-        .blog-post-content li {
-            margin-bottom: 10px;
-        }
-        
-        .blog-post-content em {
-            color: #9c27b0;
+        .article-content em {
+            color: #ce93d8;
             font-style: italic;
         }
-        
-        .blog-loading {
-            text-align: center;
-            padding: 100px 20px;
-            color: #a0b3d9;
+        .article-content ul, .article-content ol {
+            margin: 20px 0;
+            padding-left: 24px;
         }
-        
-        .blog-error {
-            text-align: center;
-            padding: 100px 20px;
-            color: #ef4444;
+        .article-content li {
+            margin-bottom: 10px;
+            color: #b0c4de;
         }
-        
-        .back-link {
-            display: inline-block;
-            margin: 20px 5%;
+        .article-content li::marker {
             color: #00f5ff;
-            text-decoration: none;
         }
-        
-        .back-link:hover {
-            text-decoration: underline;
+        .article-content blockquote {
+            border-left: 3px solid #00f5ff;
+            padding: 12px 20px;
+            margin: 24px 0;
+            background: rgba(0, 245, 255, 0.03);
+            border-radius: 0 8px 8px 0;
+            color: #8899b5;
+            font-style: italic;
         }
-        
+
+        /* Standings Table */
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.85rem;
+        }
+        .standings-table th {
+            text-align: left;
+            padding: 10px 12px;
+            color: #5a6b8a;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .standings-table td {
+            padding: 8px 12px;
+            color: #8899b5;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .standings-table tr:hover td { background: rgba(0, 245, 255, 0.03); }
+        .standings-table .rank { color: #5a6b8a; font-weight: 700; }
+        .standings-table .team-name { color: #e2e8f0; font-weight: 600; }
+        .standings-table .pts { color: #00f5ff; font-weight: 800; }
+        .form-w { color: #22c55e; }
+        .form-d { color: #f59e0b; }
+        .form-l { color: #ef4444; }
+
+        /* States */
+        .article-loading, .article-error {
+            text-align: center; padding: 100px 20px;
+        }
+        .article-loading { color: #5a6b8a; }
+        .article-loading .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(0,245,255,0.2);
+            border-top-color: #00f5ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .article-error { color: #ef4444; }
+
+        /* Related Articles */
+        .related-section {
+            max-width: 800px; margin: 0 auto; padding: 40px 20px 60px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .related-section h3 {
+            color: #e2e8f0; font-size: 1.3rem; font-weight: 800; margin-bottom: 20px;
+        }
+        .related-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;
+        }
+        .related-card {
+            background: #131b2e;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .related-card:hover {
+            border-color: rgba(0, 245, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .related-card h4 { color: white; font-size: 1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+        .related-card .meta { color: #5a6b8a; font-size: 0.8rem; }
+
         @media (max-width: 768px) {
-            .blog-post-title {
-                font-size: 1.8rem;
-            }
-            
-            .blog-post-meta {
-                gap: 15px;
-            }
+            .article-title { font-size: 1.6rem; }
+            .article-meta { gap: 12px; }
+            .news-nav-links { display: none; }
+            .related-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- Your existing navigation/header would go here -->
-    
-    <a href="/blog.html" class="back-link">← Back to Blog</a>
-    
-    <div id="blog-post-container" class="blog-post-container">
-        <div class="blog-loading">Loading article...</div>
+    <!-- Navigation -->
+    <nav class="news-nav">
+        <a href="/" class="news-nav-brand">
+            <span>ProPredict</span>
+            <span style="color:#5a6b8a;font-weight:400">News</span>
+        </a>
+        <div class="news-nav-links">
+            <a href="/">Predictions</a>
+            <a href="/blog.html">News</a>
+            <a href="/tips.html">Tips</a>
+        </div>
+    </nav>
+
+    <!-- Back -->
+    <div class="back-nav">
+        <a href="/blog.html" class="back-link">\u2190 Back to News</a>
     </div>
-    
-    <!-- Your existing footer would go here -->
-    
+
+    <!-- Article -->
+    <div id="article-container" class="article-container">
+        <div class="article-loading"><div class="spinner"></div>Loading article...</div>
+    </div>
+
+    <!-- Related Articles -->
+    <div class="related-section" id="related-section" style="display:none">
+        <h3>More News</h3>
+        <div id="related-grid" class="related-grid"></div>
+    </div>
+
     <script>
-        function formatNumber(num) {
+        function getCategoryClass(category) {
+            if (!category) return 'cat-default';
+            const cat = category.toLowerCase();
+            if (cat.includes('preview')) return 'cat-match-preview';
+            if (cat.includes('roundup')) return 'cat-league-roundup';
+            if (cat.includes('digest')) return 'cat-digest';
+            return 'cat-default';
+        }
+
+        function getCategoryIcon(category) {
+            if (!category) return '';
+            const cat = category.toLowerCase();
+            if (cat.includes('preview')) return '\u26bd';
+            if (cat.includes('roundup')) return '\ud83d\udcca';
+            if (cat.includes('digest')) return '\ud83d\udcf0';
+            return '\ud83c\udfc6';
+        }
+
+        function formatViews(num) {
+            if (!num) return '0';
             if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
             if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return num.toString();
         }
-        
-        async function loadBlogPost() {
-            const container = document.getElementById('blog-post-container');
+
+        function formatMatchDate(dateStr) {
+            if (!dateStr) return 'TBD';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        async function loadArticle() {
+            const container = document.getElementById('article-container');
             const urlParams = new URLSearchParams(window.location.search);
             const slug = urlParams.get('slug');
-            
+
             if (!slug) {
-                container.innerHTML = '<div class="blog-error">No article specified.</div>';
+                container.innerHTML = '<div class="article-error">No article specified.</div>';
                 return;
             }
-            
+
             try {
-                const response = await fetch(`/blog/${slug}`);
+                const response = await fetch(`/news/${slug}`);
                 const article = await response.json();
-                
+
                 if (article.error) {
-                    container.innerHTML = `<div class="blog-error">${article.error}</div>`;
+                    container.innerHTML = `<div class="article-error">${article.error}</div>`;
                     return;
                 }
-                
-                // Update page title
-                document.title = `${article.title} | ProPredict Blog`;
-                
+
+                // Update page title & meta
+                document.title = `${article.title} | ProPredict News`;
+                document.querySelector('meta[name="description"]')?.setAttribute('content', article.summary || '');
+
+                // Build match info card for previews
+                let matchCard = '';
+                if (article.matchData) {
+                    const md = article.matchData;
+                    matchCard = `
+                        <div class="match-info-card">
+                            <h3>\u26bd Match Info</h3>
+                            <div class="match-teams">
+                                <div class="match-team">
+                                    ${md.homeTeam?.logo ? `<img src="${md.homeTeam.logo}" alt="${md.homeTeam.name}" style="width:40px;height:40px;margin-bottom:8px" onerror="this.style.display='none'">` : ''}
+                                    <div class="match-team-name">${md.homeTeam?.name || 'TBD'}</div>
+                                </div>
+                                <div class="match-vs">VS</div>
+                                <div class="match-team">
+                                    ${md.awayTeam?.logo ? `<img src="${md.awayTeam.logo}" alt="${md.awayTeam.name}" style="width:40px;height:40px;margin-bottom:8px" onerror="this.style.display='none'">` : ''}
+                                    <div class="match-team-name">${md.awayTeam?.name || 'TBD'}</div>
+                                </div>
+                            </div>
+                            <div class="match-detail">
+                                <span class="match-detail-label">Date</span>
+                                <span>${formatMatchDate(md.date)}</span>
+                            </div>
+                            <div class="match-detail">
+                                <span class="match-detail-label">Round</span>
+                                <span>${md.round || 'TBD'}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 // Render article
                 container.innerHTML = `
                     <article>
-                        <header class="blog-post-header">
-                            <span class="blog-post-category">${article.category}</span>
-                            <h1 class="blog-post-title">${article.title}</h1>
-                            <div class="blog-post-meta">
-                                <span>📅 ${article.date}</span>
-                                <span>⏱️ ${article.readTime}</span>
-                                <span class="blog-post-views" id="views-counter">👁️ ${formatNumber(article.displayViews)} readers</span>
+                        <header class="article-header">
+                            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px">
+                                <span class="article-league-badge">
+                                    ${article.league?.flag || ''} ${article.league?.name || 'Football' }
+                                </span>
+                                <span class="article-category-badge ${getCategoryClass(article.category)}">
+                                    ${getCategoryIcon(article.category)} ${article.category || 'News'}
+                                </span>
                             </div>
+                            <h1 class="article-title">${article.title}</h1>
+                            <div class="article-meta">
+                                <span class="article-meta-item">\ud83d\udcc5 ${article.date}</span>
+                                <span class="article-meta-item">\u23f1\ufe0f ${article.readTime || '5 min read'}</span>
+                                <span class="article-meta-item article-views">\ud83d\udc41 ${formatViews(article.views)} readers</span>
+                            </div>
+                            ${(article.tags || []).length > 0 ? `
+                                <div class="article-tags">
+                                    ${article.tags.map(t => `<span class="article-tag">${t}</span>`).join('')}
+                                </div>
+                            ` : ''}
                         </header>
-                        
-                        <div class="blog-post-content">
+
+                        ${matchCard}
+
+                        <div class="article-content">
                             ${article.content}
                         </div>
                     </article>
                 `;
-                
-                // Start view counter animation if not frozen
-                if (!article.isFrozen) {
-                    startViewCounter(article.displayViews, article.targetViews, slug);
-                }
-                
+
+                // Load related articles
+                loadRelated(article);
+
             } catch (error) {
-                console.error('Failed to load blog post:', error);
-                container.innerHTML = '<div class="blog-error">Failed to load article. Please try again later.</div>';
+                console.error('Failed to load article:', error);
+                container.innerHTML = '<div class="article-error">Failed to load article. Please try again.</div>';
             }
         }
-        
-        function startViewCounter(startViews, targetViews, slug) {
-            const viewsElement = document.getElementById('views-counter');
-            if (!viewsElement) return;
-            
-            let currentViews = startViews;
-            
-            const counter = setInterval(() => {
-                // Random increment between 50-300 views
-                const increment = Math.floor(Math.random() * 250) + 50;
-                currentViews = Math.min(currentViews + increment, targetViews);
-                
-                viewsElement.textContent = `👁️ ${formatNumber(currentViews)} readers`;
-                
-                if (currentViews >= targetViews) {
-                    clearInterval(counter);
-                    
-                    // Notify server that views are frozen
-                    fetch(`/blog/${slug}/freeze`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ views: targetViews })
-                    }).catch(() => {});
+
+        async function loadRelated(currentArticle) {
+            try {
+                const params = new URLSearchParams({ limit: 3 });
+                if (currentArticle.league?.name) {
+                    params.set('league', currentArticle.league.name);
                 }
-            }, 3000); // Update every 3 seconds
+                const response = await fetch(`/news?${params}`);
+                const data = await response.json();
+                const related = (data.articles || []).filter(a => a.slug !== currentArticle.slug).slice(0, 3);
+
+                if (related.length === 0) return;
+
+                const section = document.getElementById('related-section');
+                const grid = document.getElementById('related-grid');
+                section.style.display = 'block';
+
+                grid.innerHTML = related.map(a => `
+                    <div class="related-card" onclick="window.location.href='/blog-post.html?slug=${a.slug}'">
+                        <h4>${a.title}</h4>
+                        <div class="meta">\ud83d\udcc5 ${a.date} &middot; ${a.readTime || '5 min read'}</div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Failed to load related:', err);
+            }
         }
-        
-        loadBlogPost();
+
+        loadArticle();
     </script>
 </body>
 </html>

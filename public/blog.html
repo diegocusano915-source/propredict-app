@@ -3,178 +3,559 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProPredict Blog | Football Analytics & Betting Insights</title>
-    <meta name="description" content="Data-driven football analysis, betting psychology, and predictive modeling insights from the ProPredict team.">
+    <title>ProPredict News | Live Football Coverage Across 20+ Leagues</title>
+    <meta name="description" content="Real-time football news, match previews, weekly roundups and standings from the Premier League, La Liga, Serie A, Bundesliga and 16 more leagues.">
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Blog-specific styles */
-        .blog-header {
-            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
-            padding: 60px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(0, 245, 255, 0.2);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0b1220; color: #e2e8f0; font-family: 'Inter', sans-serif; min-height: 100vh; }
         
-        .blog-header h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, #00f5ff, #9c27b0);
+        /* Nav */
+        .news-nav {
+            background: rgba(11, 18, 32, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 245, 255, 0.1);
+            padding: 12px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .news-nav-brand {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; color: #00f5ff; font-weight: 800; font-size: 1.2rem;
+        }
+        .news-nav-links { display: flex; gap: 24px; align-items: center; }
+        .news-nav-links a { color: #7f90b0; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: color 0.2s; }
+        .news-nav-links a:hover { color: #00f5ff; }
+        .news-nav-links a.active { color: #00f5ff; }
+        
+        /* Hero */
+        .news-hero {
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 50%, #0f1729 100%);
+            padding: 50px 5% 40px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 245, 255, 0.15);
+        }
+        .news-hero h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #00f5ff, #7ff0c5, #9c27b0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        .news-hero p { color: #7f90b0; font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+        .news-hero-stats {
+            display: flex; justify-content: center; gap: 30px; margin-top: 24px; flex-wrap: wrap;
+        }
+        .news-hero-stat {
+            text-align: center;
+        }
+        .news-hero-stat .num { font-size: 1.8rem; font-weight: 900; color: #00f5ff; }
+        .news-hero-stat .label { font-size: 0.8rem; color: #5a6b8a; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
         
-        .blog-header p {
-            color: #a0b3d9;
-            font-size: 1.2rem;
-            max-width: 600px;
+        /* League Filter */
+        .news-filters {
+            padding: 20px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: transparent;
+            color: #7f90b0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .filter-btn:hover { border-color: #00f5ff; color: #00f5ff; }
+        .filter-btn.active { background: rgba(0, 245, 255, 0.15); border-color: #00f5ff; color: #00f5ff; }
+        
+        /* Search */
+        .news-search {
+            padding: 16px 5% 0;
+            max-width: 1400px;
             margin: 0 auto;
         }
+        .news-search input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .news-search input:focus { border-color: #00f5ff; }
+        .news-search input::placeholder { color: #4a5568; }
         
-        .blog-grid {
+        /* Category Tabs */
+        .news-categories {
+            padding: 16px 5% 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .cat-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255,255,255,0.05);
+            color: #7f90b0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn:hover { background: rgba(0, 245, 255, 0.1); color: #00f5ff; }
+        .cat-btn.active { background: #00f5ff; color: #0b1220; }
+        
+        /* Article Grid */
+        .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            padding: 50px 5%;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+            padding: 30px 5%;
             max-width: 1400px;
             margin: 0 auto;
         }
         
-        .blog-card {
-            background: #1a1f35;
-            border-radius: 20px;
+        /* Article Card */
+        .news-card {
+            background: linear-gradient(145deg, #131b2e 0%, #1a2235 100%);
+            border-radius: 16px;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.3s, border-color 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
+        .news-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 245, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 245, 255, 0.08);
+        }
+        .news-card-league-bar {
+            height: 3px;
+            background: linear-gradient(90deg, #00f5ff, #7ff0c5);
+        }
+        .news-card-body {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .news-card-top {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+        }
+        .news-card-category {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .cat-digest { background: rgba(156, 39, 176, 0.2); color: #ce93d8; }
+        .cat-match-preview { background: rgba(0, 245, 255, 0.15); color: #00f5ff; }
+        .cat-league-roundup { background: rgba(127, 240, 197, 0.15); color: #7ff0c5; }
+        .cat-default { background: rgba(255,255,255,0.08); color: #7f90b0; }
         
-        .blog-card:hover {
-            transform: translateY(-5px);
+        .news-card-league {
+            font-size: 0.8rem; color: #5a6b8a; font-weight: 600;
+        }
+        .news-card h2 {
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .news-card-meta {
+            color: #5a6b8a;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+        }
+        .news-card-summary {
+            color: #8899b5;
+            line-height: 1.6;
+            font-size: 0.9rem;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .news-card-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 24px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .news-card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .news-card-tag {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.05);
+            color: #5a6b8a;
+        }
+        .news-card-views { font-size: 0.8rem; color: #5a6b8a; }
+        
+        /* States */
+        .news-loading, .news-error, .news-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+        }
+        .news-loading { color: #5a6b8a; }
+        .news-loading .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(0,245,255,0.2);
+            border-top-color: #00f5ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .news-error { color: #ef4444; }
+        .news-empty { color: #5a6b8a; }
+        .news-empty p { font-size: 1.1rem; margin-bottom: 8px; }
+        .news-empty small { color: #3d4f6a; }
+        
+        /* Load More */
+        .news-load-more {
+            text-align: center;
+            padding: 20px 5% 60px;
+        }
+        .news-load-more button {
+            padding: 12px 32px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            background: rgba(0, 245, 255, 0.08);
+            color: #00f5ff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .news-load-more button:hover {
+            background: rgba(0, 245, 255, 0.15);
             border-color: #00f5ff;
         }
-        
-        .blog-card-content {
-            padding: 30px;
+        .news-load-more button:disabled {
+            opacity: 0.4; cursor: not-allowed;
         }
         
-        .blog-card-category {
-            display: inline-block;
-            padding: 5px 12px;
-            background: rgba(0, 245, 255, 0.1);
-            border-radius: 20px;
-            color: #00f5ff;
-            font-size: 0.85rem;
-            margin-bottom: 15px;
+        /* Scheduler Status */
+        .news-status-bar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 12px 5%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #3d4f6a;
         }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .status-dot.active { background: #22c55e; box-shadow: 0 0 8px rgba(34, 197, 94, 0.5); }
+        .status-dot.inactive { background: #ef4444; }
         
-        .blog-card h2 {
-            color: white;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-        
-        .blog-card-meta {
-            color: #6b7da3;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-        
-        .blog-card-meta span {
-            margin-right: 15px;
-        }
-        
-        .blog-card-summary {
-            color: #a0b3d9;
-            line-height: 1.6;
-        }
-        
-        .blog-loading {
+        /* Footer */
+        .news-footer {
             text-align: center;
-            padding: 100px 20px;
-            color: #a0b3d9;
+            padding: 40px 5%;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: #3d4f6a;
+            font-size: 0.8rem;
         }
-        
-        .blog-error {
-            text-align: center;
-            padding: 100px 20px;
-            color: #ef4444;
-        }
-        
-        .back-link {
-            display: inline-block;
-            margin: 20px 5%;
-            color: #00f5ff;
-            text-decoration: none;
-        }
-        
-        .back-link:hover {
-            text-decoration: underline;
-        }
+        .news-footer a { color: #00f5ff; text-decoration: none; }
         
         @media (max-width: 768px) {
-            .blog-header h1 {
-                font-size: 2rem;
-            }
-            
-            .blog-grid {
-                grid-template-columns: 1fr;
-                padding: 30px 20px;
-            }
+            .news-hero h1 { font-size: 1.8rem; }
+            .news-grid { grid-template-columns: 1fr; padding: 20px 16px; }
+            .news-nav-links { display: none; }
+            .news-hero-stats { gap: 16px; }
         }
     </style>
 </head>
 <body>
-    <!-- Your existing navigation/header would go here -->
+    <!-- Navigation -->
+    <nav class="news-nav">
+        <a href="/" class="news-nav-brand">
+            <span>ProPredict</span>
+            <span style="color:#5a6b8a;font-weight:400">News</span>
+        </a>
+        <div class="news-nav-links">
+            <a href="/">Predictions</a>
+            <a href="/news.html" class="active">News</a>
+            <a href="/tips.html">Tips</a>
+        </div>
+    </nav>
     
-    <div class="blog-header">
-        <h1>ProPredict Blog</h1>
-        <p>Data-driven football analysis, betting psychology, and predictive modeling insights.</p>
+    <!-- Hero -->
+    <div class="news-hero">
+        <h1>Football News Hub</h1>
+        <p>AI-curated match previews, weekly roundups, and real-time analysis across 20+ leagues. Powered by real data, written by intelligence.</p>
+        <div class="news-hero-stats">
+            <div class="news-hero-stat"><div class="num">20+</div><div class="label">Leagues</div></div>
+            <div class="news-hero-stat"><div class="num">3-4x</div><div class="label">Per Week</div></div>
+            <div class="news-hero-stat"><div class="num">100%</div><div class="label">Real Data</div></div>
+        </div>
     </div>
     
-    <a href="/" class="back-link">← Back to ProPredict</a>
-    
-    <div id="blog-container" class="blog-grid">
-        <div class="blog-loading">Loading articles...</div>
+    <!-- Scheduler Status -->
+    <div class="news-status-bar">
+        <span class="status-dot inactive" id="status-dot"></span>
+        <span id="status-text">Checking scheduler...</span>
     </div>
     
-    <!-- Your existing footer would go here -->
+    <!-- League Filter -->
+    <div class="news-filters" id="league-filters">
+        <button class="filter-btn active" data-league="">All Leagues</button>
+    </div>
+    
+    <!-- Category Tabs -->
+    <div class="news-categories">
+        <button class="cat-btn active" data-category="">All</button>
+        <button class="cat-btn" data-category="Match Preview">Match Previews</button>
+        <button class="cat-btn" data-category="League Roundup">League Roundups</button>
+        <button class="cat-btn" data-category="Weekly Digest">Weekly Digests</button>
+    </div>
+    
+    <!-- Search -->
+    <div class="news-search">
+        <input type="text" id="search-input" placeholder="Search articles..." />
+    </div>
+    
+    <!-- Articles Grid -->
+    <div id="news-grid" class="news-grid">
+        <div class="news-loading"><div class="spinner"></div>Loading latest news...</div>
+    </div>
+    
+    <!-- Load More -->
+    <div class="news-load-more" id="load-more-section" style="display:none">
+        <button id="load-more-btn">Load More Articles</button>
+    </div>
+    
+    <!-- Footer -->
+    <div class="news-footer">
+        <p>ProPredict News — Real data, real teams, real standings. No fake content.</p>
+        <p style="margin-top:8px"><a href="/">Back to ProPredict</a></p>
+    </div>
     
     <script>
-        async function loadBlogPosts() {
-            const container = document.getElementById('blog-container');
+        let currentPage = 1;
+        let currentLeague = '';
+        let currentCategory = '';
+        let searchQuery = '';
+        let hasMore = false;
+        let isLoading = false;
+        
+        // Category CSS class mapping
+        function getCategoryClass(category) {
+            if (!category) return 'cat-default';
+            const cat = category.toLowerCase();
+            if (cat.includes('preview')) return 'cat-match-preview';
+            if (cat.includes('roundup')) return 'cat-league-roundup';
+            if (cat.includes('digest')) return 'cat-digest';
+            return 'cat-default';
+        }
+        
+        function getCategoryIcon(category) {
+            if (!category) return '';
+            const cat = category.toLowerCase();
+            if (cat.includes('preview')) return '\u26bd';
+            if (cat.includes('roundup')) return '\ud83d\udcca';
+            if (cat.includes('digest')) return '\ud83d\udcf0';
+            return '\ud83c\udfc6';
+        }
+        
+        function formatViews(num) {
+            if (!num) return '0';
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+        
+        // Load articles
+        async function loadArticles(append = false) {
+            if (isLoading) return;
+            isLoading = true;
+            
+            const container = document.getElementById('news-grid');
+            if (!append) container.innerHTML = '<div class="news-loading"><div class="spinner"></div>Loading...</div>';
             
             try {
-                const response = await fetch('/blog');
+                const params = new URLSearchParams({
+                    page: currentPage,
+                    limit: 12
+                });
+                if (currentLeague) params.set('league', currentLeague);
+                if (currentCategory) params.set('category', currentCategory);
+                if (searchQuery) params.set('search', searchQuery);
+                
+                const response = await fetch(`/news?${params}`);
                 const data = await response.json();
                 
-                if (!data.articles || data.articles.length === 0) {
-                    container.innerHTML = '<div class="blog-error">No articles found.</div>';
-                    return;
+                const articles = data.articles || [];
+                hasMore = data.pagination ? (data.pagination.page < data.pagination.pages) : false;
+                
+                if (articles.length === 0 && !append) {
+                    container.innerHTML = `
+                        <div class="news-empty">
+                            <p>No articles found</p>
+                            <small>News articles are generated automatically 3-4 times per week when matches are scheduled.</small>
+                        </div>`;
+                } else {
+                    const html = articles.map(a => `
+                        <div class="news-card" onclick="window.location.href='/blog-post.html?slug=${a.slug}'">
+                            <div class="news-card-league-bar"></div>
+                            <div class="news-card-body">
+                                <div class="news-card-top">
+                                    <span class="news-card-category ${getCategoryClass(a.category)}">
+                                        ${getCategoryIcon(a.category)} ${a.category || 'News'}
+                                    </span>
+                                    ${a.league ? `<span class="news-card-league">${a.league.flag || ''} ${a.league.name}</span>` : ''}
+                                </div>
+                                <h2>${a.title}</h2>
+                                <div class="news-card-meta">
+                                    <span>\ud83d\udcc5 ${a.date}</span>
+                                    <span>\u23f1\ufe0f ${a.readTime || '5 min read'}</span>
+                                </div>
+                                <p class="news-card-summary">${a.summary || ''}</p>
+                            </div>
+                            <div class="news-card-footer">
+                                <div class="news-card-tags">
+                                    ${(a.tags || []).slice(0, 3).map(t => `<span class="news-card-tag">${t}</span>`).join('')}
+                                </div>
+                                <span class="news-card-views">\ud83d\udc41 ${formatViews(a.views)}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    container.innerHTML = append ? container.innerHTML + html : html;
                 }
                 
-                container.innerHTML = data.articles.map(article => `
-                    <div class="blog-card" onclick="window.location.href='/blog-post.html?slug=${article.slug}'">
-                        <div class="blog-card-content">
-                            <span class="blog-card-category">${article.category}</span>
-                            <h2>${article.title}</h2>
-                            <div class="blog-card-meta">
-                                <span>📅 ${article.date}</span>
-                                <span>⏱️ ${article.readTime}</span>
-                            </div>
-                            <p class="blog-card-summary">${article.summary}</p>
-                        </div>
-                    </div>
-                `).join('');
+                // Show/hide load more
+                document.getElementById('load-more-section').style.display = hasMore ? 'block' : 'none';
                 
             } catch (error) {
-                console.error('Failed to load blog posts:', error);
-                container.innerHTML = '<div class="blog-error">Failed to load articles. Please try again later.</div>';
+                console.error('Failed to load news:', error);
+                if (!append) {
+                    container.innerHTML = '<div class="news-error">Failed to load articles. Please try again.</div>';
+                }
+            } finally {
+                isLoading = false;
             }
         }
         
-        loadBlogPosts();
+        // Load league filters
+        async function loadLeagueFilters() {
+            try {
+                const response = await fetch('/news/available-leagues');
+                const data = await response.json();
+                const container = document.getElementById('league-filters');
+                
+                data.leagues.forEach(league => {
+                    const btn = document.createElement('button');
+                    btn.className = 'filter-btn';
+                    btn.dataset.league = league.name;
+                    btn.textContent = `${league.flag} ${league.name}`;
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        currentLeague = currentLeague === league.name ? '' : league.name;
+                        currentPage = 1;
+                        loadArticles();
+                    });
+                    container.appendChild(btn);
+                });
+            } catch (err) {
+                console.error('Failed to load leagues:', err);
+            }
+        }
+        
+        // Check scheduler status
+        async function checkStatus() {
+            try {
+                const response = await fetch('/news/meta');
+                const meta = await response.json();
+                const dot = document.getElementById('status-dot');
+                const text = document.getElementById('status-text');
+                
+                if (meta.schedulerActive) {
+                    dot.className = 'status-dot active';
+                    text.textContent = `Scheduler active — 20 leagues covered`;
+                    if (meta.lastRun) {
+                        const lastRun = new Date(meta.lastRun).toLocaleString();
+                        text.textContent += ` — Last run: ${lastRun} (${meta.totalArticlesGenerated || 0} articles generated)`;
+                    }
+                } else {
+                    dot.className = 'status-dot inactive';
+                    text.textContent = 'Scheduler inactive — API keys not configured';
+                }
+            } catch (err) {
+                document.getElementById('status-text').textContent = 'Status unavailable';
+            }
+        }
+        
+        // Event Listeners
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                currentPage = 1;
+                loadArticles();
+            });
+        });
+        
+        let searchTimeout;
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchQuery = e.target.value.trim();
+                currentPage = 1;
+                loadArticles();
+            }, 400);
+        });
+        
+        document.getElementById('load-more-btn').addEventListener('click', () => {
+            currentPage++;
+            loadArticles(true);
+        });
+        
+        // Initialize
+        loadLeagueFilters();
+        checkStatus();
+        loadArticles();
     </script>
 </body>
-  </html>
+</html>

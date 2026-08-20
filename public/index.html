@@ -428,28 +428,18 @@
           </div>
         </div>
 
-        <!-- 🔥 NEW: Blog Preview Section -->
-        <h2 class="public-section-title">Latest From Our Blog</h2>
-        <p class="public-section-subtitle">Data-driven football analysis and betting insights</p>
-        <div class="public-blog-preview">
-          <div class="public-blog-card" onclick="window.location.href='/blog-post.html?slug=10000-matches-analyzed'">
-            <span class="blog-category">📊 Data Science</span>
-            <h3>I Analyzed 10,000 Matches: The 3 Stats That Actually Predict Wins</h3>
-            <p>After feeding a decade of football data into ProPredict's AI, three metrics emerged as the holy grail of prediction.</p>
-            <span class="read-more">Read More →</span>
+        <!-- 🔥 NEW: News Preview Section — Dynamic Feed -->
+        <h2 class="public-section-title">Latest Football News</h2>
+        <p class="public-section-subtitle">Real data, real teams, real analysis — updated 3-4x per week across 20+ leagues</p>
+        <div class="public-blog-preview" id="news-feed-home">
+          <div class="public-blog-card" style="opacity:0.5">
+            <span class="blog-category">Loading...</span>
+            <h3>Fetching latest news</h3>
+            <p>Please wait while we load the latest articles.</p>
           </div>
-          <div class="public-blog-card" onclick="window.location.href='/blog-post.html?slug=accumulator-failure-psychology'">
-            <span class="blog-category">🧠 Psychology</span>
-            <h3>Why 85% of Accumulator Bets Fail by the 75th Minute</h3>
-            <p>The math says accumulators are terrible value. So why do we keep building them? The answer is in your brain chemistry.</p>
-            <span class="read-more">Read More →</span>
-          </div>
-          <div class="public-blog-card" onclick="window.location.href='/blog-post.html?slug=leicester-2016-data-truth'">
-            <span class="blog-category">📜 Historical Analysis</span>
-            <h3>The Leicester City 2016 Miracle: What the Data Actually Said</h3>
-            <p>ProPredict's retrospective analysis reveals Leicester's title wasn't luck—it was predictable factors the market missed.</p>
-            <span class="read-more">Read More →</span>
-          </div>
+        </div>
+        <div style="text-align:center;margin-top:20px">
+          <a href="/blog.html" style="color:#00f5ff;text-decoration:none;font-weight:700;font-size:0.95rem">View All News →</a>
         </div>
       </div>
     </section>
@@ -753,5 +743,31 @@
   <script type="text/javascript">var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date(); (function(){ var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0]; s1.async=true; s1.src='https://embed.tawk.to/69dff5770092d61c3637ee24/1jmb0dl5h'; s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0); })(); </script>
 
   <script src="ui-enhancements.js"></script><script src="upgrade-ui.js"></script><script src="app-shell.js"></script>
+  <script>
+  // Load news feed on homepage
+  (async function loadNewsFeed() {
+    const container = document.getElementById('news-feed-home');
+    if (!container) return;
+    try {
+      const res = await fetch('/news/recent?count=3');
+      const data = await res.json();
+      const articles = data.articles || [];
+      if (articles.length === 0) {
+        container.innerHTML = '<div class="public-blog-card" style="opacity:0.6"><span class="blog-category">Coming Soon</span><h3>News articles will appear here</h3><p>AI-generated football news from 20+ leagues, publishing 3-4 times per week.</p></div>';
+        return;
+      }
+      container.innerHTML = articles.map(a => `
+        <div class="public-blog-card" onclick="window.location.href='/blog-post.html?slug=${a.slug}'">
+          <span class="blog-category">${a.league?.flag || ''} ${a.category || 'News'}</span>
+          <h3>${a.title}</h3>
+          <p>${a.summary || ''}</p>
+          <span class="read-more">Read More →</span>
+        </div>
+      `).join('');
+    } catch (e) {
+      console.log('News feed failed to load:', e);
+    }
+  })();
+  </script>
 </body>
 </html>
