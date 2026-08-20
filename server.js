@@ -820,33 +820,9 @@ app.get("/news/meta", async (req, res) => {
   }
 });
 
-// Legacy blog endpoint — serves from news system
-app.get("/blog", async (req, res) => {
-  const result = getArticles({ limit: 20 });
-  const legacyArticles = result.articles.map(a => ({
-    slug: a.slug,
-    title: a.title,
-    category: a.category,
-    date: a.date,
-    readTime: a.readTime,
-    summary: a.summary
-  }));
-  res.json({ articles: legacyArticles });
-});
-
-app.get("/blog/:slug", async (req, res) => {
-  const article = getArticle(req.params.slug);
-  if (!article) {
-    return res.status(404).json({ error: "Not found" });
-  }
-  res.json({
-    title: article.title,
-    category: article.category,
-    date: article.date,
-    readTime: article.readTime,
-    summary: article.summary,
-    content: article.content
-  });
+// Blog page — serve the HTML file
+app.get("/blog", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "blog.html"));
 });
 
 /* ==================================================
