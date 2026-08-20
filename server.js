@@ -535,9 +535,9 @@ setTimeout(() => botFridayPreview(), 30000);
 console.log("✅ Bot v3 Active");
 
 /* ==================================================
-   ================= SERVER START ====================
+   ================= SERVER START (DEFERRED) =========
+   Actual listen is at bottom of file with news scheduler
 ================================================== */
-initializeAuthTables().then(() => { app.listen(PORT, () => console.log(`Server on port ${PORT}`)); });
 /* ==================================================
    ================= TELEGRAM CONFIGURATION ==========
 ================================================== */
