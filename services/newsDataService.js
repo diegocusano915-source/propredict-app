@@ -12,8 +12,8 @@ const axios = require('axios');
 
 const BASE = 'https://api.football-data.org/v4';
 
-// 12 leagues — football-data.org competition codes
-// Free tier covers: PL, CL, EL, BL, SA, LL, L1, EC, WC, PPL, EFL
+// Leagues available on football-data.org FREE tier
+// Note: CL, EL, EC require paid tier — omitted here
 const LEAGUES = [
   // Top 5 European leagues
   { code: 'PL',  name: 'Premier League',    country: 'England', flag: '\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc77\udb40\udc7c', priority: 1 },
@@ -21,15 +21,12 @@ const LEAGUES = [
   { code: 'SA',  name: 'Serie A',            country: 'Italy',   flag: '\ud83c\uddee\ud83c\uddf9', priority: 1 },
   { code: 'BL1', name: 'Bundesliga',         country: 'Germany', flag: '\ud83c\udde9\ud83c\uddea', priority: 1 },
   { code: 'FL1', name: 'Ligue 1',            country: 'France',  flag: '\ud83c\uddeb\ud83c\uddf7', priority: 1 },
-  // European competitions
-  { code: 'CL',  name: 'Champions League',   country: 'Europe',  flag: '\u26bd',            priority: 1 },
-  { code: 'EC',  name: 'European Championship', country: 'Europe', flag: '\ud83c\uddea\ud83c\uddfa', priority: 2 },
   // Secondary leagues
   { code: 'ELC', name: 'Championship',       country: 'England', flag: '\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc77\udb40\udc7c', priority: 2 },
   { code: 'DED', name: 'Eredivisie',         country: 'Netherlands', flag: '\ud83c\uddf3\ud83c\uddf1', priority: 2 },
   { code: 'PPL', name: 'Primeira Liga',      country: 'Portugal', flag: '\ud83c\uddf5\ud83c\uddf9', priority: 2 },
+  // Rest of world
   { code: 'BSA', name: 'Serie A (Brazil)',   country: 'Brazil',  flag: '\ud83c\udde7\ud83c\uddf7', priority: 3 },
-  { code: 'EL',  name: 'Europa League',      country: 'Europe',  flag: '\ud83c\uddea\ud83c\uddfa', priority: 2 },
 ];
 
 // Cache to stay under 10 req/min
@@ -138,16 +135,25 @@ async function getStandings(competitionCode) {
  * Get head-to-head between two teams
  */
 async function getHeadToHead(team1Id, team2Id) {
-  const data = await apiGet(`/teams/${team1Id}/matches?opponent=${team2Id}&limit=5`);
-  return (data.matches || []).map(m => ({
-    date: m.utcDate,
-    homeTeam: m.homeTeam.name,
-    awayTeam: m.awayTeam.name,
-    homeGoals: m.score?.fullTime?.home,
-    awayGoals: m.score?.fullTime?.away,
-    winner: m.score?.winner || 'draw',
-    competition: m.competition?.name || ''
-  }));
+  // football-data.org has no opponent filter, so fetch team1's matches & filter
+  try {
+    const data = await apiGet(`/teams/${team1Id}/matches?limit=50&status=FINISHED`);
+    const h2h = (data.matches || []).filter(m =>
+      (m.homeTeam.id === team2Id || m.awayTeam.id === team2Id)
+    ).slice(-5).map(m => ({
+      date: m.utcDate,
+      homeTeam: m.homeTeam.name,
+      awayTeam: m.awayTeam.name,
+      homeGoals: m.score?.fullTime?.home,
+      awayGoals: m.score?.fullTime?.away,
+      winner: m.score?.winner || 'draw',
+      competition: m.competition?.name || ''
+    }));
+    return h2h;
+  } catch (err) {
+    console.error(`H2H lookup failed for teams ${team1Id}/${team2Id}: ${err.message}`);
+    return [];
+  }
 }
 
 /**
@@ -337,7 +343,7 @@ async function enrichMatchData(matches) {
  */
 async function getLeagueContext(leagueCode) {
   try {
-    const [standings, scorers] = await Promise.all([
+    const [standings, topScorers] = await Promise.all([
       getStandings(leagueCode),
       getTopScorers(leagueCode)
     ]);
