@@ -757,7 +757,7 @@
         return;
       }
       container.innerHTML = articles.map(a => `
-        <div class="public-blog-card" onclick="window.location.href='/blog-post.html?slug=${a.slug}'">
+        <div class="public-blog-card" onclick="window.location.href='/news-article.html?slug=${a.slug}'">
           <span class="blog-category">${a.league?.flag || ''} ${a.category || 'News'}</span>
           <h3>${a.title}</h3>
           <p>${a.summary || ''}</p>

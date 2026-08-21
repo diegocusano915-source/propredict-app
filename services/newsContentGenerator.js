@@ -28,11 +28,11 @@ async function callAI(prompt, retries = 2) {
           messages: [
             {
               role: 'system',
-              content: `You are a professional sports journalist for ProPredict, a leading sports analytics platform. You write engaging, data-driven football/soccer news articles. You ONLY use the real data provided to you — never invent scores, names, standings, or match results. Your writing style is authoritative yet accessible, similar to The Athletic or BBC Sport. You use real team names, real player names, and real statistics exactly as provided. You never fabricate information.`
+              content: `You are a professional sports journalist for ProPredict, a leading sports analytics platform. You write engaging, data-driven football/soccer news articles. You ONLY use the real data provided to you — never invent scores, names, standings, or match results. Your writing style is authoritative yet accessible, similar to The Athletic or BBC Sport. You use real team names, real player names, and real statistics exactly as provided. You never fabricate information. Every article you write is a FULL, DETAILED report of at least 900 words: substantial paragraphs (4-6 sentences each), deep analysis in every section, and zero placeholders — never write '...' or 'content here'; deliver the complete finished article.`
             },
             { role: 'user', content: prompt }
           ],
-          max_tokens: 4000,
+          max_tokens: 6000,
           temperature: 0.7
         }, {
           headers: {
@@ -72,23 +72,69 @@ ${h2h.map(h => `- ${formatDatePretty(h.date)}: ${h.homeTeam} ${h.homeGoals}-${h.
 ${standings.length > 0 ? `CURRENT STANDINGS (Top 10):
 ${standings.map(s => `${s.rank}. ${s.team} — P:${s.played} W:${s.wins} D:${s.draws} L:${s.losses} GD:${s.goalDiff} Pts:${s.points} Form:${s.form}`).join('\n')}` : 'No standings data available.'}
 
-Write the article in this format (use HTML):
+Write a DETAILED report of 900-1,200 words in this format (use HTML):
 <h2>Match Overview</h2>
-<p>Detailed preview paragraph about the match context...</p>
+<p>2-3 substantial paragraphs on the match context: stakes, round, season implications for both clubs.</p>
 
 <h2>Current Form & Standings</h2>
-<p>Analysis of both teams' positions and recent form...</p>
+<p>Deep analysis of both teams' league positions, points, goal difference and recent form strings — what the numbers actually say about each side's trajectory.</p>
 
 <h2>Head-to-Head History</h2>
-<p>Analysis of recent meetings between these teams...</p>
+<p>Analyze every recent meeting listed above: patterns, scorelines, which side has held the edge and what history suggests about this fixture.</p>
 
 <h2>Key Storylines</h2>
-<p>2-3 paragraphs about key narratives (relegation battles, title races, derbies, etc.)...</p>
+<p>3-4 paragraphs on the narratives: title races, relegation battles, derby history, European qualification math — whatever the standings data genuinely supports.</p>
 
-<h2>What to Expect</h2>
-<p>Final preview with tactical expectations...</p>
+<h2>Tactical Expectations</h2>
+<p>2-3 paragraphs on likely approaches based on each team's numbers: attacking output, defensive record, goal difference and form.</p>
+
+<h2>The ProPredict Angle</h2>
+<p>A closing analytical section: what the data says smart watchers should focus on, framed as analysis (never a betting instruction or guaranteed outcome).</p>
 
 IMPORTANT: Use only the data provided above. Reference real team names and real statistics. Do NOT make up player names, scores, or events.`;
+
+  return await callAI(prompt);
+}
+
+/**
+ * Generate a post-match REPORT article (auto match updater)
+ * Written only after a match has actually FINISHED — real final score,
+ * real scorers if provided, real standings context. No fabrication.
+ */
+async function generateMatchReport(match, standings, h2h) {
+  const scorersText = (match.scorers && match.scorers.length > 0)
+    ? `\nGOALSCORERS (chronological, real data):\n${match.scorers.map(s => `- ${s.minute}' ${s.name} (${s.team})`).join('\n')}`
+    : '\nNo goalscorer detail available — do NOT invent scorer names.';
+
+  const prompt = `Write a DETAILED post-match football report using ONLY the following REAL data. Do NOT invent any information.
+
+FINAL RESULT: ${match.homeTeam.name} ${match.goals.home ?? '?'}-${match.goals.away ?? '?'} ${match.awayTeam.name}
+LEAGUE: ${match.league.name} (${match.league.country})
+ROUND: ${match.league.round || 'TBD'}
+STATUS: ${match.status}
+${scorersText}
+
+${standings.length > 0 ? `CURRENT STANDINGS (Top 10):\n${standings.map(s => `${s.rank}. ${s.team} — P:${s.played} W:${s.wins} D:${s.draws} L:${s.losses} GD:${s.goalDiff} Pts:${s.points} Form:${s.form}`).join('\n')}` : 'No standings data available.'}
+
+${h2h.length > 0 ? `HEAD-TO-HEAD (recent meetings):\n${h2h.map(h => `- ${formatDatePretty(h.date)}: ${h.homeTeam} ${h.homeGoals}-${h.awayGoals} ${h.awayTeam}`).join('\n')}` : 'No head-to-head data available.'}
+
+Write a DETAILED report of 900-1,200 words in this format (use HTML):
+<h2>Full-Time Verdict</h2>
+<p>2-3 substantial paragraphs on how the result unfolded and what it means.</p>
+
+<h2>How the Scoreline Was Built</h2>
+<p>If goalscorer data is provided, walk through the goals chronologically with each real scorer and minute. If NOT provided, analyse the scoreline and what the result does for each side — and say plainly that scorers were not in the data feed rather than inventing any.</p>
+
+<h2>Standings Impact</h2>
+<p>Detailed analysis using the real table: points won or lost, positions, goal difference swings, form strings.</p>
+
+<h2>The Bigger Picture</h2>
+<p>2-3 paragraphs on what this result means for each club's season based strictly on the standings and result data.</p>
+
+<h2>History Check</h2>
+<p>If head-to-head data is provided, how this result fits the recent pattern of the fixture.</p>
+
+IMPORTANT: Use ONLY the data provided. Reference real team names and real statistics. Do NOT make up player names, scorer names, or events. If a data point is missing, say it was not available.`;
 
   return await callAI(prompt);
 }
@@ -220,6 +266,8 @@ function generateSlug(title) {
 }
 
 module.exports = {
+  generateMatchPreview,
+  generateMatchReport,
   generateMatchPreview,
   generateWeeklyRoundup,
   generateMultiLeagueDigest,

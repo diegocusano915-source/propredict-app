@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProPredict | Match Report</title>
+    <meta name="description" content="AI-written football reporting from real match data — real scores, real standings, zero fabrication.">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root { --glow-cyan: #00f5ff; --glow-purple: #9c27b0; --ink: #a0b3d9; }
+        body { background: #070b14; }
+
+        #read-progress {
+            position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+            background: linear-gradient(90deg, var(--glow-cyan), var(--glow-purple));
+            box-shadow: 0 0 12px rgba(0,245,255,0.8), 0 0 24px rgba(156,39,176,0.5);
+            z-index: 1000; transition: width 0.1s linear;
+        }
+
+        .glow-bg { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+        .glow-orb { position: absolute; border-radius: 50%; filter: blur(110px); opacity: 0.20; }
+        .orb-1 { width: 480px; height: 480px; background: var(--glow-cyan); top: -140px; left: -120px; animation: drift1 18s ease-in-out infinite alternate; }
+        .orb-2 { width: 420px; height: 420px; background: var(--glow-purple); bottom: -160px; right: -100px; animation: drift2 22s ease-in-out infinite alternate; }
+        .orb-3 { width: 300px; height: 300px; background: #ff2d78; top: 40%; left: 60%; opacity: 0.09; animation: drift1 26s ease-in-out infinite alternate-reverse; }
+        @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(60px, 40px) scale(1.15); } }
+        @keyframes drift2 { from { transform: translate(0,0) scale(1.1); } to { transform: translate(-70px, -30px) scale(0.95); } }
+
+        .page-wrap { position: relative; z-index: 1; }
+
+        .back-link {
+            display: inline-flex; align-items: center; gap: 8px; margin: 26px 5% 6px;
+            color: var(--ink); text-decoration: none; font-size: 0.9rem; font-weight: 600;
+            padding: 8px 16px; border: 1px solid rgba(255,255,255,0.08); border-radius: 999px;
+            background: rgba(255,255,255,0.03); transition: all 0.3s;
+        }
+        .back-link:hover { color: var(--glow-cyan); border-color: rgba(0,245,255,0.5); box-shadow: 0 0 18px rgba(0,245,255,0.25); }
+
+        .article-shell { max-width: 880px; margin: 0 auto 60px; padding: 0 20px; }
+
+        .article-card {
+            position: relative; border-radius: 28px; padding: 48px 46px; overflow: hidden;
+            background: linear-gradient(160deg, rgba(16,22,40,0.92), rgba(10,14,26,0.96));
+            border: 1px solid rgba(0,245,255,0.18);
+            box-shadow: 0 24px 80px rgba(0,0,0,0.55), 0 0 42px rgba(0,245,255,0.07);
+        }
+        .article-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--glow-cyan), var(--glow-purple), transparent);
+            background-size: 200% 100%; animation: borderflow 6s linear infinite;
+        }
+        @keyframes borderflow { from { background-position: 0% 0; } to { background-position: 200% 0; } }
+
+        .league-badge {
+            display: inline-flex; align-items: center; gap: 8px; padding: 7px 18px;
+            border-radius: 999px; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em;
+            background: rgba(0,245,255,0.08); border: 1px solid rgba(0,245,255,0.35);
+            color: var(--glow-cyan); text-shadow: 0 0 14px rgba(0,245,255,0.5); margin-bottom: 22px;
+        }
+        .article-title { color: #fff; font-size: 2.3rem; line-height: 1.25; margin-bottom: 20px; text-shadow: 0 0 30px rgba(0,245,255,0.15); }
+
+        .score-strip {
+            display: flex; align-items: center; justify-content: center; gap: 26px;
+            padding: 20px; margin: 4px 0 30px; border-radius: 20px;
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.07);
+        }
+        .score-team { flex: 1; text-align: center; color: #e8f1ff; font-weight: 800; font-size: 1.05rem; line-height: 1.4; }
+        .score-num { font-size: 2.4rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+        .score-num.win { color: #7ff0c5; text-shadow: 0 0 22px rgba(127,240,197,0.4); }
+        .score-num.lose { color: #7d8db3; }
+        .score-ft { color: var(--glow-cyan); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+
+        .article-meta {
+            display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+            color: #6b7da3; font-size: 0.9rem; margin-bottom: 34px;
+            padding-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .article-meta span { display: inline-flex; align-items: center; gap: 6px; }
+        .views-pill {
+            color: #7ff0c5; background: rgba(127,240,197,0.08);
+            border: 1px solid rgba(127,240,197,0.3); border-radius: 999px;
+            padding: 4px 12px; font-weight: 700; font-size: 0.8rem;
+        }
+        .real-data-pill {
+            color: #ce93d8; background: rgba(156,39,176,0.1);
+            border: 1px solid rgba(156,39,176,0.4); border-radius: 999px;
+            padding: 4px 12px; font-weight: 700; font-size: 0.8rem;
+        }
+
+        .article-content { color: var(--ink); line-height: 1.85; font-size: 1.08rem; }
+        .article-content h2 {
+            color: #fff; font-size: 1.6rem; margin: 44px 0 18px; line-height: 1.35;
+            padding-left: 16px; border-left: 3px solid var(--glow-cyan);
+            text-shadow: 0 0 24px rgba(0,245,255,0.18);
+        }
+        .article-content h3 { color: #e8f1ff; font-size: 1.25rem; margin: 32px 0 14px; }
+        .article-content p { margin-bottom: 20px; }
+        .article-content strong { color: var(--glow-cyan); font-weight: 700; }
+        .article-content em { color: #ce93d8; }
+        .article-content ul, .article-content ol { margin: 20px 0; padding-left: 26px; }
+        .article-content li { margin-bottom: 12px; }
+        .article-content li::marker { color: var(--glow-cyan); }
+
+        .article-footer {
+            margin-top: 46px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,0.07);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
+        }
+        .honesty-note { font-size: 0.78rem; color: #586a8f; line-height: 1.5; max-width: 430px; }
+        .back-to-news {
+            padding: 12px 26px; border-radius: 14px; text-decoration: none; font-weight: 800;
+            font-size: 0.82rem; letter-spacing: 0.04em; color: var(--glow-cyan);
+            background: linear-gradient(135deg, rgba(0,245,255,0.12), rgba(156,39,176,0.12));
+            border: 1px solid rgba(0,245,255,0.4); transition: all 0.3s;
+        }
+        .back-to-news:hover { box-shadow: 0 0 26px rgba(0,245,255,0.35); transform: translateY(-2px); }
+
+        .related-section { max-width: 880px; margin: 0 auto 70px; padding: 0 20px; }
+        .related-title {
+            color: #fff; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.06em;
+            text-transform: uppercase; margin-bottom: 18px; text-shadow: 0 0 20px rgba(0,245,255,0.25);
+        }
+        .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+        .related-card {
+            padding: 20px; border-radius: 18px; cursor: pointer;
+            background: rgba(16,22,40,0.8); border: 1px solid rgba(255,255,255,0.07); transition: all 0.3s;
+        }
+        .related-card:hover {
+            transform: translateY(-4px); border-color: rgba(156,39,176,0.6);
+            box-shadow: 0 12px 34px rgba(0,0,0,0.4), 0 0 22px rgba(156,39,176,0.2);
+        }
+        .related-card .rcat { font-size: 0.72rem; color: #ce93d8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .related-card .rtitle { color: #e8f1ff; font-size: 0.95rem; font-weight: 700; margin-top: 8px; line-height: 1.4; }
+        .related-card .rmeta { color: #586a8f; font-size: 0.75rem; margin-top: 10px; }
+
+        .blog-loading, .blog-error { text-align: center; padding: 110px 20px; color: var(--ink); }
+        .blog-error { color: #ef4444; }
+        .loading-pulse {
+            display: inline-block; width: 54px; height: 54px; border-radius: 50%;
+            border: 3px solid rgba(0,245,255,0.15); border-top-color: var(--glow-cyan);
+            animation: spin 0.9s linear infinite; box-shadow: 0 0 22px rgba(0,245,255,0.25);
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .article-card { padding: 30px 22px; border-radius: 22px; }
+            .article-title { font-size: 1.6rem; }
+            .article-content { font-size: 1rem; }
+            .article-content h2 { font-size: 1.3rem; }
+            .score-num { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="read-progress"></div>
+    <div class="glow-bg"><div class="glow-orb orb-1"></div><div class="glow-orb orb-2"></div><div class="glow-orb orb-3"></div></div>
+
+    <div class="page-wrap">
+        <a href="/news.html" class="back-link">← News Desk</a>
+
+        <div id="article-container" class="article-shell">
+            <div class="blog-loading"><div class="loading-pulse"></div></div>
+        </div>
+
+        <div id="related-wrap" class="related-section" style="display:none;">
+            <h3 class="related-title">More From The Desk</h3>
+            <div id="related-grid" class="related-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement;
+            const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+            const bar = document.getElementById('read-progress');
+            if (bar) bar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+        }, { passive: true });
+
+        function scoreStrip(a) {
+            const md = a.matchData;
+            if (!md || md.score == null) return '';
+            const [h, aw] = String(md.score).split('-').map(n => parseInt(n, 10));
+            if (isNaN(h) || isNaN(aw)) return '';
+            const hCls = h > aw ? 'win' : h < aw ? 'lose' : '';
+            const aCls = aw > h ? 'win' : aw < h ? 'lose' : '';
+            return `
+                <div class="score-strip">
+                    <div class="score-team">${md.homeTeam?.name || ''}</div>
+                    <div class="score-num ${hCls}">${h}</div>
+                    <div class="score-ft">Full Time</div>
+                    <div class="score-num ${aCls}">${aw}</div>
+                    <div class="score-team">${md.awayTeam?.name || ''}</div>
+                </div>`;
+        }
+
+        async function loadArticle() {
+            const container = document.getElementById('article-container');
+            const slug = new URLSearchParams(window.location.search).get('slug');
+            if (!slug) { container.innerHTML = '<div class="blog-error">No article specified.</div>'; return; }
+
+            try {
+                const [artRes, listRes] = await Promise.all([
+                    fetch('/news/' + encodeURIComponent(slug)),
+                    fetch('/news?limit=20').catch(() => null)
+                ]);
+                const a = await artRes.json();
+                if (a.error) { container.innerHTML = '<div class="blog-error">' + a.error + '</div>'; return; }
+
+                document.title = a.title + ' | ProPredict News';
+
+                container.innerHTML = `
+                    <article class="article-card">
+                        <header>
+                            <span class="league-badge">${a.league?.flag || '⚽'} ${a.league?.name || 'Football'} · ${a.category || 'News'}</span>
+                            <h1 class="article-title">${a.title}</h1>
+                            ${scoreStrip(a)}
+                            <div class="article-meta">
+                                <span>📅 ${a.date}</span>
+                                <span>⏱️ ${a.readTime || '5 min'}</span>
+                                <span class="views-pill">👁️ ${(a.views || 0).toLocaleString()} real reads</span>
+                                <span class="real-data-pill">Built from real match data</span>
+                            </div>
+                        </header>
+                        <div class="article-content">${a.content}</div>
+                        <footer class="article-footer">
+                            <p class="honesty-note">This report was generated from live football-data.org feeds — real scores, real standings. Read counts are actual page loads; nothing on this page is inflated.</p>
+                            <a class="back-to-news" href="/news.html">MORE REPORTS →</a>
+                        </footer>
+                    </article>
+                `;
+
+                if (listRes && listRes.ok) {
+                    const data = await listRes.json();
+                    const related = (data.articles || []).filter(x => x.slug !== slug).slice(0, 3);
+                    if (related.length > 0) {
+                        document.getElementById('related-wrap').style.display = 'block';
+                        document.getElementById('related-grid').innerHTML = related.map(x => `
+                            <div class="related-card" onclick="window.location.href='/news-article.html?slug=${x.slug}'">
+                                <span class="rcat">${x.league?.flag || ''} ${x.league?.name || ''}</span>
+                                <div class="rtitle">${x.title}</div>
+                                <div class="rmeta">📅 ${x.date} · ⏱️ ${x.readTime || '5 min'}</div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load article:', e);
+                container.innerHTML = '<div class="blog-error">Failed to load article. Please try again later.</div>';
+            }
+        }
+
+        loadArticle();
+    </script>
+</body>
+</html>

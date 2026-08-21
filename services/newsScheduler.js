@@ -319,6 +319,11 @@ function startScheduler() {
   });
 
   console.log('\U0001f4f0 News scheduler ACTIVE — runs Mon/Wed/Fri/Sun');
+
+  // Invisible match updater: watches for freshly PLAYED matches every 45 min
+  // and publishes full-time reports automatically (free-tier pacing).
+  try { startMatchUpdater(); } catch (e) { console.error('Match updater failed to start:', e.message); }
+
   return true;
 }
 
