@@ -16,6 +16,7 @@
 const { addArticle, loadArticles, generateSlug, generateSummary, estimateReadTime, loadCoveredMatchIds, saveCoveredMatchIds } = require('./newsStorage');
 const { generateMatchReport } = require('./newsContentGenerator');
 const { LEAGUES, getRecentFixtures, getStandings } = require('./newsDataService');
+const { announceNewArticles } = require('./newsSocial');
 
 const CHECK_INTERVAL_MS = 45 * 60 * 1000; // every 45 minutes
 const LEAGUES_PER_RUN = 3;      // rotate: 3 leagues checked per run
@@ -95,6 +96,7 @@ async function checkForPlayedMatches() {
         });
         produced++;
         console.log(`\u26A1 Match updater: published report — ${match.homeTeam.name} ${match.goals.home}-${match.goals.away} ${match.awayTeam.name} (${league.name})`);
+        try { await announceNewArticles(); } catch (_) {}
       } catch (err) {
         console.error(`Match updater: article failed (${league.name}): ${err.message}`);
       }

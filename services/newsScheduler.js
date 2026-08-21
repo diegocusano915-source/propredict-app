@@ -12,6 +12,8 @@
  */
 
 const cron = require('node-cron');
+const { startMatchUpdater } = require('./newsUpdater');
+const { announceNewArticles } = require('./newsSocial');
 const {
   scanWeeklyMatches,
   selectNewsMatches,
@@ -255,6 +257,9 @@ async function generateNews() {
     meta.totalArticlesGenerated = (meta.totalArticlesGenerated || 0) + runReport.articlesGenerated;
     meta.totalApiCallsUsed = (meta.totalApiCallsUsed || 0) + runReport.apiCallsUsed;
     await saveMeta(meta);
+
+    // Traction loop: announce fresh articles to the distribution channel
+    try { await announceNewArticles(); } catch (e) { console.error('Announce failed:', e.message); }
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     console.log(`\n\U0001f4f0 ========== NEWS GENERATION COMPLETE (${elapsed}s) ==========`);

@@ -100,6 +100,20 @@
         .article-content li { margin-bottom: 12px; }
         .article-content li::marker { color: var(--glow-cyan); }
 
+        .share-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+        .share-label { color: #586a8f; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; }
+        .share-btn {
+            min-width: 44px; height: 38px; padding: 0 10px; border-radius: 12px;
+            display: inline-flex; align-items: center; justify-content: center;
+            text-decoration: none; font-weight: 900; font-size: 0.72rem; letter-spacing: 0.03em;
+            color: #a0b3d9; background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1); transition: all 0.25s;
+        }
+        .share-btn:hover {
+            color: #00f5ff; border-color: rgba(0,245,255,0.5);
+            box-shadow: 0 0 18px rgba(0,245,255,0.25); transform: translateY(-2px);
+        }
+
         .article-footer {
             margin-top: 46px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,0.07);
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
@@ -191,6 +205,61 @@
                 </div>`;
         }
 
+        // SEO: Open Graph + Twitter cards + NewsArticle structured data
+        function injectShareMeta(a) {
+            const url = window.location.href;
+            const strip = (html) => {
+                const d = document.createElement('div');
+                d.innerHTML = html || '';
+                return (d.textContent || '').replace(/\s+/g, ' ').trim().substring(0, 155);
+            };
+            const metas = [
+                ['property', 'og:title', a.title],
+                ['property', 'og:description', a.summary || strip(a.content)],
+                ['property', 'og:type', 'article'],
+                ['property', 'og:url', url],
+                ['property', 'og:site_name', 'ProPredict News Desk'],
+                ['name', 'twitter:card', 'summary_large_image'],
+                ['name', 'twitter:title', a.title],
+                ['name', 'twitter:description', a.summary || strip(a.content)]
+            ];
+            metas.forEach(([attr, key, val]) => {
+                const m = document.createElement('meta');
+                m.setAttribute(attr, key);
+                m.setAttribute('content', val || '');
+                document.head.appendChild(m);
+            });
+            const ld = document.createElement('script');
+            ld.type = 'application/ld+json';
+            ld.textContent = JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'NewsArticle',
+                headline: a.title,
+                description: a.summary || strip(a.content),
+                datePublished: a.generatedAt || undefined,
+                articleSection: a.league?.name || 'Football',
+                author: { '@type': 'Organization', name: 'ProPredict News Desk' },
+                publisher: { '@type': 'Organization', name: 'ProPredict' },
+                mainEntityOfPage: url
+            });
+            document.head.appendChild(ld);
+        }
+
+        // Social share row
+        function shareRow(a) {
+            const u = encodeURIComponent(window.location.href);
+            const t = encodeURIComponent(a.title);
+            return `
+                <div class="share-row">
+                    <span class="share-label">SHARE</span>
+                    <a class="share-btn" href="https://twitter.com/intent/tweet?url=${u}&text=${t}" target="_blank" rel="noopener" title="Share on X">X</a>
+                    <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=${u}" target="_blank" rel="noopener" title="Share on Facebook">f</a>
+                    <a class="share-btn" href="https://t.me/share/url?url=${u}&text=${t}" target="_blank" rel="noopener" title="Share on Telegram">TG</a>
+                    <a class="share-btn" href="https://api.whatsapp.com/send?text=${t}%20${u}" target="_blank" rel="noopener" title="Share on WhatsApp">WA</a>
+                    <a class="share-btn" href="#" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='\u2713';return false;" title="Copy link">LINK</a>
+                </div>`;
+        }
+
         async function loadArticle() {
             const container = document.getElementById('article-container');
             const slug = new URLSearchParams(window.location.search).get('slug');
@@ -205,6 +274,7 @@
                 if (a.error) { container.innerHTML = '<div class="blog-error">' + a.error + '</div>'; return; }
 
                 document.title = a.title + ' | ProPredict News';
+                injectShareMeta(a);
 
                 container.innerHTML = `
                     <article class="article-card">
@@ -222,6 +292,7 @@
                         <div class="article-content">${a.content}</div>
                         <footer class="article-footer">
                             <p class="honesty-note">This report was generated from live football-data.org feeds — real scores, real standings. Read counts are actual page loads; nothing on this page is inflated.</p>
+                            ${shareRow(a)}
                             <a class="back-to-news" href="/news.html">MORE REPORTS →</a>
                         </footer>
                     </article>

@@ -726,6 +726,7 @@ app.post("/api/admin/manual-payments/:paymentId/status", authenticateToken, asyn
 ================================================== */
 const {
   getArticles,
+  loadArticles,
   getArticle,
   incrementViews,
   deleteArticle,
@@ -735,6 +736,56 @@ const {
 } = require("./services/newsStorage");
 const { generateNews, startScheduler } = require("./services/newsScheduler");
 const { LEAGUES } = require("./services/newsDataService");
+
+/* ==================================================
+   ================= SEO / TRACTION ==================
+   sitemap.xml, robots.txt, RSS feed — auto-built from
+   the live (persistent) article store every request.
+================================================== */
+const SITE_URL = process.env.SITE_URL || `https://propredict-app.onrender.com`;
+
+function xmlEscape(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const staticPages = ['', '/news.html', '/blog.html', '/about.html', '/contact.html', '/faq.html', '/pricing.html'];
+    const articles = await loadArticles();
+    const urls = [
+      ...staticPages.map(u => `  <url><loc>${xmlEscape(SITE_URL + u)}</loc><changefreq>${u === '' ? 'daily' : 'weekly'}</changefreq><priority>${u === '' ? '1.0' : '0.7'}</priority></url>`),
+      ...articles.map(a => `  <url><loc>${xmlEscape(`${SITE_URL}/news-article.html?slug=${a.slug}`)}</loc><lastmod>${xmlEscape((a.generatedAt || new Date().toISOString()).substring(0, 10))}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`)
+    ].join('\n');
+    res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`);
+  } catch (e) { res.status(500).end(); }
+});
+
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send(
+    `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`
+  );
+});
+
+app.get('/feed.xml', async (req, res) => {
+  try {
+    const articles = (await loadArticles()).slice(0, 30);
+    const items = articles.map(a => `  <item>
+    <title>${xmlEscape(a.title)}</title>
+    <link>${xmlEscape(`${SITE_URL}/news-article.html?slug=${a.slug}`)}</link>
+    <guid isPermaLink="true">${xmlEscape(`${SITE_URL}/news-article.html?slug=${a.slug}`)}</guid>
+    <pubDate>${new Date(a.generatedAt || Date.now()).toUTCString()}</pubDate>
+    <description>${xmlEscape(a.summary || '')}</description>
+    <category>${xmlEscape(a.category || 'Football')}</category>
+  </item>`).join('\n');
+    res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>
+  <title>ProPredict News Desk</title>
+  <link>${SITE_URL}/news.html</link>
+  <description>Real football intelligence — AI-written reports from live match data across 20+ leagues. Real scores, real standings, zero fabrication.</description>
+  <language>en</language>
+${items}
+</channel></rss>`);
+  } catch (e) { res.status(500).end(); }
+});
 
 // GET /news — List articles with pagination & filtering
 app.get("/news", async (req, res) => {
