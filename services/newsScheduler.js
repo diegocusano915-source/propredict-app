@@ -106,7 +106,7 @@ async function generateNews() {
     // Step 5: Determine article types based on day of week
     console.log('\n\u2699\ufe0f Step 5: Generating articles...');
     const dayOfWeek = new Date().getDay();
-    const existingArticles = loadArticles();
+    const existingArticles = await loadArticles();
     const existingSlugs = new Set(existingArticles.map(a => a.slug));
 
     // --- ARTICLE TYPE 1: Multi-League Digest ---
@@ -141,7 +141,7 @@ async function generateNews() {
             type: 'digest',
             views: 0
           };
-          addArticle(article);
+          await addArticle(article);
           runReport.articlesGenerated++;
           console.log('  \u2705 Digest article created');
         }
@@ -189,7 +189,7 @@ async function generateNews() {
               type: 'preview',
               views: 0
             };
-            addArticle(article);
+            await addArticle(article);
             runReport.articlesGenerated++;
             console.log(`    \u2705 Preview article created: ${match.homeTeam.name} vs ${match.awayTeam.name}`);
           }
@@ -235,7 +235,7 @@ async function generateNews() {
               type: 'roundup',
               views: 0
             };
-            addArticle(article);
+            await addArticle(article);
             runReport.articlesGenerated++;
             console.log(`    \u2705 Roundup article created: ${leagueData.league.name}`);
           }
@@ -247,14 +247,14 @@ async function generateNews() {
     }
 
     // Update metadata
-    const meta = loadMeta();
+    const meta = await loadMeta();
     meta.lastRun = new Date().toISOString();
     meta.lastArticleCount = runReport.articlesGenerated;
     meta.lastLeaguesScanned = runReport.leaguesScanned;
     meta.lastMatchesFound = runReport.matchesFound;
     meta.totalArticlesGenerated = (meta.totalArticlesGenerated || 0) + runReport.articlesGenerated;
     meta.totalApiCallsUsed = (meta.totalApiCallsUsed || 0) + runReport.apiCallsUsed;
-    saveMeta(meta);
+    await saveMeta(meta);
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     console.log(`\n\U0001f4f0 ========== NEWS GENERATION COMPLETE (${elapsed}s) ==========`);

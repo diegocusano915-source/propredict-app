@@ -740,7 +740,7 @@ const { LEAGUES } = require("./services/newsDataService");
 app.get("/news", async (req, res) => {
   try {
     const { page, limit, league, category, search } = req.query;
-    const result = getArticles({
+    const result = await getArticles({
       page: parseInt(page) || 1,
       limit: Math.min(parseInt(limit) || 20, 50),
       league,
@@ -758,7 +758,7 @@ app.get("/news", async (req, res) => {
 app.get("/news/recent", async (req, res) => {
   try {
     const count = Math.min(parseInt(req.query.count) || 6, 20);
-    const articles = getRecentArticles(count);
+    const articles = await getRecentArticles(count);
     res.json({ articles });
   } catch (err) {
     res.status(500).json({ error: "Failed to load recent articles" });
@@ -768,7 +768,7 @@ app.get("/news/recent", async (req, res) => {
 // GET /news/leagues — Active leagues that have articles
 app.get("/news/leagues", async (req, res) => {
   try {
-    const leagues = getActiveLeagues();
+    const leagues = await getActiveLeagues();
     res.json({ leagues });
   } catch (err) {
     res.status(500).json({ error: "Failed to load leagues" });
@@ -783,9 +783,9 @@ app.get("/news/available-leagues", async (req, res) => {
 // GET /news/:slug — Single article
 app.get("/news/:slug", async (req, res) => {
   try {
-    const article = getArticle(req.params.slug);
+    const article = await getArticle(req.params.slug);
     if (!article) return res.status(404).json({ error: "Article not found" });
-    const views = incrementViews(req.params.slug);
+    const views = await incrementViews(req.params.slug);
     res.json({ ...article, views });
   } catch (err) {
     res.status(500).json({ error: "Failed to load article" });
@@ -809,7 +809,7 @@ app.post("/news/generate", async (req, res) => {
 // GET /news/meta — Scheduler status & stats
 app.get("/news/meta", async (req, res) => {
   try {
-    const meta = loadMeta();
+    const meta = await loadMeta();
     res.json({
       ...meta,
       schedulerActive: !!(process.env.FOOTBALL_DATA_KEY && process.env.OPENROUTER_API_KEY),

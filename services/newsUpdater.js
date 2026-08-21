@@ -13,7 +13,7 @@
  *   - Silent no-ops when no new results exist
  */
 
-const { addArticle, loadArticles, generateSlug, generateSummary, estimateReadTime } = require('./newsStorage');
+const { addArticle, loadArticles, generateSlug, generateSummary, estimateReadTime, loadCoveredMatchIds, saveCoveredMatchIds } = require('./newsStorage');
 const { generateMatchReport } = require('./newsContentGenerator');
 const { LEAGUES, getRecentFixtures, getStandings } = require('./newsDataService');
 
@@ -21,26 +21,6 @@ const CHECK_INTERVAL_MS = 45 * 60 * 1000; // every 45 minutes
 const LEAGUES_PER_RUN = 3;      // rotate: 3 leagues checked per run
 const MAX_ARTICLES_PER_RUN = 2; // AI cost cap
 const COVERED_KEY = 'news_covered_match_ids';
-
-// ---------- tiny persistent covered-set (file in ./data alongside storage) ----------
-const fs = require('fs');
-const path = require('path');
-const DATA_DIR = path.join(__dirname, '..', 'data');
-const COVERED_FILE = path.join(DATA_DIR, `${COVERED_KEY}.json`);
-
-function loadCovered() {
-  try {
-    if (fs.existsSync(COVERED_FILE)) return new Set(JSON.parse(fs.readFileSync(COVERED_FILE, 'utf8')).ids || []);
-  } catch (_) {}
-  return new Set();
-}
-
-function saveCovered(set) {
-  try {
-    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-    fs.writeFileSync(COVERED_FILE, JSON.stringify({ ids: Array.from(set).slice(-2000) }));
-  } catch (_) {}
-}
 
 // ---------- the run ----------
 let running = false;
@@ -52,8 +32,8 @@ async function checkForPlayedMatches() {
   running = true;
 
   try {
-    const covered = loadCovered();
-    const existingSlugs = new Set(loadArticles().map(a => a.slug));
+    const covered = await loadCoveredMatchIds();
+    const existingSlugs = new Set((await loadArticles()).map(a => a.slug));
     const to = new Date();
     const from = new Date(to.getTime() - 36 * 60 * 60 * 1000); // last 36h window
 
@@ -83,13 +63,13 @@ async function checkForPlayedMatches() {
       const match = finished.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
       const slug = generateSlug(`${match.homeTeam.name} vs ${match.awayTeam.name} Report`);
       covered.add(String(match.id));
-      if (existingSlugs.has(slug)) { saveCovered(covered); continue; }
+      if (existingSlugs.has(slug)) { await saveCoveredMatchIds(covered); continue; }
 
       try {
         let standings = [];
         try { standings = (await getStandings(league.code)) || []; } catch (_) {}
         const content = await generateMatchReport(match, standings, []);
-        addArticle({
+        await addArticle({
           slug,
           title: `${match.homeTeam.name} ${match.goals.home}-${match.goals.away} ${match.awayTeam.name}: Full-Time Report — ${league.name}`,
           category: 'Match Report',
@@ -118,7 +98,7 @@ async function checkForPlayedMatches() {
       } catch (err) {
         console.error(`Match updater: article failed (${league.name}): ${err.message}`);
       }
-      saveCovered(covered);
+      await saveCoveredMatchIds(covered);
       if (produced >= MAX_ARTICLES_PER_RUN) break;
     }
   } catch (err) {
