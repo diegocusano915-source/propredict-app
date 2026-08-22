@@ -42,7 +42,10 @@ let isRunning = false;
 /**
  * Main article generation pipeline
  */
-async function generateNews() {
+async function generateNews(opts = {}) {
+  // Manual triggers (POST /news/generate) bypass the day-of-week gates:
+  // a human asked for news NOW, so we publish from whatever is live.
+  const manual = !!(opts && opts.manual);
   if (isRunning) {
     console.log('⏳ News generation already in progress, skipping...');
     return { status: 'skipped', reason: 'already_running' };
@@ -113,7 +116,7 @@ async function generateNews() {
 
     // --- ARTICLE TYPE 1: Multi-League Digest ---
     // Generated on Monday (weekend review) and Sunday (weekend results)
-    if (dayOfWeek === 1 || dayOfWeek === 0) {
+    if (manual || dayOfWeek === 1 || dayOfWeek === 0) {
       console.log('  \U0001f4ca Generating multi-league digest...');
       try {
         const leagueSummaries = weeklyData.results
@@ -155,7 +158,7 @@ async function generateNews() {
 
     // --- ARTICLE TYPE 2: Individual Match Previews (2-3 PL + others) ---
     // Generated on Wednesday and Friday
-    if (dayOfWeek === 3 || dayOfWeek === 5) {
+    if (manual || dayOfWeek === 3 || dayOfWeek === 5) {
       const previewMatches = enrichedMatches
         .filter(m => ['NS', '1H', 'HT', '2H'].includes(m.status))
         .slice(0, 6);
@@ -204,7 +207,7 @@ async function generateNews() {
 
     // --- ARTICLE TYPE 3: League Roundup (one per major league) ---
     // Generated on Monday (reviewing weekend) and Friday (previewing weekend)
-    if (dayOfWeek === 1 || dayOfWeek === 5) {
+    if (manual || dayOfWeek === 1 || dayOfWeek === 5) {
       const leaguesWithMatches = weeklyData.results
         .filter(r => r.matchCount >= 3)
         .sort((a, b) => a.league.priority - b.league.priority)

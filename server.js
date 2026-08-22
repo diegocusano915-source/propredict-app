@@ -916,7 +916,7 @@ app.post("/news/generate", async (req, res) => {
     if (!process.env.FOOTBALL_DATA_KEY || !process.env.OPENROUTER_API_KEY) {
       return res.status(503).json({ error: "News API keys not configured. Set FOOTBALL_DATA_KEY and OPENROUTER_API_KEY in .env" });
     }
-    const result = await generateNews();
+    const result = await generateNews({ manual: true });
     res.json(result);
   } catch (err) {
     console.error("Manual news gen error:", err);
