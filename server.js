@@ -626,8 +626,32 @@ app.post("/telegram-webhook", async (req, res) => {
 app.post("/api/paystack/initialize-subscription", authenticateToken, async (req, res) => {
   try {
     const { tier, interval } = req.body;
-    let selectedPlan = PAYSTACK_PRO_MONTHLY_PLAN;
-    if (tier === "vvip") selectedPlan = PAYSTACK_VVIP_MONTHLY_PLAN;
+
+    // PLAN SELECTION: the four pricing cards send tier/interval as
+    // weekly|monthly|quarterly|yearly. Map them to the matching Paystack plan
+    // codes (PREDICT_* plans), with PRO/VVIP codes as fallbacks.
+    const PLAN_MAP = {
+      weekly:    PAYSTACK_PREDICT_WEEKLY    || PAYSTACK_PRO_MONTHLY_PLAN,
+      monthly:   PAYSTACK_PREDICT_MONTHLY   || PAYSTACK_PRO_MONTHLY_PLAN,
+      quarterly: PAYSTACK_PREDICT_QUARTERLY || PAYSTACK_PRO_YEARLY_PLAN,
+      yearly:    PAYSTACK_PREDICT_YEARLY    || PAYSTACK_PRO_YEARLY_PLAN,
+    };
+    let selectedPlan = PLAN_MAP[String(interval || tier || "monthly").toLowerCase()] || PAYSTACK_PRO_MONTHLY_PLAN;
+    if (tier === "vvip") {
+      selectedPlan = interval === "yearly"
+        ? (PAYSTACK_VVIP_YEARLY_PLAN || PAYSTACK_VVIP_MONTHLY_PLAN)
+        : PAYSTACK_VVIP_MONTHLY_PLAN;
+    }
+
+    if (!PAYSTACK_SECRET_KEY) {
+      console.error("[payments] PAYSTACK_SECRET_KEY is not set in the environment");
+      return res.status(500).json({ error: "Payment gateway not configured. Contact support." });
+    }
+    if (!selectedPlan) {
+      console.error("[payments] No Paystack plan code configured for tier=" + tier + " interval=" + interval);
+      return res.status(500).json({ error: "No payment plan configured for the " + (interval || tier) + " tier. Contact support." });
+    }
+
     const userResult = await pool.query("SELECT * FROM users WHERE id = $1", [req.user.id]);
     const user = userResult.rows[0];
     let customerCode = user.paystack_customer_code;
@@ -637,9 +661,16 @@ app.post("/api/paystack/initialize-subscription", authenticateToken, async (req,
       await pool.query("UPDATE users SET paystack_customer_code = $1 WHERE id = $2", [customerCode, user.id]);
     }
     const reference = `sub_${uuidv4()}`;
-    const subResp = await axios.post("https://api.paystack.co/transaction/initialize", { email: user.email, plan: selectedPlan, reference, metadata: { userId: user.id, tier } }, { headers: { Authorization: `Bearer ${PAYSTACK_SECRET_KEY}` } });
+    const subResp = await axios.post("https://api.paystack.co/transaction/initialize", { email: user.email, plan: selectedPlan, reference, metadata: { userId: user.id, tier, interval } }, { headers: { Authorization: `Bearer ${PAYSTACK_SECRET_KEY}` } });
+    if (!subResp.data?.status || !subResp.data.data?.authorization_url) {
+      console.error("[payments] Paystack rejected initialization:", JSON.stringify(subResp.data));
+      return res.status(502).json({ error: "Paystack rejected this payment: " + (subResp.data?.message || "unknown error") });
+    }
     res.json({ authorization_url: subResp.data.data.authorization_url, reference });
-  } catch (e) { res.status(500).json({ error: "Failed" }); }
+  } catch (e) {
+    console.error("[payments] initialize-subscription failed:", e.response?.data?.message || e.message);
+    res.status(500).json({ error: "Payment initialization failed: " + (e.response?.data?.message || e.message) });
+  }
 });
 
 app.get("/api/paystack/verify/:reference", authenticateToken, async (req, res) => {
@@ -686,10 +717,46 @@ app.post("/api/supabase/user-predictions", authenticateToken, async (req, res) =
 app.post("/api/get-payment-details", authenticateToken, async (req, res) => {
   try {
     const { currency, plan, amount } = req.body;
-    let details = { currency, plan, amount, supportEmail: "propredict.support@gmail.com" };
-    if (currency === "USDT") details = { ...details, address: process.env.GREY_CRYPTO_ADDRESS, networks: ["BEP20","TRC20"] };
+    const supportEmail = process.env.MANUAL_PAYMENT_EMAIL || "propredict.support@gmail.com";
+    let details = { currency, plan, amount, supportEmail };
+
+    if (currency === "USD") {
+      details = { ...details,
+        bankName: process.env.GREY_USD_BANK_NAME,
+        accountName: process.env.GREY_USD_ACCOUNT_NAME,
+        accountNumber: process.env.GREY_USD_ACCOUNT_NUMBER,
+        routing: process.env.GREY_USD_ROUTING,
+        instructions: "Send the exact amount to the account above, then paste your transaction reference below. Verified within 24 hours.",
+      };
+    } else if (currency === "GBP") {
+      details = { ...details,
+        bankName: process.env.GREY_GBP_BANK_NAME,
+        accountName: process.env.GREY_GBP_ACCOUNT_NAME,
+        accountNumber: process.env.GREY_GBP_ACCOUNT_NUMBER,
+        sortCode: process.env.GREY_GBP_SORT_CODE,
+        iban: process.env.GREY_GBP_IBAN,
+        swift: process.env.GREY_GBP_SWIFT,
+        instructions: "Send the exact amount via Faster Payments or wire, then paste your transaction reference below. Verified within 24 hours.",
+      };
+    } else if (currency === "USDT" || currency === "USDC") {
+      const rawNets = currency === "USDC"
+        ? (process.env.GREY_CRYPTO_USDC_NETWORKS || process.env.GREY_CRYPTO_USDT_NETWORKS || "BEP20,TRC20")
+        : (process.env.GREY_CRYPTO_USDT_NETWORKS || "BEP20,TRC20");
+      details = { ...details,
+        address: process.env.GREY_CRYPTO_ADDRESS,
+        networks: rawNets.split(",").map(s => s.trim()).filter(Boolean),
+        instructions: "Send the exact amount on a listed network, then paste your transaction hash below. Verified within 24 hours.",
+      };
+    } else {
+      details = { ...details, instructions: "This currency is not currently supported for manual payment. Contact support." };
+    }
+
+    console.log("[payments] details served:", currency, "plan:", plan, "amount:", amount);
     res.json({ success: true, paymentDetails: details });
-  } catch (e) { res.status(500).json({ error: "Failed" }); }
+  } catch (e) {
+    console.error("[payments] get-payment-details failed:", e.message);
+    res.status(500).json({ error: "Failed to load payment details: " + e.message });
+  }
 });
 
 app.post("/api/submit-manual-payment", authenticateToken, async (req, res) => {
