@@ -238,8 +238,15 @@ IMPORTANT: Use ONLY the data provided above. Use real team names, real scores, a
  * Generate a summary for article cards (shorter, for listing pages)
  */
 function generateSummary(contentHtml, maxLength = 180) {
-  // Strip HTML tags
-  const text = contentHtml.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  // Strip HTML tags AND markdown syntax (# headings, * bullets, _em_, **bold**)
+  const text = contentHtml
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/^#{1,6}\s+/gm, '')      // markdown headings
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1') // bold/italic
+    .replace(/^\s*[-*+]\s+/gm, '')   // bullets
+    .replace(/_{1,2}([^_]+)_{1,2}/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength).replace(/\s+\S*$/, '') + '...';
 }
