@@ -124,9 +124,10 @@ app.use(helmet({
         "https://cdn.jsdelivr.net"
       ],
       connectSrc: [
-        "'self'", 
-        "https://api.paystack.co", 
-        "https://propredict-app.onrender.com", 
+        "'self'",
+        "https://api.paystack.co",
+        "https://propredict-app.onrender.com",
+        "https://veyydrngucgtnwqffnew.supabase.co",
         "https://fonts.googleapis.com", 
         "https://fonts.gstatic.com", 
         "https://embed.tawk.to", 
