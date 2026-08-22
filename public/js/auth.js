@@ -719,12 +719,37 @@ window.ppBindAuthUI = function ppBindAuthUI() {
 
   window.supabase = {
     auth: {
-      // Real OAuth: Supabase hosted authorize endpoint. The apikey is REQUIRED
-      // as a query param for browser redirects.
+      // Real OAuth: Supabase hosted authorize endpoint with PKCE (the flow
+      // modern Supabase projects use). The apikey is REQUIRED as a query
+      // param for browser redirects; the verifier is kept in localStorage so
+      // /auth/callback.html can finish the code exchange.
       signInWithOAuth: async ({ provider, options }) => {
         const redirectTo = options?.redirectTo || (window.location.origin + '/auth/callback.html');
-        const params = new URLSearchParams({ provider: provider, redirect_to: redirectTo, apikey: SUPABASE_ANON_KEY });
-        window.location.href = SUPABASE_URL + '/auth/v1/authorize?' + params.toString();
+        try {
+          const rand = new Uint8Array(32);
+          window.crypto.getRandomValues(rand);
+          let verifier = '';
+          for (let i = 0; i < rand.length; i++) verifier += String.fromCharCode(rand[i]);
+          verifier = btoa(verifier).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+          localStorage.setItem('pp_oauth_verifier', verifier);
+          const digest = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
+          const challengeBytes = new Uint8Array(digest);
+          let challenge = '';
+          for (let i = 0; i < challengeBytes.length; i++) challenge += String.fromCharCode(challengeBytes[i]);
+          challenge = btoa(challenge).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+          const params = new URLSearchParams({
+            provider: provider,
+            redirect_to: redirectTo,
+            apikey: SUPABASE_ANON_KEY,
+            flow_type: 'pkce',
+            code_challenge: challenge,
+            code_challenge_method: 's256'
+          });
+          window.location.href = SUPABASE_URL + '/auth/v1/authorize?' + params.toString();
+        } catch (e) {
+          const params = new URLSearchParams({ provider: provider, redirect_to: redirectTo, apikey: SUPABASE_ANON_KEY });
+          window.location.href = SUPABASE_URL + '/auth/v1/authorize?' + params.toString();
+        }
         return { data: {}, error: null };
       },
       // Exchange the #hash tokens from the OAuth redirect for the user object

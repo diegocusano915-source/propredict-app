@@ -36,20 +36,37 @@
       var params = new URLSearchParams(window.location.hash.substring(1) || window.location.search.substring(1));
       var accessToken = params.get('access_token');
 
-      // Supabase PKCE flow may return a code instead of tokens
+      // Supabase sometimes redirects back with the failure reason in the URL
+      if (!accessToken) {
+        var oauthErr = params.get('error_description') || params.get('error');
+        if (oauthErr) return fail(oauthErr);
+      }
+
+      // PKCE flow: Supabase returns a one-time code, exchange it with the
+      // verifier stored when the Google button was clicked
       if (!accessToken) {
         var code = params.get('code');
         if (code) {
+          var verifier = '';
+          try { verifier = localStorage.getItem('pp_oauth_verifier') || ''; } catch (e) {}
           var r0 = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=pkce', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
-            body: JSON.stringify({ auth_code: code })
+            body: JSON.stringify({ auth_code: code, code_verifier: verifier })
           });
-          if (r0.ok) { var j0 = await r0.json(); accessToken = j0.access_token; }
+          if (r0.ok) {
+            var j0 = await r0.json();
+            accessToken = j0.access_token;
+          } else {
+            var e0 = {};
+            try { e0 = await r0.json(); } catch (e) {}
+            return fail('Google login exchange failed: ' + (e0.msg || e0.error_description || e0.error || ('HTTP ' + r0.status)));
+          }
         }
       }
 
       if (!accessToken) return fail('No session returned by Google. Please try again.');
+      try { localStorage.removeItem('pp_oauth_verifier'); } catch (e) {}
 
       // Verify the session with Supabase and load the account
       var r1 = await fetch(SUPABASE_URL + '/auth/v1/user', {

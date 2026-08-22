@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    // Google sign-in safety net: if Supabase lands the OAuth result on the
+    // homepage instead of /auth/callback.html, forward it so login completes.
+    (function () {
+      try {
+        var h = window.location.hash || '';
+        var s = window.location.search || '';
+        if (h.indexOf('access_token=') !== -1 || h.indexOf('error=') !== -1 || s.indexOf('code=') !== -1) {
+          window.location.replace('/auth/callback.html' + window.location.search + window.location.hash);
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta charset="UTF-8">
   <title>ProPredict — Multi-Sport Probability Intelligence</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
