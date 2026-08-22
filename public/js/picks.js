@@ -41,6 +41,14 @@ function calculateImpliedOdds(probPercent) {
 window.normalizePicks = function normalizePicks(raw) {
   if (!raw) return [];
 
+  // A REAL bookmaker price only — null when the engine had no live price.
+  // Never invented: value bets are computed exclusively from these.
+  function parseBookOdds(v) {
+    if (v === undefined || v === null || v === '') return null;
+    const n = parseFloat(v);
+    return (!isNaN(n) && n > 1) ? n : null;
+  }
+
   if (raw.h2h && Array.isArray(raw.h2h)) {
     return raw.h2h.map(pick => ({
       matchId: pick.matchId || '',
@@ -49,7 +57,8 @@ window.normalizePicks = function normalizePicks(raw) {
       market: (pick.market || '').replace('Win: ', ''),
       probability: parseFloat(pick.adjustedProbability || pick.impliedProbability || 0) / 100,
       confidence: pick.confidence || 'Low',
-      odds: pick.odds || calculateImpliedOdds(pick.adjustedProbability || pick.impliedProbability || 33)
+      odds: pick.odds || calculateImpliedOdds(pick.adjustedProbability || pick.impliedProbability || 33),
+      bookOdds: parseBookOdds(pick.odds)
     }));
   }
 
@@ -61,7 +70,8 @@ window.normalizePicks = function normalizePicks(raw) {
       market: (pick.market || '1X2').replace('Win: ', ''),
       probability: parseFloat(pick.adjustedProbability || pick.impliedProbability || pick.probability || 0) / 100,
       confidence: pick.confidence || 'Low',
-      odds: pick.odds || calculateImpliedOdds(pick.adjustedProbability || pick.impliedProbability || 33)
+      odds: pick.odds || calculateImpliedOdds(pick.adjustedProbability || pick.impliedProbability || pick.probability || 33),
+      bookOdds: parseBookOdds(pick.odds)
     }));
   }
 
@@ -294,5 +304,51 @@ window.renderTopPicks = function renderTopPicks() {
     });
 
     container.appendChild(wrapper);
+  });
+
+  window.renderValueBets();
+};
+
+// ==========================================================
+// VALUE BETS — real bookmaker odds vs model probability only
+// Edge = probability × bookOdds − 1. No priced market, no entry.
+// ==========================================================
+window.renderValueBets = function renderValueBets() {
+  const container = document.getElementById('valueBetsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const picks = window.topPicksData || [];
+  if (picks.length === 0) {
+    container.innerHTML = '<div style="font-size:12px;color:#8a9bb5;line-height:1.5;">No picks loaded for this competition yet.</div>';
+    return;
+  }
+
+  const priced = picks.filter(p => p.bookOdds && p.probability > 0 && p.probability < 1);
+  if (priced.length === 0) {
+    container.innerHTML = '<div style="font-size:12px;color:#8a9bb5;line-height:1.5;">No live bookmaker prices for this market right now — value bets appear only when real odds are available.</div>';
+    return;
+  }
+
+  const valued = priced
+    .map(p => Object.assign({}, p, { edge: p.probability * p.bookOdds - 1 }))
+    .filter(p => p.edge > 0.01)
+    .sort((a, b) => b.edge - a.edge)
+    .slice(0, 3);
+
+  if (valued.length === 0) {
+    container.innerHTML = '<div style="font-size:12px;color:#8a9bb5;line-height:1.5;">No value bets: every priced play is currently below fair value. Updates live as odds move.</div>';
+    return;
+  }
+
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  valued.forEach(v => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:#c5d1eb;';
+    const label = (v.homeTeam && v.awayTeam) ? `${v.homeTeam} v ${v.awayTeam}` : (v.matchId || '');
+    row.innerHTML =
+      `<span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(label)} — ${esc(v.market)} @ ${v.bookOdds.toFixed(2)}</span>` +
+      `<span style="color:#22c55e;font-weight:700;white-space:nowrap;">+${(v.edge * 100).toFixed(1)}%</span>`;
+    container.appendChild(row);
   });
 };
