@@ -27,8 +27,22 @@
   function fail(msg) {
     document.getElementById('spinner').style.display = 'none';
     document.getElementById('status').textContent = 'Sign-in failed';
-    document.getElementById('err').textContent = msg;
-    setTimeout(function() { window.location.href = '/'; }, 3500);
+    var err = document.getElementById('err');
+    err.style.fontSize = '1rem';
+    err.style.lineHeight = '1.5';
+    err.style.padding = '0 20px';
+    err.style.wordBreak = 'break-word';
+    err.textContent = msg;
+    var retry = document.createElement('a');
+    retry.href = '/';
+    retry.textContent = '← Back to ProPredict';
+    retry.style.display = 'inline-block';
+    retry.style.marginTop = '22px';
+    retry.style.color = '#00f5ff';
+    retry.style.textDecoration = 'none';
+    retry.style.fontWeight = '700';
+    err.parentNode.appendChild(document.createElement('br'));
+    err.parentNode.appendChild(retry);
   }
 
   (async function() {
