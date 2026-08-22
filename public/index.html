@@ -550,6 +550,10 @@
               <div class="acca-selection"><span class="selection-name">Loading...</span><span class="selection-odds">-</span></div>
             </div>
             <div class="acca-total"><span class="total-label">Total Odds</span><span class="total-odds">-</span></div>
+            <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+              <span style="font-size:11px;color:#8a9bb5;">Your stake $</span>
+              <input id="accaStakeInput" type="number" min="1" step="1" value="10" style="width:70px;padding:4px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.4);color:#fff;font-size:12px;">
+            </div>
             <div class="acca-return">Potential Return: -</div>
             <button class="btn-accumulator" id="addToBetslipBtn">Add to Betslip</button>
           </div>
@@ -769,5 +773,21 @@
     }
   })();
   </script>
+
+<script>
+  // Recompute the accumulator return when the stake changes (real odds only)
+  document.addEventListener('input', function(e) {
+    if (e.target && e.target.id === 'accaStakeInput') {
+      var totalOdds = window.__accaTotalOdds;
+      var returnEl = document.querySelector('.accumulator-premium-card .acca-return');
+      var stake = parseFloat(e.target.value) || 0;
+      if (returnEl) {
+        returnEl.textContent = totalOdds
+          ? 'Potential Return: $' + (totalOdds * stake).toFixed(2) + ' (on $' + stake.toFixed(2) + ' staked)'
+          : 'Potential Return: -';
+      }
+    }
+  });
+</script>
 </body>
 </html>

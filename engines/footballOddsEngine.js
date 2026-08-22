@@ -140,7 +140,9 @@ function extractMarkets(data, groupedMarkets) {
           market: `Win: ${name}`,
           impliedProbability: implied.toFixed(1),
           adjustedProbability: hybrid.toFixed(1),
-          confidence: getConfidenceLabel(hybrid)
+          confidence: getConfidenceLabel(hybrid),
+          // REAL best bookmaker price for this outcome (no invented odds)
+          odds: h2hPrices[i]
         });
       }
     }

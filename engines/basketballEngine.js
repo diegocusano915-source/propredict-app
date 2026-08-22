@@ -250,7 +250,9 @@ function extractMarkets(data, groupedMarkets) {
             : `${entry.outcome.name} ${entry.outcome.point || ""}`.trim(),
           impliedProbability: entry.implied.toFixed(1),
           adjustedProbability: entry.hybrid.toFixed(1),
-          confidence: getConfidenceLabel(entry.hybrid)
+          confidence: getConfidenceLabel(entry.hybrid),
+          // REAL best bookmaker price for this outcome (no invented odds)
+          odds: entry.outcome.price
         };
 
         if (groupedMarkets[market.key]) {

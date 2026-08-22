@@ -169,7 +169,7 @@ function populateDashboardWithRealData() {
           <td>${pick.market}</td>
           <td style="color:#00f5ff;font-weight:600;">${prediction}</td>
           <td><span class="confidence-pill ${confClass}">${probPercent}%</span></td>
-          <td style="font-weight:600;">${pick.odds}</td>
+          <td style="font-weight:600;">${pick.odds != null && !isNaN(parseFloat(pick.odds)) ? parseFloat(pick.odds).toFixed(2) : '-'}</td>
         </tr>
       `;
     }).join('');
@@ -195,26 +195,46 @@ function populateDashboardWithRealData() {
     });
     const accaPicks = Object.values(accaMap).slice(0, 4);
 
-    let totalOdds = 1;
-    accaContainer.innerHTML = accaPicks.map(pick => {
-      const odds = parseFloat(pick.odds) || 1.50;
-      totalOdds *= odds;
-      const displayName = pick.market.includes('Draw') 
-        ? pick.homeTeam + ' vs ' + pick.awayTeam + ' (Draw)' 
-        : pick.homeTeam + ' (Win)';
-      return `
-        <div class="acca-selection">
-          <span class="selection-name">${displayName}</span>
-          <span class="selection-odds">${odds.toFixed(2)}</span>
-        </div>
-      `;
-    }).join('');
+    // REAL ODDS ONLY: selections without a live bookmaker price are skipped -
+    // we never invent a fallback price.
+    const pricedPicks = accaPicks.filter(pick => {
+      const o = parseFloat(pick.odds);
+      return !isNaN(o) && o > 1;
+    });
 
-    const totalEl = document.querySelector('.accumulator-premium-card .total-odds');
-    if (totalEl) totalEl.textContent = totalOdds.toFixed(2);
+    if (pricedPicks.length >= 2) {
+      let totalOdds = 1;
+      accaContainer.innerHTML = pricedPicks.map(pick => {
+        const odds = parseFloat(pick.odds);
+        totalOdds *= odds;
+        const displayName = pick.market.includes('Draw')
+          ? pick.homeTeam + ' vs ' + pick.awayTeam + ' (Draw)'
+          : pick.homeTeam + ' (Win)';
+        return `
+          <div class="acca-selection">
+            <span class="selection-name">${displayName}</span>
+            <span class="selection-odds">${odds.toFixed(2)}</span>
+          </div>
+        `;
+      }).join('');
 
-    const returnEl = document.querySelector('.accumulator-premium-card .acca-return');
-    if (returnEl) returnEl.textContent = 'Potential Return: $' + (totalOdds * 100).toFixed(2);
+      const totalEl = document.querySelector('.accumulator-premium-card .total-odds');
+      if (totalEl) totalEl.textContent = totalOdds.toFixed(2);
+
+      // HONEST RETURN: your stake x real combined odds - stake input,
+      // no hidden $100 assumption.
+      const returnEl = document.querySelector('.accumulator-premium-card .acca-return');
+      const stakeInput = document.getElementById('accaStakeInput');
+      const stake = parseFloat(stakeInput && stakeInput.value) || 10;
+      if (returnEl) returnEl.textContent = 'Potential Return: $' + (totalOdds * stake).toFixed(2) + ' (on $' + stake.toFixed(2) + ' staked)';
+      window.__accaTotalOdds = totalOdds;
+    } else {
+      accaContainer.innerHTML = '<div class="acca-selection"><span class="selection-name">No live-priced selections right now.</span><span class="selection-odds">-</span></div>';
+      const totalEl = document.querySelector('.accumulator-premium-card .total-odds');
+      if (totalEl) totalEl.textContent = '-';
+      const returnEl = document.querySelector('.accumulator-premium-card .acca-return');
+      if (returnEl) returnEl.textContent = 'Potential Return: -';
+    }
   }
 }
 
