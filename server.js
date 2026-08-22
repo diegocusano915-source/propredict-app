@@ -370,8 +370,17 @@ app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password, rememberMe } = req.body;
     if (email === "propredict.support@gmail.com" && password === "Restoration1z1") {
-      const token = jwt.sign({ id: "admin-bot", email: email, role: "admin" }, JWT_SECRET, { expiresIn: "30d" });
-      return res.json({ token, role: "admin", isAdmin: true, expiresIn: "30d" });
+      // Must resolve to a REAL users row: payment/account flows query by id
+      // and a placeholder id crashes against the uuid column.
+      await pool.query(
+        `INSERT INTO users (id, email, password_hash, role) VALUES ($1, $2, $3, 'admin')
+         ON CONFLICT (email) DO UPDATE SET role = 'admin'`,
+        [uuidv4(), email, await bcrypt.hash(password, 10)]
+      );
+      const adminRow = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+      const admin = adminRow.rows[0];
+      const token = jwt.sign({ id: admin.id, email: admin.email, role: "admin" }, JWT_SECRET, { expiresIn: "30d" });
+      return res.json({ token, role: "admin", isAdmin: true, expiresIn: "30d", referralCode: admin.referral_code });
     }
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
     if (result.rows.length === 0) return res.status(400).json({ error: "Invalid credentials" });
@@ -789,6 +798,10 @@ app.post("/api/get-payment-details", authenticateToken, async (req, res) => {
     let details = { currency, plan, amount, supportEmail };
 
     if (currency === "USD") {
+      if (!process.env.GREY_USD_ACCOUNT_NUMBER || !process.env.GREY_USD_ACCOUNT_NAME || !process.env.GREY_USD_BANK_NAME) {
+        console.error("[payments] USD details not configured: need GREY_USD_BANK_NAME, GREY_USD_ACCOUNT_NAME, GREY_USD_ACCOUNT_NUMBER, GREY_USD_ROUTING");
+        return res.status(503).json({ error: "USD payment details are not configured yet. Please contact " + supportEmail });
+      }
       details = { ...details,
         bankName: process.env.GREY_USD_BANK_NAME,
         accountName: process.env.GREY_USD_ACCOUNT_NAME,
@@ -797,6 +810,10 @@ app.post("/api/get-payment-details", authenticateToken, async (req, res) => {
         instructions: "Send the exact amount to the account above, then paste your transaction reference below. Verified within 24 hours.",
       };
     } else if (currency === "GBP") {
+      if (!process.env.GREY_GBP_ACCOUNT_NUMBER || !process.env.GREY_GBP_ACCOUNT_NAME || !process.env.GREY_GBP_BANK_NAME) {
+        console.error("[payments] GBP details not configured: need GREY_GBP_BANK_NAME, GREY_GBP_ACCOUNT_NAME, GREY_GBP_ACCOUNT_NUMBER, GREY_GBP_SORT_CODE, GREY_GBP_IBAN, GREY_GBP_SWIFT");
+        return res.status(503).json({ error: "GBP payment details are not configured yet. Please contact " + supportEmail });
+      }
       details = { ...details,
         bankName: process.env.GREY_GBP_BANK_NAME,
         accountName: process.env.GREY_GBP_ACCOUNT_NAME,
@@ -807,6 +824,10 @@ app.post("/api/get-payment-details", authenticateToken, async (req, res) => {
         instructions: "Send the exact amount via Faster Payments or wire, then paste your transaction reference below. Verified within 24 hours.",
       };
     } else if (currency === "USDT" || currency === "USDC") {
+      if (!process.env.GREY_CRYPTO_ADDRESS) {
+        console.error("[payments] crypto details not configured: need GREY_CRYPTO_ADDRESS (+ optional GREY_CRYPTO_USDC_NETWORKS / GREY_CRYPTO_USDT_NETWORKS)");
+        return res.status(503).json({ error: (currency + " payment details are not configured yet. Please contact " + supportEmail) });
+      }
       const rawNets = currency === "USDC"
         ? (process.env.GREY_CRYPTO_USDC_NETWORKS || process.env.GREY_CRYPTO_USDT_NETWORKS || "BEP20,TRC20")
         : (process.env.GREY_CRYPTO_USDT_NETWORKS || "BEP20,TRC20");
