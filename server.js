@@ -824,15 +824,20 @@ app.post("/api/get-payment-details", authenticateToken, async (req, res) => {
         instructions: "Send the exact amount via Faster Payments or wire, then paste your transaction reference below. Verified within 24 hours.",
       };
     } else if (currency === "USDT" || currency === "USDC") {
-      if (!process.env.GREY_CRYPTO_ADDRESS) {
-        console.error("[payments] crypto details not configured: need GREY_CRYPTO_ADDRESS (+ optional GREY_CRYPTO_USDC_NETWORKS / GREY_CRYPTO_USDT_NETWORKS)");
+      // Each coin has its OWN address on its OWN network — never share one
+      // address across coins (cross-network sends are unrecoverable).
+      const cryptoAddress = currency === "USDC"
+        ? (process.env.GREY_USDC_ADDRESS || process.env.GREY_CRYPTO_ADDRESS)
+        : (process.env.GREY_USDT_ADDRESS || process.env.GREY_CRYPTO_ADDRESS);
+      if (!cryptoAddress) {
+        console.error("[payments] crypto details not configured: need GREY_USDT_ADDRESS (TRC20) and GREY_USDC_ADDRESS (SOLANA)");
         return res.status(503).json({ error: (currency + " payment details are not configured yet. Please contact " + supportEmail) });
       }
       const rawNets = currency === "USDC"
-        ? (process.env.GREY_CRYPTO_USDC_NETWORKS || process.env.GREY_CRYPTO_USDT_NETWORKS || "BEP20,TRC20")
-        : (process.env.GREY_CRYPTO_USDT_NETWORKS || "BEP20,TRC20");
+        ? (process.env.GREY_CRYPTO_USDC_NETWORKS || "SOLANA")
+        : (process.env.GREY_CRYPTO_USDT_NETWORKS || "TRC20");
       details = { ...details,
-        address: process.env.GREY_CRYPTO_ADDRESS,
+        address: cryptoAddress,
         networks: rawNets.split(",").map(s => s.trim()).filter(Boolean),
         instructions: "Send the exact amount on a listed network, then paste your transaction hash below. Verified within 24 hours.",
       };
