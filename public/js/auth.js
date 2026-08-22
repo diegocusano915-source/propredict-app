@@ -709,40 +709,53 @@ window.ppBindAuthUI = function ppBindAuthUI() {
 
 (function initSupabase() {
   if (window.supabase) return;
-  
+
+  // REAL Supabase project credentials (anon key is public-by-design, RLS-protected)
   const SUPABASE_URL = 'https://veyydrngucgtnwqffnew.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZleXlkcm5ndWNndG53cWZmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTIzNDU2NzgsImV4cCI6MjAyNzkyMTY3OH0.abcdefghijklmnopqrstuvwxyz';
-  
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZleXlkcm5ndWNndG53cWZmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDYwNzcsImV4cCI6MjA5MTcyMjA3N30.PFSkDWntIx0eVMZCfto6SVyQY6yv_GfI2NaK1l2UVM8';
+
+  window.SUPABASE_URL = SUPABASE_URL;
+  window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
+
   window.supabase = {
     auth: {
+      // Real OAuth: Supabase hosted authorize endpoint. The apikey is REQUIRED
+      // as a query param for browser redirects.
       signInWithOAuth: async ({ provider, options }) => {
-        const redirectTo = options?.redirectTo || 'https://propredict-app.onrender.com/auth/callback';
-        const queryParams = options?.queryParams || {};
-        const params = new URLSearchParams({ provider, redirect_to: redirectTo, ...queryParams });
-        window.location.href = `${SUPABASE_URL}/auth/v1/authorize?${params.toString()}`;
+        const redirectTo = options?.redirectTo || (window.location.origin + '/auth/callback.html');
+        const params = new URLSearchParams({ provider: provider, redirect_to: redirectTo, apikey: SUPABASE_ANON_KEY });
+        window.location.href = SUPABASE_URL + '/auth/v1/authorize?' + params.toString();
         return { data: {}, error: null };
+      },
+      // Exchange the #hash tokens from the OAuth redirect for the user object
+      exchangeCodeForSession: async () => {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+        if (!accessToken) return { data: { session: null }, error: null };
+        const res = await fetch(SUPABASE_URL + '/auth/v1/user', {
+          headers: { 'Authorization': 'Bearer ' + accessToken, 'apikey': SUPABASE_ANON_KEY }
+        });
+        if (!res.ok) return { data: { session: null }, error: new Error('Supabase session invalid') };
+        const user = await res.json();
+        return { data: { session: { access_token: accessToken, user: user } }, error: null };
       },
       getSession: async () => {
         const hash = window.location.hash.substring(1);
         const params = new URLSearchParams(hash);
         const accessToken = params.get('access_token');
         const refreshToken = params.get('refresh_token');
-        
         if (accessToken) {
-          const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-            headers: { 'Authorization': `Bearer ${accessToken}`, 'apikey': SUPABASE_ANON_KEY }
+          const res = await fetch(SUPABASE_URL + '/auth/v1/user', {
+            headers: { 'Authorization': 'Bearer ' + accessToken, 'apikey': SUPABASE_ANON_KEY }
           });
-          const user = await res.json();
-          
-          return {
-            data: { session: { access_token: accessToken, refresh_token: refreshToken, user: user } },
-            error: null
-          };
+          if (res.ok) {
+            const user = await res.json();
+            return { data: { session: { access_token: accessToken, refresh_token: refreshToken, user: user } }, error: null };
+          }
         }
         return { data: { session: null }, error: null };
       }
     }
   };
-  
-  console.log('✅ Supabase client initialized');
 })();

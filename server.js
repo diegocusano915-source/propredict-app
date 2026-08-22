@@ -288,6 +288,73 @@ app.post("/api/auth/register", async (req, res) => {
   } catch (err) { res.status(500).json({ error: "Registration failed", details: err.message }); }
 });
 
+// GOOGLE OAUTH: verify the Supabase session server-side (service key),
+// find-or-create the app user, and issue OUR JWT. The client's word is
+// never trusted - the token is validated against Supabase directly.
+app.post("/api/auth/google", async (req, res) => {
+  try {
+    const { accessToken, email, supabaseId } = req.body;
+    if (!accessToken || !email || !supabaseId) {
+      return res.status(400).json({ error: "Missing Google session data" });
+    }
+
+    // 1. Verify the access token against Supabase with the SERVICE key
+    const verifyRes = await axios.get(`${process.env.SUPABASE_URL}/auth/v1/user`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        apikey: process.env.SUPABASE_SERVICE_KEY,
+      },
+      timeout: 15000,
+    });
+    if (verifyRes.status !== 200 || !verifyRes.data || verifyRes.data.id !== supabaseId) {
+      return res.status(401).json({ error: "Google session could not be verified" });
+    }
+    const verified = verifyRes.data;
+    const verifiedEmail = (verified.email || email || "").toLowerCase();
+    if (!verifiedEmail) return res.status(400).json({ error: "Google account has no email" });
+
+    // 2. Find or create the app user (Google accounts have no password)
+    let user = null;
+    const byId = await pool.query("SELECT * FROM users WHERE id = $1", [supabaseId]);
+    if (byId.rows.length > 0) {
+      user = byId.rows[0];
+    } else {
+      const byEmail = await pool.query("SELECT * FROM users WHERE email = $1", [verifiedEmail]);
+      if (byEmail.rows.length > 0) {
+        // Same email registered manually earlier -> link the Supabase id by id match
+        user = byEmail.rows[0];
+      } else {
+        const role = verifiedEmail === process.env.ADMIN_EMAIL ? "admin" : "free";
+        const newReferralCode = generateReferralCode(verifiedEmail);
+        await pool.query(
+          `INSERT INTO users (id, email, password_hash, role, referral_code) VALUES ($1, $2, 'GOOGLE_OAUTH', $3, $4)
+           ON CONFLICT (id) DO NOTHING`,
+          [supabaseId, verifiedEmail, role, newReferralCode]
+        );
+        const created = await pool.query("SELECT * FROM users WHERE id = $1", [supabaseId]);
+        user = created.rows[0];
+        try { await sendEmail(verifiedEmail, "Welcome to ProPredict!", `<div><h1>Welcome to ProPredict!</h1><p>Your Google account is ready. Your referral code: <strong>${user.referral_code}</strong></p></div>`); } catch (e) {}
+      }
+    }
+    if (!user) return res.status(500).json({ error: "Could not create your account" });
+
+    // 3. Issue our own JWT (identical shape to email login)
+    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "30d" });
+    const name = (verified.user_metadata && (verified.user_metadata.full_name || verified.user_metadata.name)) || null;
+    res.json({
+      token,
+      role: user.role,
+      email: user.email,
+      name: name,
+      referralCode: user.referral_code,
+      expiresIn: "30d",
+    });
+  } catch (e) {
+    console.error("[auth] google sign-in failed:", e.response?.data?.message || e.message);
+    res.status(500).json({ error: "Google sign-in failed: " + (e.response?.data?.message || e.message) });
+  }
+});
+
 app.post("/api/auth/email-verified", async (req, res) => {
   try {
     const { email } = req.body;

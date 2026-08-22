@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signing you in... | ProPredict</title>
+<style>
+  body { margin:0; background:#070b14; color:#a0b3d9; font-family:Inter,system-ui,sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+  .box { text-align:center; padding:40px; }
+  .pulse { width:54px; height:54px; margin:0 auto 22px; border-radius:50%; border:3px solid rgba(0,245,255,0.15); border-top-color:#00f5ff; animation:spin .9s linear infinite; box-shadow:0 0 22px rgba(0,245,255,0.25); }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  h1 { color:#fff; font-size:1.2rem; margin:0 0 8px; }
+  .err { color:#ff6b6b; font-size:.85rem; margin-top:14px; }
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="pulse" id="spinner"></div>
+  <h1 id="status">Completing Google sign-in...</h1>
+  <div class="err" id="err"></div>
+</div>
+<script>
+(function() {
+  var SUPABASE_URL = 'https://veyydrngucgtnwqffnew.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZleXlkcm5ndWNndG53cWZmbmV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDYwNzcsImV4cCI6MjA5MTcyMjA3N30.PFSkDWntIx0eVMZCfto6SVyQY6yv_GfI2NaK1l2UVM8';
+
+  function fail(msg) {
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('status').textContent = 'Sign-in failed';
+    document.getElementById('err').textContent = msg;
+    setTimeout(function() { window.location.href = '/'; }, 3500);
+  }
+
+  (async function() {
+    try {
+      var params = new URLSearchParams(window.location.hash.substring(1) || window.location.search.substring(1));
+      var accessToken = params.get('access_token');
+
+      // Supabase PKCE flow may return a code instead of tokens
+      if (!accessToken) {
+        var code = params.get('code');
+        if (code) {
+          var r0 = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=pkce', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+            body: JSON.stringify({ auth_code: code })
+          });
+          if (r0.ok) { var j0 = await r0.json(); accessToken = j0.access_token; }
+        }
+      }
+
+      if (!accessToken) return fail('No session returned by Google. Please try again.');
+
+      // Verify the session with Supabase and load the account
+      var r1 = await fetch(SUPABASE_URL + '/auth/v1/user', {
+        headers: { 'Authorization': 'Bearer ' + accessToken, 'apikey': SUPABASE_ANON_KEY }
+      });
+      if (!r1.ok) return fail('Your Google session expired. Please try again.');
+      var sbUser = await r1.json();
+
+      // Exchange for OUR app session (the server verifies the token again)
+      var r2 = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          accessToken: accessToken,
+          email: sbUser.email,
+          supabaseId: sbUser.id,
+          name: (sbUser.user_metadata && (sbUser.user_metadata.full_name || sbUser.user_metadata.name)) || null,
+          avatarUrl: (sbUser.user_metadata && sbUser.user_metadata.avatar_url) || null
+        })
+      });
+      var data = await r2.json();
+      if (!r2.ok || !data.token) return fail(data.error || 'Server rejected the sign-in. Please try email instead.');
+
+      // Store exactly like the email login does
+      localStorage.setItem('propredict_token', data.token);
+      localStorage.setItem('pp_token', data.token);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('propredict_user', JSON.stringify({ email: data.email || sbUser.email, name: data.name || null, avatarUrl: (sbUser.user_metadata && sbUser.user_metadata.avatar_url) || null }));
+      if (data.referralCode) localStorage.setItem('referralCode', data.referralCode);
+
+      document.getElementById('status').textContent = 'Welcome' + (data.name ? ', ' + data.name : '') + '! Redirecting...';
+      setTimeout(function() { window.location.href = '/'; }, 700);
+    } catch (e) {
+      fail(e.message || 'Unexpected error during sign-in.');
+    }
+  })();
+})();
+</script>
+</body>
+</html>
