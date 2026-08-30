@@ -1014,9 +1014,37 @@ app.get("/blog", (req, res) => {
 /* ==================================================
    ================= SERVER START ====================
 ================================================== */
+
+// NEWS CATCH-UP: Render free tier sleeps the server after ~15 idle minutes,
+// so node-cron windows (Mon/Wed/Fri/Sun) get missed while asleep. Whenever
+// the server WAKES, if the newest article is stale (>20h), generate the
+// missed content immediately — the reader never notices the nap.
+let lastCatchUpDay = "";
+async function catchUpNews(reason) {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    if (lastCatchUpDay === today) return; // one catch-up per day, no doubles
+    const result = await getArticles({ page: 1, limit: 1 });
+    const newest = result && result.articles && result.articles[0];
+    const lastDate = newest ? new Date(newest.date || newest.created_at || 0).getTime() : 0;
+    const hoursSince = (Date.now() - lastDate) / 3600000;
+    if (hoursSince > 20) {
+      lastCatchUpDay = today;
+      console.log(`[news] catch-up (${reason}): newest article is ${Math.round(hoursSince)}h old — generating missed news`);
+      await generateNews({ manual: true });
+      console.log("[news] catch-up complete");
+    }
+  } catch (e) {
+    console.error("[news] catch-up failed:", e.message);
+  }
+}
+
 initializeAuthTables().then(() => {
   app.listen(PORT, () => {
     console.log(`ProPredict Server running on port ${PORT}`);
     startScheduler();
+    // Catch up on wake + re-check every 30 min while awake
+    setTimeout(() => catchUpNews("boot"), 15000);
+    setInterval(() => catchUpNews("interval"), 30 * 60 * 1000);
   });
 });
