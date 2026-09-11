@@ -11,7 +11,6 @@ const axios = require('axios');
 const { formatDatePretty } = require('./newsDataService');
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-let lastError = '';
 
 // Models to try (fallback chain) — FREE OpenRouter variants first
 // (the account has no purchased credits: paid models 402), paid models
@@ -27,6 +26,7 @@ const MODELS = [
 ];
 
 async function callAI(prompt, retries = 2) {
+  const attempts = [];
   for (const model of MODELS) {
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
@@ -53,15 +53,21 @@ async function callAI(prompt, retries = 2) {
         if (response.data?.choices?.[0]?.message?.content) {
           return response.data.choices[0].message.content;
         }
+        attempts.push(`${model}: empty response`);
       } catch (err) {
-        const status = err.response ? ` [HTTP ${err.response.status}${err.response.data?.error?.message ? ': ' + String(err.response.data.error.message).slice(0, 120) : ''}]` : '';
-        console.error(`  AI call failed (${model}, attempt ${attempt + 1}): ${err.message}${status}`);
-        lastError = `${model}${status || ': ' + err.message}`;
+        const status = err.response?.status;
+        const providerMsg = err.response?.data?.error?.message
+          ? String(err.response.data.error.message).slice(0, 140) : err.message;
+        attempts.push(`${model} [HTTP ${status || '?'}: ${providerMsg}]`);
+        // free-tier rate limit: wait it out instead of hammering
+        if (status === 429 && attempt < retries) {
+          await new Promise(r => setTimeout(r, 6000));
+        }
         if (attempt === retries) continue; // Try next model
       }
     }
   }
-  throw new Error('All AI models failed to generate content — ' + (lastError || 'unknown reason'));
+  throw new Error('All AI models failed — ' + attempts.slice(0, MODELS.length).join(' | '));
 }
 
 /**
