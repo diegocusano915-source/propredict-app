@@ -12,16 +12,17 @@ const { formatDatePretty } = require('./newsDataService');
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
-// Models to try (fallback chain) — FREE OpenRouter variants first
-// (the account has no purchased credits: paid models 402), paid models
-// kept at the end so they start working automatically after a top-up.
+// Models to try (fallback chain) — current FREE OpenRouter lineup first
+// (verified live 2026-09-11 from /api/v1/models; older :free slugs 404 now).
+// openrouter/free auto-routes to whatever free model is up.
+// Paid models stay at the end: they work automatically after a top-up.
 const MODELS = [
-  'deepseek/deepseek-chat-v3-0324:free',
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'qwen/qwen-2.5-72b-instruct:free',
-  'google/gemini-2.0-flash-exp:free',
+  'openrouter/free',
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'google/gemma-4-31b-it:free',
+  'google/gemma-4-26b-a4b-it:free',
   'deepseek/deepseek-chat-v3-0324',
-  'google/gemini-2.5-flash-preview-05-20',
   'meta-llama/llama-3.3-70b-instruct'
 ];
 
