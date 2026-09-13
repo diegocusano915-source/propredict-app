@@ -1,0 +1,69 @@
+====================================================================
+GITHUB SUPPORT — SENSITIVE DATA REMOVAL REQUEST (copy-paste ready)
+====================================================================
+
+SUBMIT HERE:
+https://support.github.com/contact
+Choose: "Remove content" -> "Remove sensitive data from my own repository"
+(Submit while logged in as diegocusano915-source)
+
+--------------------------------------------------------------------
+SUBJECT:
+--------------------------------------------------------------------
+Sensitive data removal request — .env file exposed in commit history (propredict-app)
+
+--------------------------------------------------------------------
+MESSAGE (paste everything below):
+--------------------------------------------------------------------
+Hello GitHub Support,
+
+I am the owner of the repository diegocusano915-source/propredict-app. I
+accidentally committed a .env file containing sensitive credentials
+(API secret keys and banking details) and need help removing cached
+views of it.
+
+WHAT I HAVE ALREADY DONE:
+1. Removed the file from the repository and added it to .gitignore.
+2. Rewrote the entire git history with git-filter-repo to remove the
+   file from every commit, and force-pushed the rewritten history to
+   main (current HEAD: 1b8ed7a).
+3. Verified the file no longer exists in any current branch:
+   https://raw.githubusercontent.com/diegocusano915-source/propredict-app/main/.env
+   returns 404.
+
+THE PROBLEM:
+Old commit snapshots are still accessible via direct URLs to the
+pre-rewrite commit SHAs, and the file content is still served there:
+
+- https://raw.githubusercontent.com/diegocusano915-source/propredict-app/560c3d6/.env
+- https://raw.githubusercontent.com/diegocusano915-source/propredict-app/933834a/.env
+- and other commits between 933834a ("Create .env") and ab25796 (the
+  last commit before the rewrite) that included the file.
+
+WHAT WAS EXPOSED:
+A .env file containing payment provider secret keys, a JWT signing
+secret, database credentials, an email service API key, and bank
+account details. (I am rotating all credentials regardless, but I want
+the cached content removed from GitHub as well.)
+
+REQUEST:
+Please run garbage collection / remove the unreachable cached commits
+and any cached raw views for the pre-rewrite SHAs of this repository so
+the removed file is no longer retrievable, including via direct SHA
+URLs and the fork/commit network.
+
+The repository is public: https://github.com/diegocusano915-source/propredict-app
+
+Thank you.
+
+====================================================================
+AFTER SUBMITTING — rotate these keys (do this regardless, today):
+====================================================================
+1. PAYSTACK_SECRET_KEY  -> new key from Paystack dashboard
+2. JWT_SECRET           -> new random string (logs everyone out - expected)
+3. SUPABASE_SERVICE_KEY -> reset in Supabase dashboard
+4. DATABASE_URL password -> reset at your Postgres provider
+5. RESEND_API_KEY       -> regenerate at resend.com
+6. Update the new values in Render -> Environment, then redeploy
+
+====================================================================

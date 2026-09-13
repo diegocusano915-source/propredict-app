@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
 const path = require("path");
+const fsp = require("fs").promises;
 
 /* ===========================
    PAYSTACK ADDITIONS (SAFE - ADDITIVE ONLY)
@@ -1009,6 +1010,86 @@ app.get("/news/meta", async (req, res) => {
 
 app.get("/blog", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "blog.html"));
+});
+
+/* ================= SEO: robots, sitemap, crawlable articles ================= */
+
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain").send(
+`User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /direct-admin
+Disallow: /api/
+Disallow: /auth/
+Sitemap: https://propredict-app.onrender.com/sitemap.xml
+`);
+});
+
+app.get("/sitemap.xml", async (req, res) => {
+  try {
+    const BASE = "https://propredict-app.onrender.com";
+    const staticPages = [
+      "", "/news", "/blog", "/tips", "/pricing", "/about", "/contact",
+      "/faq", "/affiliates", "/careers",
+      "/privacy", "/terms", "/disclaimer", "/no-guarantee",
+      "/cookie-policy", "/accessibility"
+    ];
+    let urls = staticPages.map(p =>
+      `  <url><loc>${BASE}${p}</loc><changefreq>daily</changefreq><priority>${p === "" ? "1.0" : "0.7"}</priority></url>`);
+    try {
+      const result = await getArticles({ page: 1, limit: 50 });
+      for (const a of (result.articles || [])) {
+        const last = a.date ? new Date(a.date).toISOString().slice(0, 10) : "";
+        urls.push(`  <url><loc>${BASE}/article/${encodeURIComponent(a.slug)}</loc><lastmod>${last}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`);
+      }
+    } catch (e) {
+      console.error("Sitemap article fetch failed:", e.message);
+    }
+    res.type("application/xml").send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>`);
+  } catch (err) {
+    res.status(500).type("application/xml").send('<?xml version="1.0"?><urlset/>');
+  }
+});
+
+// Crawlable article pages: same SPA the users see, but with REAL title,
+// description and Open Graph tags injected server-side (crawlers don't run JS).
+app.get("/article/:slug", async (req, res) => {
+  try {
+    const article = await getArticle(req.params.slug);
+    if (!article) return res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
+    const htmlPath = path.join(__dirname, "public", "news-article.html");
+    let html = await fsp.readFile(htmlPath, "utf8");
+    const BASE = "https://propredict-app.onrender.com";
+    const title = `${article.title} | ProPredict`;
+    const desc = (article.summary || article.title).slice(0, 155);
+    const image = article.coverImage || `${BASE}/og-image.png`;
+    const url = `${BASE}/article/${encodeURIComponent(article.slug)}`;
+    const meta =
+`  <title>${title.replace(/</g, "&lt;")}</title>
+  <meta name="description" content="${desc.replace(/</g, "&lt;").replace(/"/g, "&quot;")}">
+  <link rel="canonical" href="${url}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="${title.replace(/</g, "&lt;")}">
+  <meta property="og:description" content="${desc.replace(/</g, "&lt;").replace(/"/g, "&quot;")}">
+  <meta property="og:image" content="${image}">
+  <meta property="og:url" content="${url}">
+  <meta name="twitter:card" content="summary_large_image">`;
+    html = html.replace(/  <title>[\s\S]*?<\/title>/, meta);
+    res.send(html);
+  } catch (err) {
+    console.error("Article page error:", err);
+    res.status(500).sendFile(path.join(__dirname, "public", "404.html"));
+  }
+});
+
+// Custom 404: branded page for browser requests, JSON for API calls.
+app.use((req, res) => {
+  if (req.accepts("html")) {
+    res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
+  } else {
+    res.status(404).json({ error: "Not found" });
+  }
 });
 
 /* ==================================================

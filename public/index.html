@@ -16,6 +16,18 @@
   </script>
   <meta charset="UTF-8">
   <title>ProPredict — Multi-Sport Probability Intelligence</title>
+  <meta name="description" content="Data-driven football predictions, match previews and live news across 20+ leagues. See today's probabilities free — upgrade for premium tips.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ProPredict">
+  <meta property="og:title" content="ProPredict — Live Football Predictions, Previews & News">
+  <meta property="og:description" content="Data-driven football predictions, match previews and live news across 20+ leagues. See today's probabilities free — upgrade for premium tips.">
+  <meta property="og:image" content="https://propredict-app.onrender.com/og-image.png">
+  <meta property="og:url" content="https://propredict-app.onrender.com/index.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icon-16.png">
+  <link rel="apple-touch-icon" href="/icon-180.png">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0b1220">
@@ -778,7 +790,7 @@
         return;
       }
       container.innerHTML = articles.map(a => `
-        <div class="public-blog-card" onclick="window.location.href='/news-article.html?slug=${a.slug}'">
+        <div class="public-blog-card" onclick="window.location.href='/article/${a.slug}'">
           <span class="blog-category">${a.league?.flag || ''} ${a.category || 'News'}</span>
           <h3>${a.title}</h3>
           <p>${a.summary || ''}</p>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProPredict News | Real Football Intelligence</title>
-    <meta name="description" content="AI-written football news generated from real match data across 20+ leagues. Real scores, real standings, zero fabrication.">
+    <meta name="description" content="Real football news from 20+ leagues: match previews, post-match reports and weekly digests, generated from live fixture and standings data.">
     <link rel="stylesheet" href="styles.css">
     <style>
         :root { --glow-cyan: #00f5ff; --glow-purple: #9c27b0; --ink: #a0b3d9; }
@@ -181,7 +181,7 @@
 
         function cardHTML(a) {
             return `
-                <div class="news-card" onclick="window.location.href='/news-article.html?slug=${a.slug}'">
+                <div class="news-card" onclick="window.location.href='/article/${a.slug}'">
                     <div class="news-card-body">
                         <span class="news-card-league">${a.league?.flag || '⚽'} ${a.league?.name || 'Football'}</span>
                         <h2>${a.title}</h2>

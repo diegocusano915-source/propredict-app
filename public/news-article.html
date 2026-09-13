@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProPredict | Match Report</title>
-    <meta name="description" content="AI-written football reporting from real match data — real scores, real standings, zero fabrication.">
+    <meta name="description" content="In-depth football match preview and report with real head-to-head history, standings analysis and tactical expectations.">
     <link rel="stylesheet" href="styles.css">
     <style>
         :root { --glow-cyan: #00f5ff; --glow-purple: #9c27b0; --ink: #a0b3d9; }
@@ -304,7 +304,7 @@
                     if (related.length > 0) {
                         document.getElementById('related-wrap').style.display = 'block';
                         document.getElementById('related-grid').innerHTML = related.map(x => `
-                            <div class="related-card" onclick="window.location.href='/news-article.html?slug=${x.slug}'">
+                            <div class="related-card" onclick="window.location.href='/article/${x.slug}'">
                                 <span class="rcat">${x.league?.flag || ''} ${x.league?.name || ''}</span>
                                 <div class="rtitle">${x.title}</div>
                                 <div class="rmeta">📅 ${x.date} · ⏱️ ${x.readTime || '5 min'}</div>
