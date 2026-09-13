@@ -313,9 +313,32 @@ window.ppInitAuth = function ppInitAuth() {
 // LOGIN / REGISTER / LOGOUT
 // ==========================================================
 
+// Inline form validation: red field + specific reason on the field itself
+window.ppValidateAuthField = function ppValidateAuthField(inputId, ok, message) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  if (ok) { el.style.borderColor = ""; el.title = ""; return; }
+  el.style.borderColor = "#ff6b6b";
+  el.title = message;
+};
+
+window.ppPreValidateAuth = function ppPreValidateAuth(email, password, isSignup) {
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  window.ppValidateAuthField("authEmail", emailOk, emailOk ? "" : "Enter a valid email address");
+  const passOk = password && password.length >= (isSignup ? 8 : 1);
+  window.ppValidateAuthField("authPassword", !!passOk,
+    isSignup ? "Password must be at least 8 characters" : "Enter your password");
+  if (!emailOk) { window.ppShowAuthMessage("Please enter a valid email address.", true); return false; }
+  if (isSignup && !passOk) { window.ppShowAuthMessage("Password must be at least 8 characters.", true); return false; }
+  if (!isSignup && !passOk) { window.ppShowAuthMessage("Please enter your password.", true); return false; }
+  return true;
+};
+
 window.ppLogin = async function ppLogin(email, password) {
   const rememberMeCheckbox = document.getElementById('rememberMeCheckbox');
   const rememberMe = rememberMeCheckbox ? rememberMeCheckbox.checked : false;
+
+  if (!window.ppPreValidateAuth(email, password, false)) return;
 
   if (typeof window.showBeastLoader === 'function') {
     window.showBeastLoader('Signing you in...');
@@ -363,6 +386,7 @@ window.ppLogin = async function ppLogin(email, password) {
 };
 
 window.ppRegister = async function ppRegister(email, password) {
+  if (!window.ppPreValidateAuth(email, password, true)) return;
   const savedRef = sessionStorage.getItem('referralCode');
   const referralCode = savedRef || null;
 

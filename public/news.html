@@ -167,7 +167,24 @@
         </div>
 
         <div id="news-container" class="news-grid">
-            <div class="news-loading"><div class="loading-pulse"></div></div>
+            <div class="news-loading" aria-label="Loading news">
+              <style>
+                .news-skeleton{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;grid-column:1/-1}
+                .sk-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden}
+                .sk-img{height:130px;background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.11) 37%,rgba(255,255,255,.05) 63%);background-size:400% 100%;animation:skShimmer 1.3s infinite}
+                .sk-line{height:12px;margin:14px 16px;border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.11) 37%,rgba(255,255,255,.05) 63%);background-size:400% 100%;animation:skShimmer 1.3s infinite}
+                .sk-line.w60{width:60%}.sk-line.w90{width:90%}.sk-line.w40{width:40%}
+                @keyframes skShimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+              </style>
+              <div class="news-skeleton">
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+              </div>
+            </div>
         </div>
 
         <div class="load-more-wrap">
@@ -205,7 +222,24 @@
             if (reset) {
                 state.page = 1;
                 state.hasMore = true;
-                container.innerHTML = '<div class="news-loading"><div class="loading-pulse"></div></div>';
+                container.innerHTML = '<div class="news-loading" aria-label="Loading news">
+              <style>
+                .news-skeleton{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;grid-column:1/-1}
+                .sk-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden}
+                .sk-img{height:130px;background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.11) 37%,rgba(255,255,255,.05) 63%);background-size:400% 100%;animation:skShimmer 1.3s infinite}
+                .sk-line{height:12px;margin:14px 16px;border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.11) 37%,rgba(255,255,255,.05) 63%);background-size:400% 100%;animation:skShimmer 1.3s infinite}
+                .sk-line.w60{width:60%}.sk-line.w90{width:90%}.sk-line.w40{width:40%}
+                @keyframes skShimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+              </style>
+              <div class="news-skeleton">
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+                <div class="sk-card"><div class="sk-img"></div><div class="sk-line w90"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+              </div>
+            </div>';
             }
 
             try {

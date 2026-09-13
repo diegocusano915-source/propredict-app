@@ -222,6 +222,81 @@ app.use(trackVisitor);
 app.use("/api/paystack/webhook", express.raw({ type: "application/json" }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public"), { setHeaders: (res, path) => { res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private'); res.setHeader('Pragma', 'no-cache'); res.setHeader('Expires', '0'); res.setHeader('X-Content-Type-Options', 'nosniff'); } }));
+
+/* ===========================
+   SITE ENHANCEMENTS — inject GA4 (when GA_MEASUREMENT_ID env is set),
+   EU cookie banner and sticky mobile CTA into every HTML page served.
+   One edit point instead of patching 20 files; admin pages excluded.
+=========================== */
+const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID || "";
+const GA_SNIPPET = GA_MEASUREMENT_ID ? `
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_MEASUREMENT_ID}');</script>` : "";
+const SITE_EXTRAS_HEAD = GA_SNIPPET;
+const SITE_EXTRAS_BODY = `
+<style>
+  #ppCookieBar{position:fixed;bottom:0;left:0;right:0;z-index:99998;background:rgba(10,14,26,.96);border-top:1px solid rgba(0,245,255,.25);color:#cfd6e4;font:13px/1.5 'Segoe UI',Arial,sans-serif;padding:12px 16px;display:none;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+  #ppCookieBar button{background:linear-gradient(135deg,#00f5ff,#9c27b0);border:0;color:#fff;font-weight:700;padding:8px 18px;border-radius:20px;cursor:pointer}
+  #ppCookieBar a{color:#00f5ff}
+  #ppStickyCta{position:fixed;bottom:0;left:0;right:0;z-index:99997;display:none;justify-content:space-around;align-items:center;background:rgba(10,14,26,.97);border-top:1px solid rgba(0,245,255,.2);padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+  #ppStickyCta a{color:#e8eaf0;text-decoration:none;font:700 13px 'Segoe UI',Arial,sans-serif;padding:9px 16px;border-radius:22px}
+  #ppStickyCta a.pp-cta-main{background:linear-gradient(135deg,#00f5ff,#9c27b0);color:#fff}
+  #ppStickyCta .pp-close{color:#4a5a7a;background:none;border:0;font-size:16px;cursor:pointer;padding:4px}
+  @media (min-width: 900px){ #ppStickyCta{display:none !important} }
+</style>
+<div id="ppCookieBar" role="dialog" aria-label="Cookie consent">
+  <span>We use cookies for analytics and to improve your experience. See our <a href="/cookie-policy.html">Cookie Policy</a>.</span>
+  <button id="ppCookieOk">Accept</button>
+</div>
+<div id="ppStickyCta">
+  <a href="/tips.html">Today's Tips</a>
+  <a class="pp-cta-main" href="/pricing.html">Go Pro</a>
+  <button class="pp-close" id="ppCtaClose" aria-label="Dismiss">×</button>
+</div>
+<script>
+(function(){
+  try{
+    if(!localStorage.getItem('pp_cookie_choice')){
+      var bar=document.getElementById('ppCookieBar');
+      bar.style.display='flex';
+      document.getElementById('ppCookieOk').onclick=function(){
+        localStorage.setItem('pp_cookie_choice','accepted');
+        bar.style.display='none';
+      };
+    }
+    var cta=document.getElementById('ppStickyCta');
+    var loggedIn=localStorage.getItem('propredict_token')||localStorage.getItem('token');
+    var dismissed=localStorage.getItem('pp_cta_dismissed');
+    if(!loggedIn&&!dismissed&&window.innerWidth<900){cta.style.display='flex';}
+    var x=document.getElementById('ppCtaClose');
+    if(x)x.onclick=function(){cta.style.display='none';localStorage.setItem('pp_cta_dismissed','1');};
+  }catch(e){}
+})();
+</script>`;
+app.use((req, res, next) => {
+  if (req.path.startsWith("/admin") || req.path.startsWith("/direct-admin")) return next();
+  const origSendFile = res.sendFile.bind(res);
+  res.sendFile = function (p, opts, cb) {
+    const filePath = typeof p === "string" ? p : (p && p.path);
+    if (typeof filePath === "string" && filePath.toLowerCase().endsWith(".html")) {
+      fsp.readFile(filePath, "utf8").then(html => {
+        let out = html;
+        if (SITE_EXTRAS_HEAD && out.includes("</head>") && !out.includes("googletagmanager")) {
+          out = out.replace("</head>", SITE_EXTRAS_HEAD + "\n</head>");
+        }
+        if (out.includes("</body>") && !out.includes("ppCookieBar")) {
+          out = out.replace("</body>", SITE_EXTRAS_BODY + "\n</body>");
+        }
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
+        res.setHeader("X-Content-Type-Options", "nosniff");
+        res.type("html").status(res.statusCode !== 200 ? res.statusCode : 200).send(out);
+      }).catch(() => origSendFile(p, opts, cb));
+      return;
+    }
+    return origSendFile(p, opts, cb);
+  };
+  next();
+});
 app.use((req, res, next) => { res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private'); res.setHeader('Pragma', 'no-cache'); res.setHeader('Expires', '0'); next(); });
 
 /* ===========================

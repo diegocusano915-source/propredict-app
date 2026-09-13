@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You — ProPredict</title>
+  <meta name="description" content="Welcome to ProPredict. Your account or payment was received — here's what happens next.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png">
+  <link rel="apple-touch-icon" href="/icon-180.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: #0a0e1a; color: #a0b3d9; font-family: 'Segoe UI', Arial, sans-serif; padding: 24px;
+    }
+    .box {
+      max-width: 560px; width: 100%; text-align: center;
+      background: #1a1f35; border: 1px solid rgba(0,245,255,.18); border-radius: 24px; padding: 48px 36px;
+    }
+    .icon { font-size: 56px; margin-bottom: 12px; }
+    h1 {
+      font-size: 26px; margin-bottom: 10px;
+      background: linear-gradient(135deg, #fff, #00f5ff);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .sub { color: #6b7da3; font-size: 14px; line-height: 1.6; margin-bottom: 26px; }
+    ol {
+      text-align: left; display: inline-block; margin: 0 auto 28px; color: #cfd6e4;
+      font-size: 14px; line-height: 2;
+    }
+    .btn {
+      display: inline-block; padding: 14px 34px; border-radius: 32px;
+      background: linear-gradient(135deg, #00f5ff, #9c27b0); color: #fff;
+      text-decoration: none; font-weight: bold; font-size: 15px; margin: 4px;
+    }
+    .ghost { background: none; border: 1px solid rgba(0,245,255,.4); color: #00f5ff; }
+    .note { margin-top: 20px; font-size: 12px; color: #4a5a7a; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="icon">🎉</div>
+    <h1>Thank You — You're In!</h1>
+    <p class="sub" id="thanksMessage">Your action was received. Here's what happens next:</p>
+    <ol>
+      <li>Check your email for your receipt / confirmation.</li>
+      <li>Your plan activates automatically (manual payments within 24 hours).</li>
+      <li>Head to Today's Tips — your first predictions are waiting.</li>
+    </ol>
+    <div>
+      <a class="btn" href="/tips.html">See Today's Tips</a>
+      <a class="btn ghost" href="/">Back to Home</a>
+    </div>
+    <p class="note">Questions? <a href="mailto:propredict.support@gmail.com" style="color:#00f5ff;">propredict.support@gmail.com</a></p>
+  </div>
+  <script>
+    const src = new URLSearchParams(location.search).get("source");
+    if (src === "payment") {
+      document.getElementById("thanksMessage").textContent =
+        "Your payment was received. Here's what happens next:";
+    }
+  </script>
+</body>
+</html>
